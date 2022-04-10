@@ -7,17 +7,18 @@
 		"vscode": "^1.66.0"
 	},
 	"categories": [
+		"Keymaps",
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:modaleditor.helloWorld"
+		"*"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "modaleditor.helloWorld",
-				"title": "Hello World"
+				"command": "modal-editor.setMode",
+				"title": "ModalEditor: Set Mode"
 			}
 		]
 	},
@@ -27,7 +28,8 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"clean": "rm -rf dist",
+		"test": "node ./dist/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.66.0",
