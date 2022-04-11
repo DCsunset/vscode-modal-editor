@@ -2,9 +2,8 @@ import * as vscode from "vscode";
 import {
 	isCommand,
 	isCommandList,
-	isNormalCommand,
-	isParameterizedCommand,
-	isConditionalCommand
+	isSimpleCommand,
+	isComplexCommand
 } from "./actions.guard";
 
 /**
@@ -20,34 +19,27 @@ export type Action = Command;
  *
  * @see {isCommand} ts-auto-guard:type-guard
  */
-export type Command = NormalCommand | ConditionalCommand | CommandList;
+export type Command = SimpleCommand | ComplexCommand | CommandList;
 
 /**
- * @see {isNormalCommand} ts-auto-guard:type-guard
+ * @see {isSimpleCommand} ts-auto-guard:type-guard
  */
-export type NormalCommand = string;
+export type SimpleCommand = string;
 
 /**
- * @see {isParameterizedCommand} ts-auto-guard:type-guard
+ * @see {isComplexCommand} ts-auto-guard:type-guard
  */
-export type ParameterizedCommand = {
+export type ComplexCommand = {
 	command: string,
-	args?: any
+	args?: any,
+	// Condition to execute the above command
+	when?: string
 };
 
 /**
  * @see {isCommandList} ts-auto-guard:type-guard
  */
 export type CommandList = Command[];
-
-/**
- * @see {isConditionalCommand} ts-auto-guard:type-guard
- */
-export type ConditionalCommand = {
-	command: Command,
-	// Condition to execute the above command
-	when: string
-};
 
 export class AppState {
 	/// Execute an action
@@ -59,15 +51,13 @@ export class AppState {
 	}
 	
 	async executeCommand(command: Command) {
-		if (isNormalCommand(command)) {
+		if (isSimpleCommand(command)) {
 			await this.executeVSCommand(command);
 		}
-		else if (isParameterizedCommand(command)) {
-			await this.executeVSCommand(command.command, command.args);
-		}
-		else if (isConditionalCommand(command)) {
-			if (this.jsEval(command.when)) {
-				await this.executeCommand(command.command);
+		else if (isComplexCommand(command)) {
+			// Execute it if when is not defined or condition is true
+			if (!command.when || this.jsEval(command.when)) {
+				await this.executeVSCommand(command.command, command.args);
 			}
 		}
 		else if (isCommandList(command)) {
@@ -88,7 +78,7 @@ export class AppState {
 		return eval(expressions);
 	}
 	
-	async executeVSCommand(command: NormalCommand, ...rest: any[]) {
+	async executeVSCommand(command: string, ...rest: any[]) {
 		try {
 			await vscode.commands.executeCommand(command, ...rest);
 		}
