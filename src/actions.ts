@@ -110,7 +110,7 @@ export class AppState {
 			}
 		}
 		catch (err: any) {
-			vscode.window.showErrorMessage(err.message);
+			vscode.window.showErrorMessage(`Modal Editor: ${err.message}`);
 		}
 	}
 

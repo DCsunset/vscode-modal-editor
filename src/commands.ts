@@ -25,6 +25,8 @@ async function loadKeybindings(uri: vscode.Uri) {
 			throw new Error("invalid keybindings");
 		}
 		appState.updateConfig({ keybindings });
+		const config = vscode.workspace.getConfiguration("modalEditor");
+		config.update("keybindings", keybindings, vscode.ConfigurationTarget.Global);
 		vscode.window.showInformationMessage("Modal Editor: Keybindings imported");
 	}
 	catch (err: any) {
