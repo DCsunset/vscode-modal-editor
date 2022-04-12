@@ -18,15 +18,39 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [],
+    "commands": [
+      {
+        "command": "modalEditor.importKeybindings",
+        "title": "Modal Editor: Import keybindings"
+      }
+    ],
     "keybindings": [
       {
         "key": "Escape",
-        "command": "modalKeys.setMode",
+        "command": "modalEditor.setMode",
         "args": "normal",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Modal Editor",
+      "properties": {
+        "modalEditor.keybindings": {
+          "type": "object",
+          "description": "Keybindings to map keys to commands",
+          "default": {
+            "normal": {},
+            "insert": {}
+          }
+        },
+        "modalEditor.styles": {
+          "type": "object",
+          "description": "Styles for different modes",
+          "default": {}
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -1,21 +1,10 @@
 import * as vscode from "vscode";
-import * as config from "./config";
-import { AppState } from "./actions";
-
-/**
- * Standard Commands
- */
-export const NORMAL = "normal";
-export const INSERT = "insert";
-export const SELECT = "select";
-export const SEARCH = "search";
-export const REPLACE = 'replace';
-export const CAPTURE = 'capture';
+import { readConfig } from "./config";
+import { isKeybindings } from "./keybindings.guard";
+import { AppState, NORMAL, INSERT } from "./actions";
 
 /// Current app state
 let appState: AppState;
-/// Status bar
-let statusBar: vscode.StatusBarItem;
 /// Subscription to type command
 let typeCommandSubscription: vscode.Disposable | null = null;
 
@@ -24,16 +13,71 @@ function commandId(command: (_: any) => any) {
 	return `modalEditor.${command.name}`;
 }
 
-/// Update cursor and status bar
-export function updateStatus(editor?: vscode.TextEditor) {
-	if (editor) {
-		const { cursorStyle, statusText } = config.config[appState.mode];
-		editor.options.cursorStyle = cursorStyle;
-		statusBar.text = statusText;
-		statusBar.show();
+/**
+ * Load keybindings from a URI
+ */
+async function loadKeybindings(uri: vscode.Uri) {
+	const fs = vscode.workspace.fs;
+	try {
+		const data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
+		const keybindings = JSON.parse(data);
+		if (!isKeybindings(keybindings)) {
+			throw new Error("invalid keybindings");
+		}
+		appState.updateConfig({ keybindings });
+		vscode.window.showInformationMessage("Modal Editor: Keybindings imported");
 	}
-	else {
-		statusBar.hide();
+	catch (err: any) {
+		vscode.window.showErrorMessage(`Modal Editor: Failed to import keybindings: ${err.message}`);
+	}
+}
+
+interface PickItem extends vscode.QuickPickItem {
+	type: "file" | "uri"
+}
+
+async function importKeybindings() {
+	// TODO: read from user keybindings direction
+	const choices: PickItem[] = [
+		{
+			label: "Import from a file...",
+			type: "file"
+		},
+		{
+			label: "Import from a URI...",
+			type: "uri"
+		}
+	];
+	
+	const choice = await vscode.window.showQuickPick(choices, {
+		placeHolder: "Warning: importing keybindings will overwrite current ones in settings.json"
+	});
+
+	if (choice) {
+		if (choice.type === "file") {
+			const files = await vscode.window.showOpenDialog({
+				title: "Import keybindings from file",
+				openLabel: "Import",
+				filters: {
+				  "Keybindings": ["json"]
+				},
+				canSelectFiles: true,
+				canSelectFolders: false,
+				canSelectMany: false
+			});
+
+			if (files && files.length > 0) {
+				loadKeybindings(files[0]);
+			}
+		}
+		else if (choice.type === "uri") {
+			let uri = await vscode.window.showInputBox({
+				prompt: "Enter a valid URI"
+			})
+			if (uri) {
+				loadKeybindings(vscode.Uri.parse(uri, true));
+			}
+		}
 	}
 }
 
@@ -46,11 +90,14 @@ async function onType(event: { text: string }) {
 	await appState.handleKey(event.text);
 }
 
+export async function onStatusChange(editor?: vscode.TextEditor) {
+	appState.updateStatus(editor);
+}
+
 export async function setMode(mode: string) {
 	try {
 		appState.setMode(mode);
-		await vscode.commands.executeCommand("setContext", "modal-editor.mode", mode);
-		updateStatus(vscode.window.activeTextEditor);
+		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 		if (mode === INSERT) {
 			if (typeCommandSubscription) {
 				typeCommandSubscription.dispose();
@@ -69,21 +116,28 @@ export async function setMode(mode: string) {
 	}
 }
 
+export function onConfigUpdate() {
+	// Read config from file
+	const config = readConfig();
+	appState.updateConfig(config);
+	setMode(NORMAL);
+}
+
+function registerCommand(command: (_: any) => any) {
+	return vscode.commands.registerCommand(commandId(command), command);
+}
+
 /**
  * Register all commands
  */
 export function register(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand(commandId(setMode), setMode)
+		registerCommand(setMode),
+		registerCommand(importKeybindings)
 	);
-	
-	// Read config from file
-	config.readConfig();
-
-	appState = new AppState(NORMAL, {
-		normal: {},
-		insert: {}
-	}, outputChannel);
-	statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+		
+	const config = readConfig();
+	const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	appState = new AppState(NORMAL, config, outputChannel, statusBar);
 }
 

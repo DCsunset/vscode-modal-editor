@@ -3,6 +3,7 @@
  */
 import * as vscode from 'vscode';
 import * as commands from "./commands";
+import * as actions from "./actions";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -14,15 +15,16 @@ export function activate(context: vscode.ExtensionContext) {
 	commands.register(context, channel);
 	
 	context.subscriptions.push(
-		vscode.window.onDidChangeTextEditorSelection(e => commands.updateStatus(e.textEditor))
+		vscode.window.onDidChangeTextEditorSelection(e => commands.onStatusChange(e.textEditor)),
+		vscode.workspace.onDidChangeConfiguration(commands.onConfigUpdate)
 	);
 
 	// Set mode to Normal by default
-	commands.setMode(commands.NORMAL);
+	commands.setMode(actions.NORMAL);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-	commands.setMode(commands.INSERT);
+	commands.setMode(actions.INSERT);
 }
 

@@ -5,7 +5,19 @@ import {
 	isSimpleCommand,
 	isComplexCommand
 } from "./actions.guard";
-import { KeyBindings, KeyEventHandler } from "./keybindings";
+import { KeyEventHandler } from "./keybindings";
+import { Config } from "./config";
+
+
+/**
+ * Standard modes
+ */
+export const NORMAL = "normal";
+export const INSERT = "insert";
+export const SELECT = "select";
+export const SEARCH = "search";
+export const REPLACE = 'replace';
+export const CAPTURE = 'capture';
 
 /**
  * Action defined for each key
@@ -43,16 +55,38 @@ export type ComplexCommand = {
 export type CommandList = Command[];
 
 export class AppState {
-	keyEventHandler: KeyEventHandler;
+	// Allow initialization in a method
+	keyEventHandler!: KeyEventHandler;
+	mode!: string;
 	
 	constructor(
-		public mode: string,
-		public keyBindings: KeyBindings,
-		public outputChannel: vscode.OutputChannel
+		mode: string,
+		public config: Config,
+		public outputChannel: vscode.OutputChannel,
+		public statusBar: vscode.StatusBarItem
 	) {
-		this.keyEventHandler = new KeyEventHandler(
-			keyBindings[mode]
-		);
+		this.setMode(mode);
+	}
+
+	/// Update cursor and status bar
+	updateStatus(editor?: vscode.TextEditor) {
+		if (editor) {
+			const { cursorStyle, statusText } = this.config.styles[this.mode];
+			editor.options.cursorStyle = cursorStyle;
+			this.statusBar.text = statusText;
+			this.statusBar.show();
+		}
+		else {
+			this.statusBar.hide();
+		}
+	}
+
+	updateConfig(config: Partial<Config>) {
+		this.config = {
+			...this.config,
+			...config
+		};
+		this.setMode(NORMAL);
 	}
 	
 	log(message: string) {
@@ -60,13 +94,11 @@ export class AppState {
 	}
 	
 	setMode(mode: string) {
-		if (mode !== "insert" && !(mode in this.keyBindings)) {
-			throw new Error(`Mode not defined in key bindings: ${mode}`);
-		}
 		this.mode = mode;
 		this.keyEventHandler = new KeyEventHandler(
-			this.keyBindings[mode]
+			this.config.keybindings[mode]
 		);
+		this.updateStatus();
 	}
 	
 	async handleKey(key: string) {

@@ -2,9 +2,9 @@
  * Generated type guards for "keybindings.ts".
  * WARNING: Do not manually change this file.
  */
-import { KeyMap, KeyBindings } from "./keybindings";
+import { Keymap, Keybindings } from "./keybindings";
 
-export function isKeyMap(obj: any, _argumentName?: string): obj is KeyMap {
+export function isKeymap(obj: any, _argumentName?: string): obj is Keymap {
     return (
         (obj !== null &&
             typeof obj === "object" ||
@@ -12,7 +12,7 @@ export function isKeyMap(obj: any, _argumentName?: string): obj is KeyMap {
     )
 }
 
-export function isKeyBindings(obj: any, _argumentName?: string): obj is KeyBindings {
+export function isKeybindings(obj: any, _argumentName?: string): obj is Keybindings {
     return (
         (obj !== null &&
             typeof obj === "object" ||
