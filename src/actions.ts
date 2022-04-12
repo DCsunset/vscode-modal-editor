@@ -5,6 +5,7 @@ import {
 	isSimpleCommand,
 	isComplexCommand
 } from "./actions.guard";
+import { KeyBindings, KeyEventHandler } from "./keybindings";
 
 /**
  * Action defined for each key
@@ -42,12 +43,29 @@ export type ComplexCommand = {
 export type CommandList = Command[];
 
 export class AppState {
+	keyEventHandler: KeyEventHandler;
+	
+	constructor(public mode: string, public keyBindings: KeyBindings) {
+		this.keyEventHandler = new KeyEventHandler(
+			keyBindings[mode]
+		);
+	}
+	
+	setMode(mode: string) {
+		if (!(mode in this.keyBindings)) {
+			throw new Error(`Mode not defined in key bindings: ${mode}`);
+		}
+		this.mode = mode;
+		this.keyEventHandler = new KeyEventHandler(
+			this.keyBindings[mode]
+		);
+	}
+
 	/// Execute an action
 	async executeAction(action: Action) {
 		if (isCommand(action)) {
 			await this.executeAction(action);
 		}
-		
 	}
 	
 	async executeCommand(command: Command) {
@@ -74,7 +92,7 @@ export class AppState {
 	 * jsEval evaluates JS expressions
 	 */
 	jsEval(expressions: string) {
-		// TODO: define some variables
+		// TODO: define some variables (modalEditor.xxx)
 		return eval(expressions);
 	}
 	
@@ -87,4 +105,5 @@ export class AppState {
 		}
 	}
 }
+
 

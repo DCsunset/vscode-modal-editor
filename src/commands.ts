@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as config from "./config";
+import { AppState } from "./actions";
 
 /**
  * Standard Commands
@@ -11,8 +12,8 @@ export const SEARCH = "search";
 export const REPLACE = 'replace';
 export const CAPTURE = 'capture';
 
-/// Current mode
-let curMode = NORMAL;
+/// Current app state
+let appState: AppState;
 /// Status bar
 let statusBar: vscode.StatusBarItem;
 
@@ -36,9 +37,14 @@ export function updateStatus(editor?: vscode.TextEditor) {
 
 
 export async function setMode(mode: string) {
-	curMode = mode;
-	await vscode.commands.executeCommand("setContext", "modal-editor.mode", mode);
-	updateStatus(vscode.window.activeTextEditor);
+	try {
+		appState.setMode(mode);
+		await vscode.commands.executeCommand("setContext", "modal-editor.mode", mode);
+		updateStatus(vscode.window.activeTextEditor);
+	}
+	catch (err: any) {
+		vscode.window.showErrorMessage(err.message);
+	}
 }
 
 /**
@@ -49,6 +55,8 @@ export function register(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand(commandId(setMode), setMode)
 	);
 	
+	// TODO: read from config
+	appState = new AppState(NORMAL, {});
 	statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 }
 
