@@ -3,6 +3,9 @@
   "displayName": "ModalEditor",
   "description": "Customizable extension to turn VS Code into a modal editor",
   "version": "0.0.1",
+  "repository": {
+    "url": "https://github.com/DCsunset/vscode-modal-editor"
+  },
   "engines": {
     "vscode": "^1.66.0"
   },
@@ -15,7 +18,15 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": []
+    "commands": [],
+    "keybindings": [
+      {
+        "key": "Escape",
+        "command": "modalKeys.setMode",
+        "args": "normal",
+        "when": "editorTextFocus"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

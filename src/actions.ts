@@ -45,14 +45,22 @@ export type CommandList = Command[];
 export class AppState {
 	keyEventHandler: KeyEventHandler;
 	
-	constructor(public mode: string, public keyBindings: KeyBindings) {
+	constructor(
+		public mode: string,
+		public keyBindings: KeyBindings,
+		public outputChannel: vscode.OutputChannel
+	) {
 		this.keyEventHandler = new KeyEventHandler(
 			keyBindings[mode]
 		);
 	}
 	
+	log(message: string) {
+		this.outputChannel.appendLine(message);
+	}
+	
 	setMode(mode: string) {
-		if (!(mode in this.keyBindings)) {
+		if (mode !== "insert" && !(mode in this.keyBindings)) {
 			throw new Error(`Mode not defined in key bindings: ${mode}`);
 		}
 		this.mode = mode;
@@ -62,6 +70,7 @@ export class AppState {
 	}
 	
 	async handleKey(key: string) {
+		this.log("Handle key: " + key);
 		const command = this.keyEventHandler.handle(key);
 		if (command) {
 			await this.executeCommand(command);

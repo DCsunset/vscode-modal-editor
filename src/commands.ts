@@ -21,11 +21,11 @@ let typeCommandSubscription: vscode.Disposable | null = null;
 
 /// Get command id from command function
 function commandId(command: (_: any) => any) {
-	return `modal-editor.${command.name}`;
+	return `modalEditor.${command.name}`;
 }
 
 /// Update cursor and status bar
-function updateStatus(editor?: vscode.TextEditor) {
+export function updateStatus(editor?: vscode.TextEditor) {
 	if (editor) {
 		const { cursorStyle, statusText } = config.config[appState.mode];
 		editor.options.cursorStyle = cursorStyle;
@@ -43,7 +43,6 @@ function updateStatus(editor?: vscode.TextEditor) {
  * The event gets one character each time
  */
 async function onType(event: { text: string }) {
-	console.log("Handle key:", event.text);
 	await appState.handleKey(event.text);
 }
 
@@ -73,13 +72,18 @@ export async function setMode(mode: string) {
 /**
  * Register all commands
  */
-export function register(context: vscode.ExtensionContext) {
+export function register(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand(commandId(setMode), setMode)
 	);
 	
-	// TODO: read from config
-	appState = new AppState(NORMAL, {});
+	// Read config from file
+	config.readConfig();
+
+	appState = new AppState(NORMAL, {
+		normal: {},
+		insert: {}
+	}, outputChannel);
 	statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 }
 
