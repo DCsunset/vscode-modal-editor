@@ -98,14 +98,19 @@ export class AppState {
 		this.keyEventHandler = new KeyEventHandler(
 			this.config.keybindings[mode]
 		);
-		this.updateStatus();
+		this.updateStatus(vscode.window.activeTextEditor);
 	}
 	
 	async handleKey(key: string) {
 		this.log("Handle key: " + key);
-		const command = this.keyEventHandler.handle(key);
-		if (command) {
-			await this.executeCommand(command);
+		try {
+			const command = this.keyEventHandler.handle(key);
+			if (command) {
+				await this.executeCommand(command);
+			}
+		}
+		catch (err: any) {
+			vscode.window.showErrorMessage(err.message);
 		}
 	}
 

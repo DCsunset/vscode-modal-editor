@@ -32,12 +32,20 @@ export class KeyEventHandler {
 	handle(key: string) {
 		if (key in this.keymap) {
 			const value = this.currentKeymap[key];
-			if (isCommand(value))
+			if (isCommand(value)) {
+				// reset keymap since this sequence is finished
+				this.currentKeymap = this.keymap;
 				return value;
+			}
 			else {
 				// value is a key map
 				this.currentKeymap = value;
 			}
+		}
+		else {
+			// reset keymap when the key is invalid
+			this.currentKeymap = this.keymap;
+			throw new Error(`invalid key: ${key}`);
 		}
 	}
 	
