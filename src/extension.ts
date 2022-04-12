@@ -13,9 +13,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	config.readConfig();
 	
-	context.subscriptions.push(
-		vscode.window.onDidChangeTextEditorSelection(e => commands.updateStatus(e.textEditor))
-	);
+	// context.subscriptions.push(
+	// 	vscode.window.onDidChangeTextEditorSelection(e => commands.updateStatus(e.textEditor))
+	// );
 
 	// Set mode to Normal by default
 	commands.setMode(commands.NORMAL);

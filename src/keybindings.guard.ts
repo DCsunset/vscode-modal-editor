@@ -1,8 +1,8 @@
 /*
- * Generated type guards for "keymap.ts".
+ * Generated type guards for "keybindings.ts".
  * WARNING: Do not manually change this file.
  */
-import { KeyMap, KeyBindings } from "./keymap";
+import { KeyMap, KeyBindings } from "./keybindings";
 
 export function isKeyMap(obj: any, _argumentName?: string): obj is KeyMap {
     return (

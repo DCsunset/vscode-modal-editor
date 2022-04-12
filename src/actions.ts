@@ -60,6 +60,13 @@ export class AppState {
 			this.keyBindings[mode]
 		);
 	}
+	
+	async handleKey(key: string) {
+		const command = this.keyEventHandler.handle(key);
+		if (command) {
+			await this.executeCommand(command);
+		}
+	}
 
 	/// Execute an action
 	async executeAction(action: Action) {

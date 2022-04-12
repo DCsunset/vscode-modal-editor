@@ -16,6 +16,8 @@ export const CAPTURE = 'capture';
 let appState: AppState;
 /// Status bar
 let statusBar: vscode.StatusBarItem;
+/// Subscription to type command
+let typeCommandSubscription: vscode.Disposable | null = null;
 
 /// Get command id from command function
 function commandId(command: (_: any) => any) {
@@ -23,9 +25,9 @@ function commandId(command: (_: any) => any) {
 }
 
 /// Update cursor and status bar
-export function updateStatus(editor?: vscode.TextEditor) {
+function updateStatus(editor?: vscode.TextEditor) {
 	if (editor) {
-		const { cursorStyle, statusText } = config.config[curMode];
+		const { cursorStyle, statusText } = config.config[appState.mode];
 		editor.options.cursorStyle = cursorStyle;
 		statusBar.text = statusText;
 		statusBar.show();
@@ -35,12 +37,33 @@ export function updateStatus(editor?: vscode.TextEditor) {
 	}
 }
 
+/**
+ * Handle key event.
+ *
+ * The event gets one character each time
+ */
+async function onType(event: { text: string }) {
+	console.log("Handle key:", event.text);
+	await appState.handleKey(event.text);
+}
 
 export async function setMode(mode: string) {
 	try {
 		appState.setMode(mode);
 		await vscode.commands.executeCommand("setContext", "modal-editor.mode", mode);
 		updateStatus(vscode.window.activeTextEditor);
+		if (mode === INSERT) {
+			if (typeCommandSubscription) {
+				typeCommandSubscription.dispose();
+				typeCommandSubscription = null;
+			}
+		}
+		else {
+			if (!typeCommandSubscription) {
+				// Handle type events
+				typeCommandSubscription = vscode.commands.registerCommand("type", onType);
+			}
+		}
 	}
 	catch (err: any) {
 		vscode.window.showErrorMessage(err.message);
