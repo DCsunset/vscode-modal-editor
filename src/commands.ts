@@ -19,8 +19,11 @@ function commandId(command: (_: any) => any) {
 async function loadKeybindings(uri: vscode.Uri) {
 	const fs = vscode.workspace.fs;
 	try {
-		const data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
-		const keybindings = JSON.parse(data);
+		let data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
+		if (uri.fsPath.match(/json[5c]?$/))
+			data = `(${data})`;
+
+		const keybindings = eval(data);
 		if (!isKeybindings(keybindings)) {
 			throw new Error("invalid keybindings");
 		}
@@ -61,7 +64,7 @@ async function importKeybindings() {
 				title: "Import keybindings from file",
 				openLabel: "Import",
 				filters: {
-				  "Keybindings": ["json"]
+				  "Keybindings": ["json", "jsonc", "js"]
 				},
 				canSelectFiles: true,
 				canSelectFolders: false,
