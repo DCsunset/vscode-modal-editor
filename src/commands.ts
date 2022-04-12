@@ -118,6 +118,14 @@ export async function setMode(mode: string) {
 	}
 }
 
+export async function setInsertMode() {
+	setMode(INSERT);
+}
+
+export async function setNormalMode() {
+	setMode(NORMAL);
+}
+
 export function onConfigUpdate() {
 	// Read config from file
 	const config = readConfig();
@@ -135,6 +143,8 @@ function registerCommand(command: (_: any) => any) {
 export function register(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
 	context.subscriptions.push(
 		registerCommand(setMode),
+		registerCommand(setInsertMode),
+		registerCommand(setNormalMode),
 		registerCommand(importKeybindings)
 	);
 		

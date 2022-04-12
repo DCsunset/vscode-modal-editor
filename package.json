@@ -20,6 +20,14 @@
   "contributes": {
     "commands": [
       {
+        "command": "modalEditor.setNormalMode",
+        "title": "Modal Editor: Set mode to normal"
+      },
+      {
+        "command": "modalEditor.setInsertMode",
+        "title": "Modal Editor: Set mode to insert"
+      },
+      {
         "command": "modalEditor.importKeybindings",
         "title": "Modal Editor: Import keybindings"
       }
