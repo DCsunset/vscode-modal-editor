@@ -1,5 +1,6 @@
 import { Command } from "./actions";
 import { isCommand } from "./actions.guard";
+import { KeyError } from "./error";
 
 /**
  * Each key can be mapped to a command or a sub key map
@@ -45,7 +46,7 @@ export class KeyEventHandler {
 		else {
 			// reset keymap when the key is invalid
 			this.currentKeymap = this.keymap;
-			throw new Error(`invalid key: ${key}`);
+			throw new KeyError(`undefined key: ${key}`);
 		}
 	}
 	

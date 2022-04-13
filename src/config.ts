@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { Keybindings } from "./keybindings";
 import { isKeybindings } from "./keybindings.guard";
+import { isMisc } from "./config.guard";
 
 
 /**
@@ -10,9 +11,19 @@ import { isKeybindings } from "./keybindings.guard";
  */
 export type Styles = {
 	[mode: string]: {
-		cursorStyle: vscode.TextEditorCursorStyle;
-		statusText: string;
+		cursorStyle: vscode.TextEditorCursorStyle,
+		statusText: string
 	}
+};
+
+/**
+ * Misc Miscellaneous config
+ *
+ * @see {isMisc} ts-auto-guard:type-guard
+ */
+export type Misc = {
+	/// Do not show error message for undefined keys
+	ignoreUndefinedKeys: boolean
 };
 
 /**
@@ -22,7 +33,8 @@ export type Styles = {
  */
 export type Config = {
 	styles: Styles,
-	keybindings: Keybindings
+	keybindings: Keybindings,
+	misc: Misc
 };
 
 /// Default config
@@ -46,6 +58,10 @@ const defaultKeybindings: Keybindings = {
 	select: {}
 };
 
+const defaultMisc: Misc = {
+	ignoreUndefinedKeys: false
+};
+
 /// Read config from settings.json
 export function readConfig() {
 	const config = vscode.workspace.getConfiguration("modalEditor");
@@ -57,9 +73,17 @@ export function readConfig() {
 
 	// TODO: convert cursor styles from string to style and merge them)
 	let styles = defaultStyles;
+	
+	let misc = config.get("misc");
+	if (!isMisc(misc)) {
+		vscode.window.showErrorMessage("Invalid misc config");
+		misc = defaultMisc;
+	}
+	
 	return {
 		styles,
-		keybindings
+		keybindings,
+		misc
 	} as Config;
 }
 

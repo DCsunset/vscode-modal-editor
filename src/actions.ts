@@ -7,6 +7,7 @@ import {
 } from "./actions.guard";
 import { KeyEventHandler } from "./keybindings";
 import { Config } from "./config";
+import { KeyError } from "./error";
 
 
 /**
@@ -99,7 +100,6 @@ export class AppState {
 	}
 	
 	async handleKey(key: string) {
-		this.log("Handle key: " + key);
 		try {
 			const command = this.keyEventHandler.handle(key);
 			if (command) {
@@ -107,7 +107,13 @@ export class AppState {
 			}
 		}
 		catch (err: any) {
-			vscode.window.showErrorMessage(`Modal Editor: ${err.message}`);
+			if (err instanceof KeyError && this.config.misc.ignoreUndefinedKeys) {
+				// don't show any error message
+				this.log(err.message);
+			}
+			else {
+				vscode.window.showErrorMessage(`Modal Editor: ${err.message}`);
+			}
 		}
 	}
 

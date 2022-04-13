@@ -61,6 +61,11 @@
           "type": "object",
           "description": "Styles for different modes",
           "default": {}
+        },
+        "modalEditor.misc.ignoreUndefinedKeys": {
+          "type": "boolean",
+          "description": "Do not show error message for undefined keys",
+          "default": false
         }
       }
     }
