@@ -27,27 +27,23 @@ export type Config = {
 
 /// Default config
 const defaultStyles: Styles = {
-		insert: {
-			cursorStyle: vscode.TextEditorCursorStyle.Line,
-			statusText: "-- INS --"
-		},
-		normal: {
-			cursorStyle: vscode.TextEditorCursorStyle.Block,
-			statusText: "-- NOR --"
-		},
-		select: {
-			cursorStyle: vscode.TextEditorCursorStyle.Block,
-			statusText: "-- SEL --"
-		},
-		search: {
-			cursorStyle: vscode.TextEditorCursorStyle.Underline,
-			statusText: "SEARCH"
+	insert: {
+		cursorStyle: vscode.TextEditorCursorStyle.Line,
+		statusText: "-- INS --"
+	},
+	normal: {
+		cursorStyle: vscode.TextEditorCursorStyle.Block,
+		statusText: "-- NOR --"
+	},
+	select: {
+		cursorStyle: vscode.TextEditorCursorStyle.Block,
+		statusText: "-- SEL --"
 	}
 };
 
 const defaultKeybindings: Keybindings = {
 	normal: {},
-	insert: {}
+	select: {}
 };
 
 /// Read config from settings.json

@@ -15,9 +15,6 @@ import { Config } from "./config";
 export const NORMAL = "normal";
 export const INSERT = "insert";
 export const SELECT = "select";
-export const SEARCH = "search";
-export const REPLACE = 'replace';
-export const CAPTURE = 'capture';
 
 /**
  * Action defined for each key

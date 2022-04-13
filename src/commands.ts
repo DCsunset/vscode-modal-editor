@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
-import { AppState, NORMAL, INSERT } from "./actions";
+import { AppState, NORMAL, INSERT, SELECT } from "./actions";
 
 /// Current app state
 let appState: AppState;
@@ -129,6 +129,10 @@ export async function setNormalMode() {
 	setMode(NORMAL);
 }
 
+export async function setSelectMode() {
+	setMode(SELECT);
+}
+
 export function onConfigUpdate() {
 	// Read config from file
 	const config = readConfig();
@@ -148,6 +152,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setMode),
 		registerCommand(setInsertMode),
 		registerCommand(setNormalMode),
+		registerCommand(setSelectMode),
 		registerCommand(importKeybindings)
 	);
 		

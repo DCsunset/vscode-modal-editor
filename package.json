@@ -29,6 +29,10 @@
         "title": "Modal Editor: Set mode to insert"
       },
       {
+        "command": "modalEditor.setSelectMode",
+        "title": "Modal Editor: Set mode to select"
+      },
+      {
         "command": "modalEditor.importKeybindings",
         "title": "Modal Editor: Import keybindings"
       }
@@ -50,7 +54,7 @@
           "description": "Keybindings to map keys to commands",
           "default": {
             "normal": {},
-            "insert": {}
+            "select": {}
           }
         },
         "modalEditor.styles": {
