@@ -19,7 +19,30 @@ const actions = {
 		"cursorRight",
 		"editor.action.clipboardPasteAction"
 	],
-	P: "editor.action.clipboardPasteAction"
+	P: "editor.action.clipboardPasteAction",
+
+	// into insert mode
+	i: "modalEditor.setInsertMode",
+	I: [
+    "cursorHome",
+    "modalEditor.setInsertMode"
+  ],
+	a: [
+		"cursorRight",
+    "modalEditor.setInsertMode"
+	],
+	A: [
+    "cursorEnd",
+    "modalEditor.setInsertMode"
+  ],
+	o: [
+    "editor.action.insertLineAfter",
+    "modalEditor.setInsertMode"
+  ],
+	O: [
+    "editor.action.insertLineBefore",
+    "modalEditor.setInsertMode"
+  ],
 };
 
 module.exports = {
@@ -49,29 +72,6 @@ module.exports = {
 			e: "cursorBottom",
     },
 
-		// into insert mode
-		i: "modalEditor.setInsertMode",
-		I: [
-      "cursorHome",
-      "modalEditor.setInsertMode"
-    ],
-		a: [
-			"cursorRight",
-      "modalEditor.setInsertMode"
-		],
-		A: [
-      "cursorEnd",
-      "modalEditor.setInsertMode"
-    ],
-		o: [
-      "editor.action.insertLineAfter",
-      "modalEditor.setInsertMode"
-    ],
-		O: [
-      "editor.action.insertLineBefore",
-      "modalEditor.setInsertMode"
-    ],
-    
 		// set to select mode
 		v: "modalEditor.setSelectMode"
   },
