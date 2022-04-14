@@ -10,24 +10,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [17.x]
-
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 17
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 17
       
       - name: Build
         run: |
           npm ci --no-optional
           npm i -g vsce
-          vsce package
+          vsce package --allow-star-activation
+    
+      - name: Publish to Open VSX
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+
       - name: Upload to GitHub release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -36,3 +38,4 @@ jobs:
           file: ./vscode-modal-editor*.vsix
           tag: ${{ github.ref }}
           overwrite: true
+
