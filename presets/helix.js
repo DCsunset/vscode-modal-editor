@@ -24,24 +24,24 @@ const actions = {
 	// into insert mode
 	i: "modalEditor.setInsertMode",
 	I: [
-	"cursorHome",
-	"modalEditor.setInsertMode"
+		"cursorHome",
+		"modalEditor.setInsertMode"
 	],
 	a: [
 		"cursorRight",
-	"modalEditor.setInsertMode"
+		"modalEditor.setInsertMode"
 	],
 	A: [
-	"cursorEnd",
-	"modalEditor.setInsertMode"
+		"cursorEnd",
+		"modalEditor.setInsertMode"
 	],
 	o: [
-	"editor.action.insertLineAfter",
-	"modalEditor.setInsertMode"
+		"editor.action.insertLineAfter",
+		"modalEditor.setInsertMode"
 	],
 	O: [
-	"editor.action.insertLineBefore",
-	"modalEditor.setInsertMode"
+		"editor.action.insertLineBefore",
+		"modalEditor.setInsertMode"
 	],
 };
 
@@ -64,13 +64,13 @@ module.exports = {
 		// actions
 		...actions,
 	
-	// goto mode
-	g: {
-	h: "cursorHome",
-	l: "cursorEnd",
+		// goto mode
+		g: {
+			h: "cursorHome",
+			l: "cursorEnd",
 			g: "cursorTop",
 			e: "cursorBottom",
-	},
+		},
 
 		// set to select mode
 		v: "modalEditor.setSelectMode"
@@ -84,13 +84,13 @@ module.exports = {
 		w: "cursorWordStartRightSelect",
 		b: "cursorWordStartLeftSelect",
 	
-	// goto mode
-	g: {
-	h: "cursorHomeSelect",
-	l: "cursorEndSelect",
+		// goto mode
+		g: {
+			h: "cursorHomeSelect",
+			l: "cursorEndSelect",
 			g: "cursorTopSelect",
 			e: "cursorBottomSelect",
-	},
+		},
 		
 		// actions
 		...actions
