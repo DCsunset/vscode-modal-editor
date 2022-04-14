@@ -19,14 +19,12 @@ jobs:
         with:
           node-version: 17
       
-      - name: Build
-        run: |
-          npm ci --no-optional
-          npm i -g vsce
-          vsce package --allow-star-activation
+      - name: Install dependencies
+        run: npm ci --no-optional
     
       - name: Publish to Open VSX
         uses: HaaLeo/publish-vscode-extension@v1
+        id: publishToOpenVSX
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
 
@@ -35,7 +33,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: ./vscode-modal-editor*.vsix
+          file: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
           tag: ${{ github.ref }}
           overwrite: true
 
