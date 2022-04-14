@@ -95,7 +95,7 @@ Here is a code snippet from `helix.js` preset:
 module.exports = {
 	normal: {
 		i: "modalEditor.setInsertMode",
-    // cursor movement
+		// cursor movement
 		h: "cursorLeft",
 		j: "cursorDown",
 		k: "cursorUp",
@@ -104,7 +104,7 @@ module.exports = {
 			"cancelSelection",
 			"cursorWordStartRightSelect",
 		],
-	  b: [
+		b: [
 			"cancelSelection",
 			"cursorWordStartLeftSelect"
 		]
