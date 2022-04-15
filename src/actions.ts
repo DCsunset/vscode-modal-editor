@@ -6,7 +6,7 @@ import {
 	isComplexCommand
 } from "./actions.guard";
 import { KeyEventHandler } from "./keybindings";
-import { Config } from "./config";
+import { Config, cursorStyleMap } from "./config";
 import { KeyError } from "./error";
 
 
@@ -70,7 +70,7 @@ export class AppState {
 	updateStatus(editor?: vscode.TextEditor) {
 		if (editor) {
 			const { cursorStyle, statusText } = this.config.styles[this.mode];
-			editor.options.cursorStyle = cursorStyle;
+			editor.options.cursorStyle = cursorStyleMap[cursorStyle];
 			this.statusBar.text = statusText;
 			this.statusBar.show();
 		}

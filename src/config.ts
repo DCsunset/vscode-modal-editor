@@ -1,8 +1,23 @@
 import * as vscode from "vscode";
 import { Keybindings } from "./keybindings";
 import { isKeybindings } from "./keybindings.guard";
-import { isMisc } from "./config.guard";
+import { isStyles, isMisc } from "./config.guard";
 
+/**
+ * CursorStyle: styles for cursor
+ *
+ * @see {isCursorStyle} ts-auto-guard:type-guard
+ */
+export type CursorStyle = "line" | "block" | "underline" | "line-thin" | "block-outline" | "underline-thin";
+
+export const cursorStyleMap: { [style in CursorStyle]: vscode.TextEditorCursorStyle } = {
+	"line": vscode.TextEditorCursorStyle.Line,
+	"block": vscode.TextEditorCursorStyle.Block,
+	"underline": vscode.TextEditorCursorStyle.Underline,
+	"line-thin": vscode.TextEditorCursorStyle.LineThin,
+	"block-outline": vscode.TextEditorCursorStyle.BlockOutline,
+	"underline-thin": vscode.TextEditorCursorStyle.UnderlineThin,
+};
 
 /**
  * Styles: Styles for cursor and statusBar
@@ -11,7 +26,7 @@ import { isMisc } from "./config.guard";
  */
 export type Styles = {
 	[mode: string]: {
-		cursorStyle: vscode.TextEditorCursorStyle,
+		cursorStyle: CursorStyle,
 		statusText: string
 	}
 };
@@ -40,15 +55,15 @@ export type Config = {
 /// Default config
 const defaultStyles: Styles = {
 	insert: {
-		cursorStyle: vscode.TextEditorCursorStyle.Line,
+		cursorStyle: "line",
 		statusText: "-- INS --"
 	},
 	normal: {
-		cursorStyle: vscode.TextEditorCursorStyle.Block,
+		cursorStyle: "block",
 		statusText: "-- NOR --"
 	},
 	select: {
-		cursorStyle: vscode.TextEditorCursorStyle.Block,
+		cursorStyle: "line",
 		statusText: "-- SEL --"
 	}
 };
@@ -68,8 +83,11 @@ export function readConfig() {
 		keybindings = defaultKeybindings;
 	}
 
-	// TODO: convert cursor styles from string to style and merge them)
-	let styles = defaultStyles;
+	let styles = config.get("styles");
+	if (!isStyles(styles)) {
+		vscode.window.showErrorMessage("Invalid styles in config");
+		styles = defaultStyles;
+	}
 	
 	let misc = config.get("misc");
 	if (!isMisc(misc)) {
