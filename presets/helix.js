@@ -4,7 +4,7 @@
 
 module.exports = {
 	// Common keybindings (except for insert mode)
-	_: {
+	"": {
 		u: "undo",
 		U: "redo",
 		d: "deleteRight",

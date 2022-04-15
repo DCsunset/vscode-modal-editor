@@ -99,7 +99,7 @@ export class AppState {
 			// keymap in this mode
 			this.config.keybindings[mode],
 			// common keymap
-			this.config.keybindings._
+			this.config.keybindings[""]
 		);
 		this.updateStatus(vscode.window.activeTextEditor);
 	}

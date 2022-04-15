@@ -89,7 +89,7 @@ Recursive keymaps are useful to define multi-stage commands.
 Note that the key must be a single character.
 If you need map a key sequence to a command, you can use a recursive keymap.
 
-There's a special mode `_` in `Keybindings` which means common keybindings.
+There's a special mode `""` in `Keybindings` which means common keybindings.
 It is shared by all the modes (except insert mode),
 and it can be overwritten by a specify mode.
 
@@ -104,14 +104,14 @@ type ComplexCommand = {
 	// Condition to execute the above command
 	when?: string
 };
-````
+```
 
 
 Here is a code snippet from `helix.js` preset:
 
 ```js
 module.exports = {
-	_: {
+	"": {
 		// Common keybindings
 		i: "modalEditor.setInsertMode",
 	},
