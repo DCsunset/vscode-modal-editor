@@ -52,10 +52,7 @@
         "modalEditor.keybindings": {
           "type": "object",
           "description": "Keybindings to map keys to commands",
-          "default": {
-            "normal": {},
-            "select": {}
-          }
+          "default": {}
         },
         "modalEditor.styles": {
           "type": "object",

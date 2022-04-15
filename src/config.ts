@@ -53,10 +53,7 @@ const defaultStyles: Styles = {
 	}
 };
 
-const defaultKeybindings: Keybindings = {
-	normal: {},
-	select: {}
-};
+const defaultKeybindings: Keybindings = {};
 
 const defaultMisc: Misc = {
 	ignoreUndefinedKeys: false
