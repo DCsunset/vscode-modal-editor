@@ -94,7 +94,10 @@ export class AppState {
 	setMode(mode: string) {
 		this.mode = mode;
 		this.keyEventHandler = new KeyEventHandler(
-			this.config.keybindings[mode]
+			// keymap in this mode
+			this.config.keybindings[mode],
+			// common keymap
+			this.config.keybindings._
 		);
 		this.updateStatus(vscode.window.activeTextEditor);
 	}
