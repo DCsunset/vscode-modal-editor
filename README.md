@@ -1,14 +1,16 @@
 # vscode-modal-editor
 
-Customizable extension to turn VS Code into a modal editor 
+[![version](https://badgen.net/open-vsx/version/DCsunset/vscode-modal-editor)](https://open-vsx.org/extension/DCsunset/vscode-modal-editor)
+
+Customizable extension to turn VS Code into a modal editor
 
 ## Installation
 
-Currently it is published on [Open VSX](https://open-vsx.org/),
+Currently it is published on [Open VSX](https://open-vsx.org/extension/DCsunset/vscode-modal-editor),
 which is believed to be a vendor-neutral
 open-source alternative to the Visual Studio Marketplace.
 
-You can also download the extension directly from GitHub releases.
+You can also download the extension directly from GitHub [releases](https://github.com/DCsunset/vscode-modal-editor/releases).
 
 
 ## Features
@@ -85,12 +87,6 @@ The above definition means that each mode has a separate keymap,
 each keymap maps a key to a sub-keymap or a command.
 Recursive keymaps are useful to define multi-stage commands.
 
-Note that there's a special mode `_` in `Keybindings`,
-which means the common keybindings.
-It is shared by all the other modes (except insert mode),
-and it has the lowest priority,
-which means other modes can overwrite common keybindings.
-
 The command can be a string (which means a VS Code command),
 a list of commmands,
 or a complex command object:
@@ -109,13 +105,8 @@ Here is a code snippet from `helix.js` preset:
 
 ```js
 module.exports = {
-	// common keybindings
-	_: {
-		i: "modalEditor.setInsertMode",
-		u: "undo",
-		U: "redo",
-	},
 	normal: {
+		i: "modalEditor.setInsertMode",
 		// cursor movement
 		h: "cursorLeft",
 		j: "cursorDown",
@@ -136,13 +127,6 @@ module.exports = {
 So it maps some movement keys to some existing commands in VS Code,
 which leverages the built-in text manipulation.
 You can refer to the `presets/helix.js` for more examples.
-
-
-## TODO
-
-* [] Add command mode
-* [] Add search mode
-* [] Support repeating commands
 
 
 ## Acknowledgement
