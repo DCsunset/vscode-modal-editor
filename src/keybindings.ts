@@ -27,11 +27,11 @@ export class KeyEventHandler {
 	currentKeymap?: Keymap;
 	/// Current common keymap
 	currentCommonKeymap?: Keymap;
-	/// common keymap: starting with _
+	/// Key sequence encountered so far
+	keySequence!: string;
 	
 	constructor(public keymap?: Keymap, public commonKeymap?: Keymap) {
-		this.currentKeymap = keymap;
-		this.currentCommonKeymap = commonKeymap;
+		this.resetKeymap();
 	}
 
 	handle(key: string) {
@@ -69,14 +69,16 @@ export class KeyEventHandler {
 		}
 		else {
 			// reset keymap when the key is invalid
+			let keySeq = this.keySequence;
 			this.resetKeymap();
-			throw new KeyError(`undefined key: ${key}`);
+			throw new KeyError(`undefined key sequence: ${keySeq}`);
 		}
 	}
 	
 	resetKeymap() {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
+		this.keySequence = "";
 	}
 
 	/// Clear state

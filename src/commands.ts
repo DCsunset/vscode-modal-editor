@@ -42,7 +42,7 @@ interface PickItem extends vscode.QuickPickItem {
 }
 
 async function importKeybindings() {
-	// TODO: read from user keybindings direction
+	// TODO: read from user keybindings directory
 	const choices: PickItem[] = [
 		{
 			label: "Import from a file...",
@@ -119,7 +119,7 @@ export async function setMode(mode: string) {
 		}
 	}
 	catch (err: any) {
-		vscode.window.showErrorMessage(err.message);
+		vscode.window.showErrorMessage(`Modal Editor: ${err.message}`);
 	}
 }
 
