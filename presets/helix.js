@@ -2,52 +2,65 @@
  * Keybindings for helix editor
  */
 
-// actions shared by normal and select mode
-const actions = {
-	u: "undo",
-	U: "redo",
-	d: "deleteRight",
-	c: [
-		"deleteRight",
-		"modalEditor.setInsertMode"
-	],
-	x: "expandLineSelection",
-	"<": "editor.action.outdentLines",
-	">": "editor.action.indentLines",
-	y: "editor.action.clipboardCopyAction",
-	p: [
-		"cursorRight",
-		"editor.action.clipboardPasteAction"
-	],
-	P: "editor.action.clipboardPasteAction",
-
-	// into insert mode
-	i: "modalEditor.setInsertMode",
-	I: [
-		"cursorHome",
-		"modalEditor.setInsertMode"
-	],
-	a: [
-		"cursorRight",
-		"modalEditor.setInsertMode"
-	],
-	A: [
-		"cursorEnd",
-		"modalEditor.setInsertMode"
-	],
-	o: [
-		"editor.action.insertLineAfter",
-		"modalEditor.setInsertMode"
-	],
-	O: [
-		"editor.action.insertLineBefore",
-		"modalEditor.setInsertMode"
-	],
-};
-
 module.exports = {
+	// Common keybindings (except for insert mode)
+	_: {
+		u: "undo",
+		U: "redo",
+		d: "deleteRight",
+		c: [
+			"deleteRight",
+			"modalEditor.setInsertMode"
+		],
+		x: "expandLineSelection",
+		"<": "editor.action.outdentLines",
+		">": "editor.action.indentLines",
+		y: "editor.action.clipboardCopyAction",
+		p: [
+			"cursorRight",
+			"editor.action.clipboardPasteAction"
+		],
+		P: "editor.action.clipboardPasteAction",
+
+		// into insert mode
+		i: "modalEditor.setInsertMode",
+		I: [
+			"cursorHome",
+			"modalEditor.setInsertMode"
+		],
+		a: [
+			"cursorRight",
+			"modalEditor.setInsertMode"
+		],
+		A: [
+			"cursorEnd",
+			"modalEditor.setInsertMode"
+		],
+		o: [
+			"editor.action.insertLineAfter",
+			"modalEditor.setInsertMode"
+		],
+		O: [
+			"editor.action.insertLineBefore",
+			"modalEditor.setInsertMode"
+		],
+		
+		// goto mode
+		g: {
+			p: "workbench.action.previousEditor",
+			n: "workbench.action.nextEditor",
+			d: "editor.action.revealDefinition"
+		},
+		
+		// space mode
+		" ": {
+			f: "workbench.action.quickOpen",
+			b: "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
+			k: "editor.action.showHover"
+		},
+	},
 	normal: {
-	// cursor movement
+		// cursor movement
 		h: "cursorLeft",
 		j: "cursorDown",
 		k: "cursorUp",
@@ -60,23 +73,21 @@ module.exports = {
 			"cancelSelection",
 			"cursorWordStartLeftSelect"
 		],
-		
-		// actions
-		...actions,
 	
 		// goto mode
 		g: {
 			h: "cursorHome",
-			l: "cursorEnd",
-			g: "cursorTop",
-			e: "cursorBottom",
+			j: "cursorEnd",
+			k: "cursorTop",
+			l: "cursorBottom",
 		},
-
+	
 		// set to select mode
 		v: "modalEditor.setSelectMode"
 	},
+
 	select: {
-	// cursor movement
+		// cursor movement
 		h: "cursorLeftSelect",
 		j: "cursorDownSelect",
 		k: "cursorUpSelect",
@@ -91,9 +102,6 @@ module.exports = {
 			g: "cursorTopSelect",
 			e: "cursorBottomSelect",
 		},
-		
-		// actions
-		...actions
 	}
 };
 
