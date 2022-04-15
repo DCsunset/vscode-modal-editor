@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import { Command } from "./actions";
 import { isCommand } from "./actions.guard";
 import { KeyError } from "./error";
@@ -30,17 +31,24 @@ export class KeyEventHandler {
 	/// Key sequence encountered so far
 	keySequence!: string;
 	
-	constructor(public keymap?: Keymap, public commonKeymap?: Keymap) {
-		this.resetKeymap();
+	constructor(
+		public keyStatusBar: vscode.StatusBarItem,
+		public keymap?: Keymap,
+		public commonKeymap?: Keymap,
+	) {
+		this.reset();
 	}
 
 	handle(key: string) {
+		this.keySequence += key;
+		this.keyStatusBar.text = this.keySequence;
+
 		if (this.currentKeymap && (key in this.currentKeymap)) {
 			// try currentKeymap first
 			const value = this.currentKeymap[key];
 			if (isCommand(value)) {
 				// reset keymap since this sequence is finished
-				this.resetKeymap();
+				this.reset();
 				return value;
 			}
 			// Continue to use subkeymap
@@ -60,7 +68,7 @@ export class KeyEventHandler {
 			const value = this.currentCommonKeymap[key];
 			if (isCommand(value)) {
 				// reset keymap since this sequence is finished
-				this.resetKeymap();
+				this.reset();
 				return value;
 			}
 			// Keep only commonKeymap
@@ -70,15 +78,16 @@ export class KeyEventHandler {
 		else {
 			// reset keymap when the key is invalid
 			let keySeq = this.keySequence;
-			this.resetKeymap();
+			this.reset();
 			throw new KeyError(`undefined key sequence: ${keySeq}`);
 		}
 	}
 	
-	resetKeymap() {
+	reset() {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
 		this.keySequence = "";
+		this.keyStatusBar.text = "";
 	}
 
 	/// Clear state

@@ -159,7 +159,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 	);
 		
 	const config = readConfig();
-	const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-	appState = new AppState(NORMAL, config, outputChannel, statusBar);
+	const modeStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	const keyStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
+	appState = new AppState(NORMAL, config, outputChannel, modeStatusBar, keyStatusBar);
 }
 

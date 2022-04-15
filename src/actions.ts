@@ -61,7 +61,8 @@ export class AppState {
 		mode: string,
 		public config: Config,
 		public outputChannel: vscode.OutputChannel,
-		public statusBar: vscode.StatusBarItem
+		public modeStatusBar: vscode.StatusBarItem,
+		public keyStatusBar: vscode.StatusBarItem
 	) {
 		this.setMode(mode);
 	}
@@ -73,11 +74,13 @@ export class AppState {
 			// default cursorStyle
 			editor.options.cursorStyle = cursorStyleMap[cursorStyle || "block"];
 			// default statusText
-			this.statusBar.text = statusText || `-- ${this.mode.toUpperCase()} --`;
-			this.statusBar.show();
+			this.modeStatusBar.text = statusText || `-- ${this.mode.toUpperCase()} --`;
+			this.modeStatusBar.show();
+			this.keyStatusBar.show();
 		}
 		else {
-			this.statusBar.hide();
+			this.modeStatusBar.hide();
+			this.keyStatusBar.hide();
 		}
 	}
 
@@ -96,10 +99,11 @@ export class AppState {
 	setMode(mode: string) {
 		this.mode = mode;
 		this.keyEventHandler = new KeyEventHandler(
+			this.keyStatusBar,
 			// keymap in this mode
 			this.config.keybindings[mode],
 			// common keymap
-			this.config.keybindings[""]
+			this.config.keybindings[""],
 		);
 		this.updateStatus(vscode.window.activeTextEditor);
 	}
