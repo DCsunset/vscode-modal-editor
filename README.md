@@ -86,6 +86,12 @@ type Keybindings = {
 The above definition means that each mode has a separate keymap,
 each keymap maps a key to a sub-keymap or a command.
 Recursive keymaps are useful to define multi-stage commands.
+Note that the key must be a single character.
+If you need map a key sequence to a command, you can use a recursive keymap.
+
+There's a special mode `_` in `Keybindings` which means common keybindings.
+It is shared by all the modes (except insert mode),
+and it can be overwritten by a specify mode.
 
 The command can be a string (which means a VS Code command),
 a list of commmands,
@@ -105,8 +111,11 @@ Here is a code snippet from `helix.js` preset:
 
 ```js
 module.exports = {
-	normal: {
+	_: {
+		// Common keybindings
 		i: "modalEditor.setInsertMode",
+	},
+	normal: {
 		// cursor movement
 		h: "cursorLeft",
 		j: "cursorDown",
