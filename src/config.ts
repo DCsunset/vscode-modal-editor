@@ -8,7 +8,7 @@ import { isStyles, isMisc } from "./config.guard";
  *
  * @see {isCursorStyle} ts-auto-guard:type-guard
  */
-export type CursorStyle = "line" | "block" | "underline" | "line-thin" | "block-outline" | "underline-thin";
+type CursorStyle = "line" | "block" | "underline" | "line-thin" | "block-outline" | "underline-thin";
 
 export const cursorStyleMap: { [style in CursorStyle]: vscode.TextEditorCursorStyle } = {
 	"line": vscode.TextEditorCursorStyle.Line,
@@ -52,7 +52,7 @@ export type Config = {
 	misc: Misc
 };
 
-/// Default config
+/// Default styles
 const defaultStyles: Styles = {
 	insert: {
 		cursorStyle: "line",
@@ -68,11 +68,22 @@ const defaultStyles: Styles = {
 	}
 };
 
-const defaultKeybindings: Keybindings = {};
-
 const defaultMisc: Misc = {
 	ignoreUndefinedKeys: false
 };
+
+export function getStyle(mode: string, styles: Styles) {
+	if (mode in styles) {
+		// Merge styles with default ones
+		return {
+			...defaultStyles[mode],
+			...styles[mode]
+		};
+	}
+	else {
+		return defaultStyles[mode] ?? {};
+	}
+}
 
 /// Read config from settings.json
 export function readConfig() {
@@ -80,13 +91,13 @@ export function readConfig() {
 	let keybindings = config.get("keybindings");
 	if (!isKeybindings(keybindings)) {
 		vscode.window.showErrorMessage("Invalid keybindings in config");
-		keybindings = defaultKeybindings;
+		keybindings = {};
 	}
 
 	let styles = config.get("styles");
 	if (!isStyles(styles)) {
 		vscode.window.showErrorMessage("Invalid styles in config");
-		styles = defaultStyles;
+		styles = {};
 	}
 	
 	let misc = config.get("misc");

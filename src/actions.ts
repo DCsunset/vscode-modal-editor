@@ -6,7 +6,7 @@ import {
 	isComplexCommand
 } from "./actions.guard";
 import { KeyEventHandler } from "./keybindings";
-import { Config, cursorStyleMap } from "./config";
+import { Config, getStyle, cursorStyleMap } from "./config";
 import { KeyError } from "./error";
 
 
@@ -69,9 +69,11 @@ export class AppState {
 	/// Update cursor and status bar
 	updateStatus(editor?: vscode.TextEditor) {
 		if (editor) {
-			const { cursorStyle, statusText } = this.config.styles[this.mode];
-			editor.options.cursorStyle = cursorStyleMap[cursorStyle];
-			this.statusBar.text = statusText;
+			const { cursorStyle, statusText } = getStyle(this.mode, this.config.styles);
+			// default cursorStyle
+			editor.options.cursorStyle = cursorStyleMap[cursorStyle || "block"];
+			// default statusText
+			this.statusBar.text = statusText || `-- ${this.mode.toUpperCase()} --`;
 			this.statusBar.show();
 		}
 		else {

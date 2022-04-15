@@ -2,19 +2,8 @@
  * Generated type guards for "config.ts".
  * WARNING: Do not manually change this file.
  */
-import { CursorStyle, Styles, Misc, Config } from "./config";
+import { Styles, Misc, Config } from "./config";
 import { isKeybindings } from "./keybindings.guard";
-
-export function isCursorStyle(obj: any, _argumentName?: string): obj is CursorStyle {
-    return (
-        (obj === "line" ||
-            obj === "block" ||
-            obj === "underline" ||
-            obj === "line-thin" ||
-            obj === "block-outline" ||
-            obj === "underline-thin")
-    )
-}
 
 export function isStyles(obj: any, _argumentName?: string): obj is Styles {
     return (
