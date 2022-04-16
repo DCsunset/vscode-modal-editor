@@ -19,12 +19,3 @@ All notable changes to this project will be documented in this file. See [standa
 * improve error handling ([b3dd227](https://github.com/DCsunset/vscode-modal-editor/commit/b3dd227d8c3f361cf7455da497e50845de8ecbd8))
 * use empty string as key for common keymap ([72e3d26](https://github.com/DCsunset/vscode-modal-editor/commit/72e3d26cb420fdbd742dd3134ec56a6f2d8f58b1))
 
-# Change Log
-
-All notable changes to the "modaleditor" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
