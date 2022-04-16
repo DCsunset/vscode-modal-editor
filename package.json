@@ -63,6 +63,16 @@
           "type": "boolean",
           "description": "Do not show error message for undefined keys",
           "default": false
+        },
+        "modalEditor.misc.modeStatusBarPriority": {
+          "type": "number",
+          "description": "Priority of mode status bar which shows the current mode (reload required after change)",
+          "default": 0
+        },
+        "modalEditor.misc.keyStatusBarPriority": {
+          "type": "number",
+          "description": "Priority of key status bar which shows the current key sequence (reload required after change)",
+          "default": 10000
         }
       }
     }

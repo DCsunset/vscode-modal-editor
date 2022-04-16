@@ -18,7 +18,9 @@ export function isMisc(obj: any, _argumentName?: string): obj is Misc {
         (obj !== null &&
             typeof obj === "object" ||
             typeof obj === "function") &&
-        typeof obj.ignoreUndefinedKeys === "boolean"
+        typeof obj.ignoreUndefinedKeys === "boolean" &&
+        typeof obj.modeStatusBarPriority === "number" &&
+        typeof obj.keyStatusBarPriority === "number"
     )
 }
 

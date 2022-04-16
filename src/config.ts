@@ -38,7 +38,11 @@ export type Styles = {
  */
 export type Misc = {
 	/// Do not show error message for undefined keys
-	ignoreUndefinedKeys: boolean
+	ignoreUndefinedKeys: boolean,
+	/// Priority of mode status bar which shows the current mode
+	modeStatusBarPriority: number,
+	/// Priority of key status bar which shows the current key sequence
+	keyStatusBarPriority: number,
 };
 
 /**
@@ -69,7 +73,9 @@ const defaultStyles: Styles = {
 };
 
 const defaultMisc: Misc = {
-	ignoreUndefinedKeys: false
+	ignoreUndefinedKeys: false,
+	modeStatusBarPriority: 0,
+	keyStatusBarPriority: 10000
 };
 
 export function getStyle(mode: string, styles: Styles) {
@@ -104,6 +110,13 @@ export function readConfig() {
 	if (!isMisc(misc)) {
 		vscode.window.showErrorMessage("Invalid misc config");
 		misc = defaultMisc;
+	}
+	else {
+		// Merge with default config
+		misc = {
+			...defaultMisc,
+			...misc
+		};
 	}
 	
 	return {
