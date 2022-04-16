@@ -44,7 +44,7 @@ It is just a demo and you can easily create your own based on it.
 ## Presets
 
 I am currently a user of [helix](https://github.com/helix-editor/helix),
-so I only create a preliminary preset for it.
+so I only create a preliminary [preset](./presets/helix.js) for it.
 It doesn't implement all helix features and some actions may have slight differences.
 
 You are encouraged to define your own keybindings

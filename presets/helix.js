@@ -58,6 +58,11 @@ module.exports = {
 			b: "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
 			k: "editor.action.showHover"
 		},
+		
+		// search
+		"/": "actions.find",
+		n: "editor.action.nextMatchFindAction",
+		N: "editor.action.previousMatchFindAction"
 	},
 	normal: {
 		// cursor movement
@@ -78,8 +83,8 @@ module.exports = {
 		g: {
 			h: "cursorHome",
 			j: "cursorEnd",
-			k: "cursorTop",
-			l: "cursorBottom",
+			g: "cursorTop",
+			e: "cursorBottom",
 		},
 	
 		// set to select mode
