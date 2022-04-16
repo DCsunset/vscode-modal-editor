@@ -152,6 +152,9 @@ this extension tries to reuse most VS Code native commands
 and avoids adding more state control.
 This makes it easier to understand the code and further extend it.
 
+The logo of this extension is modified based on the icon credited to
+[Material Design Icons](https://materialdesignicons.com/).
+
 
 ## License
 
