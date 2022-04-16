@@ -22,9 +22,9 @@ You can also download the extension directly from GitHub [releases](https://gith
 ## How it works
 
 This extension can only capture normal characters typed in modes except for insert mode.
-For special keys like `Esc`, `Ctrl` or `Alt`, it is handled by VS Code.
+For special keys like `Esc`, `Ctrl` or `Alt`, they are handled by VS Code directly.
 So if you want to bind those keys to commands,
-you can directly map it in `keybindings.json`.
+you can directly map them in `keybindings.json`.
 
 This extension sets the context `modalEditor.mode`
 so you can use it in `when` conditions in `keybinding.json`.
