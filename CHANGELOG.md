@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/DCsunset/vscode-modal-editor/compare/v0.3.0...v0.3.1) (2022-04-18)
+
+
+### Features
+
+* allow importing keybindings from preset directory ([cd69cb3](https://github.com/DCsunset/vscode-modal-editor/commit/cd69cb3c4b825359c010091db115317b94d61e54))
+
+
+### Bug Fixes
+
+* fix helix preset ([42b60e8](https://github.com/DCsunset/vscode-modal-editor/commit/42b60e86a2c235dcd656c0663502291070589ee4))
+
 ## [0.3.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.2.0...v0.3.0) (2022-04-16)
 
 
@@ -18,4 +30,3 @@ All notable changes to this project will be documented in this file. See [standa
 * fix styles loading ([47c5852](https://github.com/DCsunset/vscode-modal-editor/commit/47c58520d57089132f4204372ac7fd3e5467b45b))
 * improve error handling ([b3dd227](https://github.com/DCsunset/vscode-modal-editor/commit/b3dd227d8c3f361cf7455da497e50845de8ecbd8))
 * use empty string as key for common keymap ([72e3d26](https://github.com/DCsunset/vscode-modal-editor/commit/72e3d26cb420fdbd742dd3134ec56a6f2d8f58b1))
-
