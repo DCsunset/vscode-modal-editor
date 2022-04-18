@@ -42,6 +42,10 @@
       {
         "command": "modalEditor.importKeybindings",
         "title": "Modal Editor: Import keybindings"
+      },
+      {
+        "command": "modalEditor.importPreset",
+        "title": "Modal Editor: Import keybindings from preset directory"
       }
     ],
     "keybindings": [
@@ -80,6 +84,11 @@
           "type": "number",
           "description": "Priority of key status bar which shows the current key sequence (reload required after change)",
           "default": 10000
+        },
+        "modalEditor.misc.presetDirectory": {
+          "type": "string",
+          "description": "Preset directory to easily import keybindings",
+          "default": "~/.config/vscode-modal-editor"
         }
       }
     }

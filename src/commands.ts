@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as os from "os";
 import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
 import { AppState, NORMAL, INSERT, SELECT } from "./actions";
@@ -38,12 +39,46 @@ async function loadKeybindings(uri: vscode.Uri) {
 }
 
 interface PickItem extends vscode.QuickPickItem {
-	type: "file" | "uri"
+	type: "file" | "uri" | "preset"
+}
+
+/// Expand tilde to home directory
+function expandHome(filePath: string) {
+	const home = os.homedir();
+	// Use lookahead to match the tilde
+	const regex = /^~(?=$|\/|\\)/;
+	return filePath.replace(regex, home);
+}
+
+async function importPreset(directory?: string) {
+	const presetDir = directory ?? appState.config.misc.presetDirectory;
+	const dir = vscode.Uri.file(expandHome(presetDir));
+	const entries = await vscode.workspace.fs.readDirectory(dir);
+	// Filter entries
+	const files = entries
+		.filter(([name, type]) => (
+			/\.(js)|(jsonc?)$/.test(name) && type === vscode.FileType.File
+		))
+		.map(([name]) => ({
+			path: vscode.Uri.joinPath(dir, name),
+			label: name
+		}));
+	
+	const choice = await vscode.window.showQuickPick(files, {
+		placeHolder: "Warning: importing keybindings will overwrite current ones in settings.json"
+	});
+	
+	if (choice) {
+		await loadKeybindings(choice.path);
+	}
 }
 
 async function importKeybindings() {
-	// TODO: read from user keybindings directory
 	const choices: PickItem[] = [
+		{
+			label: "Import from preset directory...",
+			type: "preset"
+		},
 		{
 			label: "Import from a file...",
 			type: "file"
@@ -58,8 +93,8 @@ async function importKeybindings() {
 		placeHolder: "Warning: importing keybindings will overwrite current ones in settings.json"
 	});
 
-	if (choice) {
-		if (choice.type === "file") {
+	switch (choice?.type) {
+		case "file": {
 			const files = await vscode.window.showOpenDialog({
 				title: "Import keybindings from file",
 				openLabel: "Import",
@@ -72,16 +107,24 @@ async function importKeybindings() {
 			});
 
 			if (files && files.length > 0) {
-				loadKeybindings(files[0]);
+				await loadKeybindings(files[0]);
 			}
+			break;
 		}
-		else if (choice.type === "uri") {
-			let uri = await vscode.window.showInputBox({
+
+		case "uri": {
+			const uri = await vscode.window.showInputBox({
 				prompt: "Enter a valid URI"
 			})
 			if (uri) {
-				loadKeybindings(vscode.Uri.parse(uri, true));
+				await loadKeybindings(vscode.Uri.parse(uri, true));
 			}
+			break;
+		}
+		
+		case "preset": {
+			await importPreset();
+			break;
 		}
 	}
 }
@@ -155,7 +198,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setInsertMode),
 		registerCommand(setNormalMode),
 		registerCommand(setSelectMode),
-		registerCommand(importKeybindings)
+		registerCommand(importKeybindings),
+		registerCommand(importPreset),
 	);
 		
 	const config = readConfig();

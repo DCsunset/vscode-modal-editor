@@ -43,6 +43,8 @@ export type Misc = {
 	modeStatusBarPriority: number,
 	/// Priority of key status bar which shows the current key sequence
 	keyStatusBarPriority: number,
+	/// Preset directory to easily import keybindings
+	presetDirectory: string,
 };
 
 /**
@@ -75,7 +77,8 @@ const defaultStyles: Styles = {
 const defaultMisc: Misc = {
 	ignoreUndefinedKeys: false,
 	modeStatusBarPriority: 0,
-	keyStatusBarPriority: 10000
+	keyStatusBarPriority: 10000,
+	presetDirectory: "~/.config/vscode-modal-editor"
 };
 
 export function getStyle(mode: string, styles: Styles) {
