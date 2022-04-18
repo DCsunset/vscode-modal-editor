@@ -12,6 +12,15 @@ open-source alternative to the Visual Studio Marketplace.
 
 You can also download the extension directly from GitHub [releases](https://github.com/DCsunset/vscode-modal-editor/releases).
 
+## Usage
+
+To use this extension, first you need to import keybindings.
+You can define your own keybindings based on the tutorial.
+Or you can use the preset in this repository as a start point.
+
+You can put different keybindings in the preset directory (default is `~/.config/vscode-modal-editor`),
+so that you can switch between them quickly.
+
 
 ## Features
 
@@ -63,6 +72,7 @@ They are listed as follows:
 | `modalEditor.setNormalMode` | - | Set to normal mode |
 | `modalEditor.setSelectMode` | - |	 Set to select mode |
 | `modalEditor.importKeybindings` | - | Import keybindings |
+| `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
 
 ## Tutorial to Customize Keybindings
 
