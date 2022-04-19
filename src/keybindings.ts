@@ -103,7 +103,7 @@ export class KeyEventHandler {
 		// reset keymap when the key is invalid
 		let keys = this.keys;
 		this.reset();
-		throw new KeyError(`undefined key sequence: ${keys}`);
+		throw new KeyError(`undefined key sequence: "${keys}"`);
 	}
 	
 	reset() {

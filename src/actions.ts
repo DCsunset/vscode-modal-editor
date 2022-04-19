@@ -154,7 +154,14 @@ export class AppState {
 		else if (isComplexCommand(command)) {
 			// Execute it if when is not defined or condition is true
 			if (!command.when || this.jsEval(command.when, ctx)) {
-				const args = command.computedArgs ? this.jsEval(command.args, ctx) : command.args;
+				let args = command.args;
+				if (command.computedArgs) {
+					if (typeof args !== "string") {
+						vscode.window.showErrorMessage(`Invalid args for command ${command.command}`);
+						return;
+					}
+					args = this.jsEval(args, ctx);
+				}
 				await this.executeVSCommand(command.command, args);
 			}
 		}

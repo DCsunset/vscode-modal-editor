@@ -74,6 +74,7 @@ They are listed as follows:
 | `modalEditor.importKeybindings` | - | Import keybindings |
 | `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
 
+
 ## Tutorial to Customize Keybindings
 
 ### Basics
