@@ -43,16 +43,45 @@ export class KeyEventHandler {
 	
 	constructor(
 		public keyStatusBar: vscode.StatusBarItem,
-		public keymap?: Keymap,
-		public commonKeymap?: Keymap,
+		public keymap: Keymap | undefined,
+		public commonKeymap: Keymap | undefined,
+		public commandMode: boolean
 	) {
 		this.reset();
+	}
+	
+	statusBarPrefix() {
+		return this.commandMode ? ":" : "";
 	}
 
 	handle(key: string) {
 		this.keys += key;
-		this.keyStatusBar.text = this.keys;
+		this.keyStatusBar.text = `${this.statusBarPrefix()}${this.keys}`;
+		
+		/** Command mode */
+		// Handle keys only until newline characters
+		if (this.commandMode) {
+			if (key !== "\n")
+				return;
+			
+			const keys = this.keys.substring(0, this.keys.length-1);
+			if (this.keymap && (keys in this.keymap)) {
+				const value = this.keymap[keys];
+				if (isCommand(value)) {
+					// reset keymap since this sequence is finished
+					this.reset();
+					return {
+						command: value,
+						keys
+					};
+				}
+			}
 
+			this.reset();
+			throw new KeyError(`undefined command: "${keys}"`);
+		}
+		
+		/** Other modes */
 		// try currentKeymap first
 		let value = getFromKeymap(this.currentKeymap, key);
 		if (value) {
@@ -101,7 +130,7 @@ export class KeyEventHandler {
 		}
 
 		// reset keymap when the key is invalid
-		let keys = this.keys;
+		const keys = this.keys;
 		this.reset();
 		throw new KeyError(`undefined key sequence: "${keys}"`);
 	}
@@ -110,7 +139,7 @@ export class KeyEventHandler {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
 		this.keys = "";
-		this.keyStatusBar.text = "";
+		this.keyStatusBar.text = this.statusBarPrefix();
 	}
 
 	/// Clear state

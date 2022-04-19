@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as os from "os";
 import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
-import { AppState, NORMAL, INSERT, SELECT } from "./actions";
+import { AppState, NORMAL, INSERT, SELECT, COMMAND } from "./actions";
 
 /// Current app state
 let appState: AppState;
@@ -167,15 +167,19 @@ export async function setMode(mode: string) {
 }
 
 export async function setInsertMode() {
-	setMode(INSERT);
+	await setMode(INSERT);
 }
 
 export async function setNormalMode() {
-	setMode(NORMAL);
+	await setMode(NORMAL);
 }
 
 export async function setSelectMode() {
-	setMode(SELECT);
+	await setMode(SELECT);
+}
+
+export async function setCommandMode() {
+	await setMode(COMMAND);
 }
 
 export function onConfigUpdate() {
@@ -198,6 +202,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setInsertMode),
 		registerCommand(setNormalMode),
 		registerCommand(setSelectMode),
+		registerCommand(setCommandMode),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
 	);

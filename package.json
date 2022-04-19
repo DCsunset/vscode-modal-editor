@@ -40,6 +40,10 @@
         "title": "Modal Editor: Set mode to select"
       },
       {
+        "command": "modalEditor.setCommandMode",
+        "title": "Modal Editor: Set mode to command"
+      },
+      {
         "command": "modalEditor.importKeybindings",
         "title": "Modal Editor: Import keybindings"
       },

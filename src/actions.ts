@@ -16,6 +16,7 @@ import { KeyError } from "./error";
 export const NORMAL = "normal";
 export const INSERT = "insert";
 export const SELECT = "select";
+export const COMMAND = "command";
 
 /**
  * Action defined for each key
@@ -110,23 +111,32 @@ export class AppState {
 	}
 	
 	setMode(mode: string) {
+		this.log(`Set mode to ${mode}`);
 		this.mode = mode;
+		this.updateStatus(vscode.window.activeTextEditor);
 		this.keyEventHandler = new KeyEventHandler(
-			this.keyStatusBar,
+			mode === COMMAND ? this.modeStatusBar : this.keyStatusBar,
 			// keymap in this mode
 			this.config.keybindings[mode],
 			// common keymap
 			this.config.keybindings[""],
+			// whether it's command mode
+			mode === COMMAND
 		);
-		this.updateStatus(vscode.window.activeTextEditor);
 	}
 	
 	async handleKey(key: string) {
 		try {
 			const result = this.keyEventHandler.handle(key);
 			if (result) {
+				const previousMode = this.mode;
 				const { command, keys } = result;
 				await this.executeCommand(command, { keys });
+
+				// Exit command mode if previous and current modes are command
+				// (mode may change after executing some command)
+				if (previousMode === COMMAND && this.mode === COMMAND)
+					this.setMode(NORMAL);
 			}
 		}
 		catch (err: any) {
@@ -137,6 +147,10 @@ export class AppState {
 			else {
 				vscode.window.showErrorMessage(`Modal Editor: ${err.message}`);
 			}
+
+			// Exit command mode
+			if (this.mode === COMMAND)
+				this.setMode(NORMAL);
 		}
 	}
 
