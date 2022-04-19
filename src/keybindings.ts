@@ -22,6 +22,16 @@ export type Keybindings = {
 	[mode: string]: Keymap | undefined
 }
 
+function getFromKeymap(keymap: Keymap | undefined, key: string) {
+	if (keymap) {
+		if (key in keymap)
+			return keymap[key];
+		// wildcard
+		if ("" in keymap)
+			return keymap[""];
+	}
+	return undefined;
+}
 
 export class KeyEventHandler {
 	/// The current keymap (because there could be sub key maps)
@@ -29,7 +39,7 @@ export class KeyEventHandler {
 	/// Current common keymap
 	currentCommonKeymap?: Keymap;
 	/// Key sequence encountered so far
-	keySequence!: string;
+	keys!: string;
 	
 	constructor(
 		public keyStatusBar: vscode.StatusBarItem,
@@ -40,53 +50,66 @@ export class KeyEventHandler {
 	}
 
 	handle(key: string) {
-		this.keySequence += key;
-		this.keyStatusBar.text = this.keySequence;
+		this.keys += key;
+		this.keyStatusBar.text = this.keys;
 
-		if (this.currentKeymap && (key in this.currentKeymap)) {
-			// try currentKeymap first
-			const value = this.currentKeymap[key];
+		// try currentKeymap first
+		let value = getFromKeymap(this.currentKeymap, key);
+		if (value) {
 			if (isCommand(value)) {
+				const keys = this.keys;
 				// reset keymap since this sequence is finished
 				this.reset();
-				return value;
+				return {
+					command: value,
+					keys
+				};
 			}
 			// Continue to use subkeymap
 			this.currentKeymap = value;
+
 			// Update currentCommonKeymap as well because it is a fallback
-			if (this.currentCommonKeymap && (key in this.currentCommonKeymap)) {
-				const value = this.currentCommonKeymap[key];
+			value = getFromKeymap(this.currentCommonKeymap, key);
+			if (value) {
 				if (!isCommand(value))
 					this.currentCommonKeymap = value;
 			}
 			else {
 				this.currentCommonKeymap = undefined;
 			}
+			
+			return;
 		}
-		else if (this.currentCommonKeymap && (key in this.currentCommonKeymap)) {
-			// currentCommonKeymap as a fallback
-			const value = this.currentCommonKeymap[key];
+		
+		// currentCommonKeymap as a fallback
+		value = getFromKeymap(this.currentCommonKeymap, key);
+		if (value) {
 			if (isCommand(value)) {
+				let keys = this.keys;
 				// reset keymap since this sequence is finished
 				this.reset();
-				return value;
+				return {
+					command: value,
+					keys
+				};
 			}
 			// Keep only commonKeymap
 			this.currentKeymap = undefined;
 			this.currentCommonKeymap = value;
+
+			return;
 		}
-		else {
-			// reset keymap when the key is invalid
-			let keySeq = this.keySequence;
-			this.reset();
-			throw new KeyError(`undefined key sequence: ${keySeq}`);
-		}
+
+		// reset keymap when the key is invalid
+		let keys = this.keys;
+		this.reset();
+		throw new KeyError(`undefined key sequence: ${keys}`);
 	}
 	
 	reset() {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
-		this.keySequence = "";
+		this.keys = "";
 		this.keyStatusBar.text = "";
 	}
 

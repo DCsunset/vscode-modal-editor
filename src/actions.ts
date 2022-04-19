@@ -42,9 +42,22 @@ export type SimpleCommand = string;
  */
 export type ComplexCommand = {
 	command: string,
+	/// args for that command
 	args?: any,
-	// Condition to execute the above command
+	/// whether to use JS expression for args
+	computedArgs?: boolean,
+	/// condition to execute the above command
 	when?: string
+};
+
+/**
+ * Context for eval js expressions
+ * 
+ * @see {isCommandContext} ts-auto-guard:type-guard
+ */
+export type CommandContext = {
+	/// Key sequence to invoke this command
+	keys: string
 };
 
 /**
@@ -110,9 +123,10 @@ export class AppState {
 	
 	async handleKey(key: string) {
 		try {
-			const command = this.keyEventHandler.handle(key);
-			if (command) {
-				await this.executeCommand(command);
+			const result = this.keyEventHandler.handle(key);
+			if (result) {
+				const { command, keys } = result;
+				await this.executeCommand(command, { keys });
 			}
 		}
 		catch (err: any) {
@@ -133,19 +147,20 @@ export class AppState {
 		}
 	}
 	
-	async executeCommand(command: Command) {
+	async executeCommand(command: Command, ctx: CommandContext) {
 		if (isSimpleCommand(command)) {
 			await this.executeVSCommand(command);
 		}
 		else if (isComplexCommand(command)) {
 			// Execute it if when is not defined or condition is true
-			if (!command.when || this.jsEval(command.when)) {
-				await this.executeVSCommand(command.command, command.args);
+			if (!command.when || this.jsEval(command.when, ctx)) {
+				const args = command.computedArgs ? this.jsEval(command.args, ctx) : command.args;
+				await this.executeVSCommand(command.command, args);
 			}
 		}
 		else if (isCommandList(command)) {
 			for (const c of command) {
-				await this.executeCommand(c);
+				await this.executeCommand(c, ctx);
 			}
 		}
 		else {
@@ -156,9 +171,9 @@ export class AppState {
 	/**
 	 * jsEval evaluates JS expressions
 	 */
-	jsEval(expressions: string) {
-		// TODO: define some variables (modalEditor.xxx)
-		return eval(expressions);
+	jsEval(expressions: string, _ctx: CommandContext) {
+		// _ctx is accessible in side eval
+		return eval(`(${expressions})`);
 	}
 	
 	async executeVSCommand(command: string, ...rest: any[]) {
