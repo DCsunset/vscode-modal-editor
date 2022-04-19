@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.3.1...v0.4.0) (2022-04-19)
+
+
+### Features
+
+* add replace command in helix.js ([c7d759f](https://github.com/DCsunset/vscode-modal-editor/commit/c7d759f9ef44ae803c95b23e833c95cd162aa7d3))
+* add wildcard character and computed args ([9ded36d](https://github.com/DCsunset/vscode-modal-editor/commit/9ded36d3ae7ff3d7a8049f5a90e5781761fe7c39))
+
+
+### Bug Fixes
+
+* improve error handling ([90b7696](https://github.com/DCsunset/vscode-modal-editor/commit/90b769620cfa96cf318d1f04e04a27ada853bc9b))
+
 ### [0.3.1](https://github.com/DCsunset/vscode-modal-editor/compare/v0.3.0...v0.3.1) (2022-04-18)
 
 
