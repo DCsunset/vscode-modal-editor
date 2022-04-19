@@ -76,6 +76,8 @@ They are listed as follows:
 
 ## Tutorial to Customize Keybindings
 
+### Basics
+
 There are 3 predefined modes (`normal`, `insert`, `select`) in this extension,
 but you are free to add more modes.
 
@@ -101,7 +103,13 @@ If you need map a key sequence to a command, you can use a recursive keymap.
 
 There's a special mode `""` in `Keybindings` which means common keybindings.
 It is shared by all the modes (except insert mode),
-and it can be overwritten by a specify mode.
+and it can be overwritten by other modes.
+
+There's also a special key `""` in `Keymap` which represents a wildcard character
+to match any character.
+It has the lowest priority and can be overwritten by other keys.
+
+### Commands
 
 The command can be a string (which means a VS Code command),
 a list of commmands,
@@ -110,12 +118,37 @@ or a complex command object:
 ```ts
 type ComplexCommand = {
 	command: string,
+	/// args for that command
 	args?: any,
-	// Condition to execute the above command
+	/// whether to use JS expression for args
+	computedArgs?: boolean,
+	/// condition to execute the above command
 	when?: string
 };
 ```
 
+The arguments of a complex command can be a JS expression,
+which depends on the `computedArgs` field.
+For computed arguments, the `args` must be a string for JS expressions.
+
+The condition `when` is also a JS expression.
+
+
+### Command Context
+
+In the JS expression in a complex command, a context object `_ctx` is available.
+
+The definion of `_ctx` is defined as follows:
+
+```ts
+export type CommandContext = {
+	/// Key sequence to invoke this command
+	keys: string
+};
+```
+
+
+### Example
 
 Here is a code snippet from `helix.js` preset:
 
@@ -126,6 +159,22 @@ module.exports = {
 		i: "modalEditor.setInsertMode",
 	},
 	normal: {
+		// replace the character at the cursor
+		r: {
+			// Wildcard character
+			"": {
+				command: "compositionType",
+				computedArgs: true,
+				// use a js expression for computed args
+				args: `{
+					// replace with last key in the key sequence
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					replaceNextCharCnt: 1,
+					positionDelta: -1
+				}`
+			}
+		},
+
 		// cursor movement
 		h: "cursorLeft",
 		j: "cursorDown",
