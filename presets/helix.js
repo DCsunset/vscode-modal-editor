@@ -65,6 +65,22 @@ module.exports = {
 		N: "editor.action.previousMatchFindAction"
 	},
 	normal: {
+		// replace the character at the cursor
+		r: {
+			// Wildcard character
+			"": {
+				command: "compositionType",
+				computedArgs: true,
+				// use a js expression for computed args
+				args: `{
+					// replace with last key in the key sequence
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					replaceNextCharCnt: 1,
+					positionDelta: -1
+				}`
+			}
+		},
+
 		// cursor movement
 		h: "cursorLeft",
 		j: "cursorDown",
