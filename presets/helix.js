@@ -22,6 +22,9 @@ module.exports = {
 		],
 		P: "editor.action.clipboardPasteAction",
 
+		// into command mode
+		":": "modalEditor.setCommandMode",
+
 		// into insert mode
 		i: "modalEditor.setInsertMode",
 		I: [
