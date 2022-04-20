@@ -2,7 +2,7 @@
   "name": "vscode-modal-editor",
   "displayName": "ModalEditor",
   "description": "Customizable extension to turn VS Code into a modal editor",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publisher": "DCsunset",
   "license": "AGPL-3.0",
   "repository": {

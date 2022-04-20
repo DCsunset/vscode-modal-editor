@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.4.0...v0.5.0) (2022-04-20)
+
+
+### Features
+
+* add command mode ([d1764f0](https://github.com/DCsunset/vscode-modal-editor/commit/d1764f0f386fbf1fe6f0f360b29695d4a5259fd3))
+* add command mode to helix preset ([b77c7c2](https://github.com/DCsunset/vscode-modal-editor/commit/b77c7c22330516ee62c8a2d1bb37436da9ec7ec1))
+* allow modifying commands by backspace ([7b1da36](https://github.com/DCsunset/vscode-modal-editor/commit/7b1da36133ab92fe20da816b56ee508c47a9a433))
+
+
+### Bug Fixes
+
+* fix command mode in helix preset ([2c364a1](https://github.com/DCsunset/vscode-modal-editor/commit/2c364a117786ae20ef1085b91aace6f8bf8404e7))
+
 ## [0.4.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.3.1...v0.4.0) (2022-04-19)
 
 
