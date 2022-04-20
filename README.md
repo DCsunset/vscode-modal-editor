@@ -80,11 +80,15 @@ They are listed as follows:
 
 ### Basics
 
-There are 3 predefined modes (`normal`, `insert`, `select`) in this extension,
+There are 4 predefined modes (`normal`, `insert`, `select`, `command`) in this extension,
 but you are free to add more modes.
 
 Keybindings can be defined for all modes except for insert mode,
 because this extension will handle over to VS Code in insert mode.
+
+Command mode is another different mode because it maps a key sequence instead of each key to a command.
+It doesn't support sub-keymap as well.
+A newline character is used to indicate the end of a command.
 
 The keybindings object is defined in the following format (in TypeScript):
 
