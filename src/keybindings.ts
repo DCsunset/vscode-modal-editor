@@ -53,10 +53,18 @@ export class KeyEventHandler {
 	statusBarPrefix() {
 		return this.commandMode ? ":" : "";
 	}
+	
+	/**
+	 * Change the current key sequence but not applying them
+	 * Useful for display or command mode
+	 */
+	setKeys(keys: string) {
+		this.keys = keys;
+		this.keyStatusBar.text = `${this.statusBarPrefix()}${keys}`;
+	}
 
 	handle(key: string) {
-		this.keys += key;
-		this.keyStatusBar.text = `${this.statusBarPrefix()}${this.keys}`;
+		this.setKeys(this.keys + key);
 		
 		/** Command mode */
 		// Handle keys only until newline characters
@@ -138,8 +146,7 @@ export class KeyEventHandler {
 	reset() {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
-		this.keys = "";
-		this.keyStatusBar.text = this.statusBarPrefix();
+		this.setKeys("");
 	}
 
 	/// Clear state

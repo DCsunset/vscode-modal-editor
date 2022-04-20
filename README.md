@@ -71,6 +71,7 @@ They are listed as follows:
 | `modalEditor.setInsertMode` | - | Set to insert mode |
 | `modalEditor.setNormalMode` | - | Set to normal mode |
 | `modalEditor.setSelectMode` | - |	 Set to select mode |
+| `modalEditor.setKeys` | `string` | Change current key sequence without applying it. Value should be a js expression (useful for modifying unexecuted commands) |
 | `modalEditor.importKeybindings` | - | Import keybindings |
 | `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
 

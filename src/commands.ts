@@ -182,6 +182,23 @@ export async function setCommandMode() {
 	await setMode(COMMAND);
 }
 
+/**
+ * Change the current key sequence but not applying them
+ * Arg is a js expression
+ * Useful for display or command mode
+ */
+export function setKeys(expr: string) {
+	const keys = appState.jsEval(expr, {
+		keys: appState.keyEventHandler.keys
+	});
+	if (typeof keys !== "string") {
+		vscode.window.showErrorMessage("Modal Editor:")
+		return;
+	}
+	appState.log(`Set keys to: "${keys}"`);
+	appState.keyEventHandler.setKeys(keys);
+}
+
 export function onConfigUpdate() {
 	// Read config from file
 	const config = readConfig();
@@ -203,6 +220,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setNormalMode),
 		registerCommand(setSelectMode),
 		registerCommand(setCommandMode),
+		registerCommand(setKeys),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
 	);

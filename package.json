@@ -54,10 +54,16 @@
     ],
     "keybindings": [
       {
-        "key": "Escape",
+        "key": "escape",
         "command": "modalEditor.setMode",
         "args": "normal",
         "when": "editorTextFocus"
+      },
+      {
+        "key": "backspace",
+        "command": "modalEditor.setKeys",
+        "args": "_ctx.keys.substring(0, _ctx.keys.length-1)",
+        "when": "editorTextFocus && modalEditor.mode == 'command'"
       }
     ],
     "configuration": {

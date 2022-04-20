@@ -57,7 +57,7 @@ export type ComplexCommand = {
  * @see {isCommandContext} ts-auto-guard:type-guard
  */
 export type CommandContext = {
-	/// Key sequence to invoke this command
+	/// Key sequence to invoke this command or unexecuted keys
 	keys: string
 };
 
@@ -111,7 +111,6 @@ export class AppState {
 	}
 	
 	setMode(mode: string) {
-		this.log(`Set mode to ${mode}`);
 		this.mode = mode;
 		this.updateStatus(vscode.window.activeTextEditor);
 		this.keyEventHandler = new KeyEventHandler(
