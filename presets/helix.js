@@ -123,6 +123,12 @@ module.exports = {
 			g: "cursorTopSelect",
 			e: "cursorBottomSelect",
 		},
+	},
+
+	// Command mode
+	command: {
+		// save file
+		"w": "workbench.action.files.save"
 	}
 };
 
