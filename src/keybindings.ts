@@ -33,6 +33,10 @@ function getFromKeymap(keymap: Keymap | undefined, key: string) {
 	return undefined;
 }
 
+function isNum(key: string) {
+	return /^\d$/.test(key);
+}
+
 export class KeyEventHandler {
 	/// The current keymap (because there could be sub key maps)
 	currentKeymap?: Keymap;
@@ -40,6 +44,10 @@ export class KeyEventHandler {
 	currentCommonKeymap?: Keymap;
 	/// Key sequence encountered so far
 	keys!: string;
+	/// Count prefix
+	count!: string;
+	/// Whether it is parsing the prefix count
+	parsingCount!: boolean;
 	
 	constructor(
 		public keyStatusBar: vscode.StatusBarItem,
@@ -60,10 +68,20 @@ export class KeyEventHandler {
 	 */
 	setKeys(keys: string) {
 		this.keys = keys;
-		this.keyStatusBar.text = `${this.statusBarPrefix()}${keys}`;
+		this.updateStatus();
+	}
+	
+	updateStatus() {
+		this.keyStatusBar.text = `${this.statusBarPrefix()}${this.count}${this.keys}`;
 	}
 
 	handle(key: string) {
+		if (this.parsingCount && !this.commandMode && isNum(key)) {
+			this.count += key;
+			this.updateStatus();
+			return;
+		}
+
 		this.setKeys(this.keys + key);
 		
 		/** Command mode */
@@ -146,6 +164,8 @@ export class KeyEventHandler {
 	reset() {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
+		this.count = "";
+		this.parsingCount = true;
 		this.setKeys("");
 	}
 
