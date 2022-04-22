@@ -20,7 +20,8 @@ export function isMisc(obj: any, _argumentName?: string): obj is Misc {
             typeof obj === "function") &&
         typeof obj.ignoreUndefinedKeys === "boolean" &&
         typeof obj.modeStatusBarPriority === "number" &&
-        typeof obj.keyStatusBarPriority === "number"
+        typeof obj.keyStatusBarPriority === "number" &&
+        typeof obj.presetDirectory === "string"
     )
 }
 

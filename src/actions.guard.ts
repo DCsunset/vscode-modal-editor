@@ -2,7 +2,7 @@
  * Generated type guards for "actions.ts".
  * WARNING: Do not manually change this file.
  */
-import { Command, SimpleCommand, ComplexCommand, CommandList } from "./actions";
+import { Command, SimpleCommand, ComplexCommand, CommandContext, CommandList } from "./actions";
 
 export function isCommand(obj: any, _argumentName?: string): obj is Command {
     return (
@@ -23,9 +23,24 @@ export function isComplexCommand(obj: any, _argumentName?: string): obj is Compl
         (obj !== null &&
             typeof obj === "object" ||
             typeof obj === "function") &&
-        isSimpleCommand(obj.command) as boolean &&
+        isCommand(obj.command) as boolean &&
+        (typeof obj.computedArgs === "undefined" ||
+            obj.computedArgs === false ||
+            obj.computedArgs === true) &&
         (typeof obj.when === "undefined" ||
-            isSimpleCommand(obj.when) as boolean)
+            isSimpleCommand(obj.when) as boolean) &&
+        (typeof obj.count === "undefined" ||
+            isSimpleCommand(obj.count) as boolean)
+    )
+}
+
+export function isCommandContext(obj: any, _argumentName?: string): obj is CommandContext {
+    return (
+        (obj !== null &&
+            typeof obj === "object" ||
+            typeof obj === "function") &&
+        isSimpleCommand(obj.keys) as boolean &&
+        typeof obj.count === "number"
     )
 }
 

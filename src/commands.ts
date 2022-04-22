@@ -189,7 +189,8 @@ export async function setCommandMode() {
  */
 export function setKeys(expr: string) {
 	const keys = appState.jsEval(expr, {
-		keys: appState.keyEventHandler.keys
+		keys: appState.keyEventHandler.keys,
+		count: 1
 	});
 	if (typeof keys !== "string") {
 		vscode.window.showErrorMessage("Modal Editor:")

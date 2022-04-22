@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Command } from "./actions";
+import { Command, CommandContext } from "./actions";
 import { isCommand } from "./actions.guard";
 import { KeyError } from "./error";
 
@@ -72,6 +72,14 @@ export class KeyEventHandler {
 		this.updateStatus();
 	}
 	
+	getCtx(): CommandContext {
+		return {
+			keys: this.keys,
+			// default count is 1
+			count: this.count.length === 0 ? 1 : parseInt(this.count)
+		};
+	}
+	
 	updateStatus() {
 		this.keyStatusBar.text = `${this.statusBarPrefix()}${this.count}${this.keys}`;
 	}
@@ -84,42 +92,44 @@ export class KeyEventHandler {
 		}
 
 		this.parsingCount = false;
-		this.setKeys(this.keys + key);
 		
 		/** Command mode */
 		// Handle keys only until newline characters
 		if (this.commandMode) {
-			if (key !== "\n")
+			if (key !== "\n") {
+				this.setKeys(this.keys + key);
 				return;
+			}
 			
-			const keys = this.keys.substring(0, this.keys.length-1);
-			if (this.keymap && (keys in this.keymap)) {
-				const value = this.keymap[keys];
-				if (isCommand(value)) {
-					// reset keymap since this sequence is finished
-					this.reset();
-					return {
-						command: value,
-						keys
-					};
-				}
+			const value = getFromKeymap(this.keymap, this.keys);
+			if (value && isCommand(value)) {
+				// reset keymap since this sequence is finished
+				const ctx = this.getCtx();
+				this.reset();
+				return {
+					command: value,
+					ctx
+				};
 			}
 
+			const keys = this.keys;
 			this.reset();
 			throw new KeyError(`undefined command: "${keys}"`);
 		}
 		
 		/** Other modes */
+		this.setKeys(this.keys + key);
+
 		// try currentKeymap first
 		let value = getFromKeymap(this.currentKeymap, key);
 		if (value) {
 			if (isCommand(value)) {
-				const keys = this.keys;
+				const ctx = this.getCtx();
 				// reset keymap since this sequence is finished
 				this.reset();
 				return {
 					command: value,
-					keys
+					ctx
 				};
 			}
 			// Continue to use subkeymap
@@ -142,12 +152,12 @@ export class KeyEventHandler {
 		value = getFromKeymap(this.currentCommonKeymap, key);
 		if (value) {
 			if (isCommand(value)) {
-				let keys = this.keys;
+				const ctx = this.getCtx();
 				// reset keymap since this sequence is finished
 				this.reset();
 				return {
 					command: value,
-					keys
+					ctx
 				};
 			}
 			// Keep only commonKeymap

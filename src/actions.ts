@@ -42,13 +42,15 @@ export type SimpleCommand = string;
  * @see {isComplexCommand} ts-auto-guard:type-guard
  */
 export type ComplexCommand = {
-	command: string,
-	/// args for that command
+	command: Command,
+	/// args for that command (only if it's a simple command)
 	args?: any,
 	/// whether to use JS expression for args
 	computedArgs?: boolean,
 	/// condition to execute the above command
-	when?: string
+	when?: string,
+	/// run this command for count times (a js expression)
+	count?: string
 };
 
 /**
@@ -58,7 +60,9 @@ export type ComplexCommand = {
  */
 export type CommandContext = {
 	/// Key sequence to invoke this command or unexecuted keys
-	keys: string
+	keys: string,
+	/// Count of the current command
+	count: number
 };
 
 /**
@@ -129,8 +133,8 @@ export class AppState {
 			const result = this.keyEventHandler.handle(key);
 			if (result) {
 				const previousMode = this.mode;
-				const { command, keys } = result;
-				await this.executeCommand(command, { keys });
+				const { command, ctx } = result;
+				await this.executeCommand(command, ctx);
 
 				// Exit command mode if previous and current modes are command
 				// (mode may change after executing some command)
@@ -167,15 +171,30 @@ export class AppState {
 		else if (isComplexCommand(command)) {
 			// Execute it if when is not defined or condition is true
 			if (!command.when || this.jsEval(command.when, ctx)) {
-				let args = command.args;
-				if (command.computedArgs) {
-					if (typeof args !== "string") {
-						vscode.window.showErrorMessage(`Invalid args for command ${command.command}`);
-						return;
-					}
-					args = this.jsEval(args, ctx);
+				const count = command.count ? this.jsEval(command.count, ctx) : 1;
+				if (!Number.isInteger(count)) {
+					vscode.window.showErrorMessage(`Invalid count for command ${command.command}`);
+					return;
 				}
-				await this.executeVSCommand(command.command, args);
+
+				// run the command for count times
+				for (let i = 0; i < count; ++i) {
+					if (isSimpleCommand(command.command)) {
+						// evaluate args only for simple command inside this complex command
+						let args = command.args;
+						if (command.computedArgs) {
+							if (typeof args !== "string") {
+								vscode.window.showErrorMessage(`Invalid args for command ${command.command}`);
+								return;
+							}
+							args = this.jsEval(args, ctx);
+						}
+						await this.executeVSCommand(command.command, args);
+					}
+					else {
+						await this.executeCommand(command.command, ctx);
+					}
+				}
 			}
 		}
 		else if (isCommandList(command)) {
