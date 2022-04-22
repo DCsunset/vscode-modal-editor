@@ -2,19 +2,27 @@
  * Keybindings for helix editor
  */
 
+// add count argument
+function repeatable(command) {
+	return {
+		command,
+		count: "_ctx.count"
+	};
+}
+
 module.exports = {
 	// Common keybindings (except for insert mode)
 	"": {
-		u: "undo",
-		U: "redo",
+		u: repeatable("undo"),
+		U: repeatable("redo"),
 		d: "deleteRight",
 		c: [
 			"deleteRight",
 			"modalEditor.setInsertMode"
 		],
-		x: "expandLineSelection",
-		"<": "editor.action.outdentLines",
-		">": "editor.action.indentLines",
+		x: repeatable("expandLineSelection"),
+		"<": repeatable("editor.action.outdentLines"),
+		">": repeatable("editor.action.indentLines"),
 		y: "editor.action.clipboardCopyAction",
 		p: [
 			"cursorRight",
@@ -85,18 +93,18 @@ module.exports = {
 		},
 
 		// cursor movement
-		h: "cursorLeft",
-		j: "cursorDown",
-		k: "cursorUp",
-		l: "cursorRight",
-		w: [
+		h: repeatable("cursorLeft"),
+		j: repeatable("cursorDown"),
+		k: repeatable("cursorUp"),
+		l: repeatable("cursorRight"),
+		w: repeatable([
 			"cancelSelection",
 			"cursorWordStartRightSelect",
-		],
-		b: [
+		]),
+		b: repeatable([
 			"cancelSelection",
 			"cursorWordStartLeftSelect"
-		],
+		]),
 	
 		// goto mode
 		g: {
@@ -112,12 +120,12 @@ module.exports = {
 
 	select: {
 		// cursor movement
-		h: "cursorLeftSelect",
-		j: "cursorDownSelect",
-		k: "cursorUpSelect",
-		l: "cursorRightSelect",
-		w: "cursorWordStartRightSelect",
-		b: "cursorWordStartLeftSelect",
+		h: repeatable("cursorLeftSelect"),
+		j: repeatable("cursorDownSelect"),
+		k: repeatable("cursorUpSelect"),
+		l: repeatable("cursorRightSelect"),
+		w: repeatable("cursorWordStartRightSelect"),
+		b: repeatable("cursorWordStartLeftSelect"),
 	
 		// goto mode
 		g: {

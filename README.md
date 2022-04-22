@@ -87,8 +87,12 @@ but you are free to add more modes.
 Keybindings can be defined for all modes except for insert mode,
 because this extension will handle over to VS Code in insert mode.
 
+Each key sequence can be prefixed with a number indicating the count.
+The count value will be stored in the `CommandContext`,
+which can be used in the js expression of `ComplexCommand`.
+
 Command mode is another different mode because it maps a key sequence instead of each key to a command.
-It doesn't support sub-keymap as well.
+It doesn't support sub-keymap or count prefix as well.
 A newline character is used to indicate the end of a command.
 
 The keybindings object is defined in the following format (in TypeScript):
@@ -124,13 +128,15 @@ or a complex command object:
 
 ```ts
 type ComplexCommand = {
-	command: string,
-	/// args for that command
+	command: Command,
+	/// args for that command (only if it's a simple command)
 	args?: any,
 	/// whether to use JS expression for args
 	computedArgs?: boolean,
 	/// condition to execute the above command
-	when?: string
+	when?: string,
+	/// run this command for count times (a js expression)
+	count?: string
 };
 ```
 
@@ -138,7 +144,7 @@ The arguments of a complex command can be a JS expression,
 which depends on the `computedArgs` field.
 For computed arguments, the `args` must be a string for JS expressions.
 
-The condition `when` is also a JS expression.
+The condition `when` and `count` are also JS expressions.
 
 
 ### Command Context
@@ -148,18 +154,28 @@ In the JS expression in a complex command, a context object `_ctx` is available.
 The definion of `_ctx` is defined as follows:
 
 ```ts
-export type CommandContext = {
-	/// Key sequence to invoke this command
-	keys: string
+type CommandContext = {
+	/// Key sequence to invoke this command or unexecuted keys
+	keys: string,
+	/// Count of the current command
+	count: number
 };
 ```
 
 
 ### Example
 
-Here is a code snippet from `helix.js` preset:
+Here is an example code snippet for `helix.js` preset:
 
 ```js
+// add count argument
+function repeatable(command) {
+	return {
+		command,
+		count: "_ctx.count"
+	};
+}
+
 module.exports = {
 	"": {
 		// Common keybindings
@@ -183,18 +199,18 @@ module.exports = {
 		},
 
 		// cursor movement
-		h: "cursorLeft",
-		j: "cursorDown",
-		k: "cursorUp",
-		l: "cursorRight",
-		w: [
+		h: repeatable("cursorLeft"),
+		j: repeatable("cursorDown"),
+		k: repeatable("cursorUp"),
+		l: repeatable("cursorRight"),
+		w: repeatable([
 			"cancelSelection",
 			"cursorWordStartRightSelect",
-		],
-		b: [
+		]),
+		b: repeatable([
 			"cancelSelection",
 			"cursorWordStartLeftSelect"
-		]
+		]),
 	}
 }
 ```
