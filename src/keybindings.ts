@@ -33,8 +33,9 @@ function getFromKeymap(keymap: Keymap | undefined, key: string) {
 	return undefined;
 }
 
-function isNum(key: string) {
-	return /^\d$/.test(key);
+function isNum(key: string, isFirst?: boolean) {
+	const regex = isFirst ? /^[1-9]$/ : /^\d$/;
+	return regex.test(key);
 }
 
 export class KeyEventHandler {
@@ -76,12 +77,13 @@ export class KeyEventHandler {
 	}
 
 	handle(key: string) {
-		if (this.parsingCount && !this.commandMode && isNum(key)) {
+		if (this.parsingCount && !this.commandMode && isNum(key, this.count.length === 0)) {
 			this.count += key;
 			this.updateStatus();
 			return;
 		}
 
+		this.parsingCount = false;
 		this.setKeys(this.keys + key);
 		
 		/** Command mode */
