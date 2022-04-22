@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.5.0...v0.6.0) (2022-04-22)
+
+
+### Features
+
+* add count parsing logic ([f09fcd1](https://github.com/DCsunset/vscode-modal-editor/commit/f09fcd1993576d3b6de7403f773abf5335ad18c4))
+* add repeatable commands to helix preset and update README ([515f2b8](https://github.com/DCsunset/vscode-modal-editor/commit/515f2b80e2add24c25dcc935b1d4fe956c29db6c))
+* support repeating command and add count to ctx ([67a8358](https://github.com/DCsunset/vscode-modal-editor/commit/67a8358d6c1920ccdf8a2ed56f5622162dcb9843))
+
+
+### Bug Fixes
+
+* fix count parsing ([0f3c957](https://github.com/DCsunset/vscode-modal-editor/commit/0f3c957a5b69f16f3548a4ac3422a9717e583824))
+
 ## [0.5.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.4.0...v0.5.0) (2022-04-20)
 
 
