@@ -200,6 +200,42 @@ export function setKeys(expr: string) {
 	appState.keyEventHandler.setKeys(keys);
 }
 
+/**
+ * Go to a specified line
+ */
+export function gotoLine(num: number) {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		const range = editor.document.lineAt(num-1).range;
+		// go to the start of that line
+		editor.selection = new vscode.Selection(range.start, range.start);
+		editor.revealRange(range);
+	}
+};
+
+/**
+ * Go to a specified line and select text
+ */
+export function gotoLineSelect(num: number) {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		const range = editor.document.lineAt(num-1).range;
+		// The position to go to (focus)
+		const nextPos = range.start;
+		// current position
+		let curPos = editor.selection.start;
+		if (nextPos.isBeforeOrEqual(curPos)) {
+			// include the current char if nextPos is before or equal
+			curPos = curPos.translate(0, 1);
+		}
+		
+		// update selection (nextPos is active)
+		editor.selection = new vscode.Selection(curPos, nextPos);
+		editor.revealRange(range);
+	}
+};
+
+
 export function onConfigUpdate() {
 	// Read config from file
 	const config = readConfig();
@@ -222,6 +258,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setSelectMode),
 		registerCommand(setCommandMode),
 		registerCommand(setKeys),
+		registerCommand(gotoLine),
+		registerCommand(gotoLineSelect),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
 	);
