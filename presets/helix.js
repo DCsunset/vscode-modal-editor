@@ -110,7 +110,12 @@ module.exports = {
 		g: {
 			h: "cursorHome",
 			j: "cursorEnd",
-			g: "cursorTop",
+			g: {
+				command: "modalEditor.gotoLine",
+				// line number is prefix count
+				computedArgs: true,
+				args: "_ctx.count"
+			},
 			e: "cursorBottom",
 		},
 	
@@ -131,7 +136,12 @@ module.exports = {
 		g: {
 			h: "cursorHomeSelect",
 			l: "cursorEndSelect",
-			g: "cursorTopSelect",
+			g: {
+				command: "modalEditor.gotoLineSelect",
+				// line number is prefix count
+				computedArgs: true,
+				args: "_ctx.count"
+			},
 			e: "cursorBottomSelect",
 		},
 	},
