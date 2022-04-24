@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.6.0...v0.7.0) (2022-04-24)
+
+
+### Features
+
+* add gotoLine and gotoLineSelect commands ([4957fc4](https://github.com/DCsunset/vscode-modal-editor/commit/4957fc4cb61c062fed628a64e3e68e5799720e29))
+* improve goto mode ([9d39c97](https://github.com/DCsunset/vscode-modal-editor/commit/9d39c97dd243fac0c5222caf14bce3aaa091494f))
+
 ## [0.6.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.5.0...v0.6.0) (2022-04-22)
 
 
