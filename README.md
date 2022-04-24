@@ -73,6 +73,8 @@ They are listed as follows:
 | `modalEditor.setSelectMode` | - | Set to select mode |
 | `modalEditor.setCommandMode` | - | Set to command mode |
 | `modalEditor.setKeys` | `string` | Change current key sequence without applying it. Value should be a js expression (useful for modifying unexecuted commands) |
+| `modalEditor.gotoLine` | `number` | Go to the specified line |
+| `modalEditor.gotoLineSelect` | `number` | Go to the specified line and select content in between |
 | `modalEditor.importKeybindings` | - | Import keybindings |
 | `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
 
