@@ -20,6 +20,12 @@ module.exports = {
 			"deleteRight",
 			"modalEditor.setInsertMode"
 		],
+		/* Mutli-cursor
+		 * (for insert cursor above, use keybindings.json for Alt-Shift-C)
+		 */
+		C: repeatable("editor.action.insertCursorBelow"),
+		",": "removeSecondaryCursors",
+
 		x: repeatable("expandLineSelection"),
 		"<": repeatable("editor.action.outdentLines"),
 		">": repeatable("editor.action.indentLines"),
