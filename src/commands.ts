@@ -265,9 +265,6 @@ export function findText(args: FindTextArgs) {
 
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
-		// Set the pos to the cursor
-		const curPos = editor.selection.active;
-
 		// Go to position after successfully finding it
 		const gotoPos = (lineNum: number, pos: number) => {
 			let newPos = new vscode.Position(lineNum, pos);
@@ -280,8 +277,10 @@ export function findText(args: FindTextArgs) {
 			if (args.till)
 				newPos = newPos.translate(0, args.backward ? 1 : -1);
 
-			if (args.select)
-				editor.selection = new vscode.Selection(curPos, newPos);
+			if (args.select) {
+				// merge with previous selection using anchor
+				editor.selection = new vscode.Selection(editor.selection.anchor, newPos);
+			}
 			else
 				editor.selection = new vscode.Selection(newPos, newPos);
 			// Focus on active cursor
@@ -289,6 +288,8 @@ export function findText(args: FindTextArgs) {
 		};
 
 		/** Find in current line first */
+		// Set the pos to the cursor
+		const curPos = editor.selection.active;
 		const curLine = editor.document.lineAt(curPos.line);
 		const pos = args.backward ?
 			curLine.text.lastIndexOf(args.text, curPos.character-1) :
