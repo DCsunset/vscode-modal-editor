@@ -75,8 +75,27 @@ They are listed as follows:
 | `modalEditor.setKeys` | `string` | Change current key sequence without applying it. Value should be a js expression (useful for modifying unexecuted commands) |
 | `modalEditor.gotoLine` | `number` | Go to the specified line |
 | `modalEditor.gotoLineSelect` | `number` | Go to the specified line and select content in between |
+| `modalEditor.findText` | `FindTextArgs` | Find and move cursor to text |
 | `modalEditor.importKeybindings` | - | Import keybindings |
 | `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
+
+
+Types defined in the above table:
+
+```ts
+type FindTextArgs = {
+	/// String to find
+	text: string,
+	/// Whether to select text
+	select: boolean,
+	/// Whether to move till the text rather than to the text (default: false)
+	till?: boolean,
+	/// Within the ine of current cursor (default: false)
+	withinLine?: boolean,
+	/// Search backward (default: false)
+	backward?: boolean,
+};
+```
 
 
 ## Tutorial to Customize Keybindings

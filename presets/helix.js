@@ -111,6 +111,62 @@ module.exports = {
 			"cancelSelection",
 			"cursorWordStartLeftSelect"
 		]),
+		f: {
+			"": repeatable([
+				"cancelSelection",
+				{
+					command: "modalEditor.findText",
+					computedArgs: true,
+					args: `{
+						text: _ctx.keys.charAt(_ctx.keys.length-1),
+						select: true
+					}`
+				}
+			])
+		},
+		F: {
+			"": repeatable([
+				"cancelSelection",
+				{
+					command: "modalEditor.findText",
+					computedArgs: true,
+					args: `{
+						text: _ctx.keys.charAt(_ctx.keys.length-1),
+						backward: true,
+						select: true
+					}`
+				}
+			])
+		},
+		t: {
+			"": repeatable([
+				"cancelSelection",
+				{
+					command: "modalEditor.findText",
+					computedArgs: true,
+					args: `{
+						text: _ctx.keys.charAt(_ctx.keys.length-1),
+						till: true,
+						select: true
+					}`
+				}
+			])
+		},
+		T: {
+			"": repeatable([
+				"cancelSelection",
+				{
+					command: "modalEditor.findText",
+					computedArgs: true,
+					args: `{
+						text: _ctx.keys.charAt(_ctx.keys.length-1),
+						till: true,
+						backward: true,
+						select: true
+					}`
+				}
+			])
+		},
 	
 		// goto mode
 		g: {
@@ -137,6 +193,50 @@ module.exports = {
 		l: repeatable("cursorRightSelect"),
 		w: repeatable("cursorWordStartRightSelect"),
 		b: repeatable("cursorWordStartLeftSelect"),
+		f: {
+			"": repeatable({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					select: true
+				}`
+			})
+		},
+		F: {
+			"": repeatable({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					backward: true,
+					select: true
+				}`
+			})
+		},
+		t: {
+			"": repeatable({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					till: true,
+					select: true
+				}`
+			})
+		},
+		T: {
+			"": repeatable({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					till: true,
+					backward: true,
+					select: true
+				}`
+			})
+		},
 	
 		// goto mode
 		g: {
