@@ -3,6 +3,7 @@ import * as os from "os";
 import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
 import { AppState, NORMAL, INSERT, SELECT, COMMAND } from "./actions";
+import { isFindTextArgs } from "./commands.guard";
 
 /// Current app state
 let appState: AppState;
@@ -235,6 +236,99 @@ export function gotoLineSelect(num: number) {
 	}
 };
 
+/**
+ * Args for findText command
+ * 
+ * @see {isFindTextArgs} ts-auto-guard:type-guard
+ */
+export type FindTextArgs = {
+	/// String to find
+	text: string,
+	/// Whether to select text
+	select: boolean,
+	/// Whether to move till the text rather than to the text (default: false)
+	till?: boolean,
+	/// Within the ine of current cursor (default: false)
+	withinLine?: boolean,
+	/// Search backward (default: false)
+	backward?: boolean,
+};
+
+/**
+ * Find text and move cursor towards it
+ */
+export function findText(args: FindTextArgs) {
+	if (!isFindTextArgs(args)) {
+		vscode.window.showErrorMessage(`Modal Editor: findText: invalid arguments`);
+		return;
+	}
+
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		// Set the pos to the cursor
+		const curPos = editor.selection.active;
+
+		// Go to position after successfully finding it
+		const gotoPos = (lineNum: number, pos: number) => {
+			let newPos = new vscode.Position(lineNum, pos);
+
+			// Add one since end position is not inclusive in vscode
+			if (!args.backward)
+				newPos = newPos.translate(0, 1);
+			
+			// Move to the text instead of till the text
+			if (args.till)
+				newPos = newPos.translate(0, args.backward ? 1 : -1);
+
+			if (args.select)
+				editor.selection = new vscode.Selection(curPos, newPos);
+			else
+				editor.selection = new vscode.Selection(newPos, newPos);
+			// Focus on active cursor
+			editor.revealRange(new vscode.Range(newPos, newPos.translate(0, 1)));
+		};
+
+		/** Find in current line first */
+		const curLine = editor.document.lineAt(curPos.line);
+		const pos = args.backward ?
+			curLine.text.lastIndexOf(args.text, curPos.character-1) :
+			curLine.text.indexOf(args.text, curPos.character+1);
+		
+		if (pos >= 0) {
+			gotoPos(curLine.lineNumber, pos);
+			return;
+		}
+
+		/** Find line by line (because of VSCode API limit) **/
+		if (!args.withinLine) {
+			if (args.backward) {
+				const start = curLine.lineNumber - 1; 
+				const end = 0;
+				for (let l = start; l >= end; l--) {
+					const line = editor.document.lineAt(l);
+					const pos = line.text.lastIndexOf(args.text);
+					if (pos >= 0) {
+						gotoPos(l, pos);
+						return;
+					}
+				}
+			}
+			else {
+				const start = curLine.lineNumber + 1; 
+				const end = editor.document.lineCount;
+				for (let l = start; l < end; l++) {
+					const line = editor.document.lineAt(l);
+					const pos = line.text.indexOf(args.text);
+					if (pos >= 0) {
+						gotoPos(l, pos);
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
 
 export function onConfigUpdate() {
 	// Read config from file
@@ -260,6 +354,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setKeys),
 		registerCommand(gotoLine),
 		registerCommand(gotoLineSelect),
+		registerCommand(findText),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
 	);
