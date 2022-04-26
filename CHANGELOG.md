@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.7.0...v0.8.0) (2022-04-26)
+
+
+### Features
+
+* add executeCommand and resetState commands ([899807b](https://github.com/DCsunset/vscode-modal-editor/commit/899807b04e5b3eadbf7d1a0d3f8f91467384a50d))
+* add f, F, t, T motions to helix preset and update docs ([c53d1e2](https://github.com/DCsunset/vscode-modal-editor/commit/c53d1e21d996bc5b40a8f8cd44efd937a7bf6f28))
+* add findText command ([1e334f2](https://github.com/DCsunset/vscode-modal-editor/commit/1e334f25a4f9601d617143fceed4785427a4779f))
+* add multi-cursor for helix preset ([f6860ba](https://github.com/DCsunset/vscode-modal-editor/commit/f6860ba57ec9fecf41ceac118c6b5ce54a3b41a6))
+
+
+### Bug Fixes
+
+* merge with previous selection in findText ([7cbdcc7](https://github.com/DCsunset/vscode-modal-editor/commit/7cbdcc75fb80efb9bc12cf0bb61a7ff5c41ebcfe))
+
 ## [0.7.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.6.0...v0.7.0) (2022-04-24)
 
 
