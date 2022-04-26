@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import {
-	isCommand,
 	isCommandList,
 	isSimpleCommand,
 	isComplexCommand
@@ -17,11 +16,6 @@ export const NORMAL = "normal";
 export const INSERT = "insert";
 export const SELECT = "select";
 export const COMMAND = "command";
-
-/**
- * Action defined for each key
- */
-export type Action = Command;
 
 /**
  * Command types:
@@ -156,14 +150,10 @@ export class AppState {
 				this.setMode(NORMAL);
 		}
 	}
-
-	/// Execute an action
-	async executeAction(action: Action) {
-		if (isCommand(action)) {
-			await this.executeAction(action);
-		}
-	}
 	
+	/**
+	 * Execute a command with a context
+	 */
 	async executeCommand(command: Command, ctx: CommandContext) {
 		if (isSimpleCommand(command)) {
 			await this.executeVSCommand(command);
