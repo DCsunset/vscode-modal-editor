@@ -208,7 +208,9 @@ export function setKeys(expr: string) {
 export function gotoLine(num: number) {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
-		const range = editor.document.lineAt(num-1).range;
+		const lineCount = editor.document.lineCount;
+		const line = num < lineCount ? num : lineCount;
+		const range = editor.document.lineAt(line-1).range;
 		// go to the start of that line
 		editor.selection = new vscode.Selection(range.start, range.start);
 		editor.revealRange(range);
@@ -221,7 +223,9 @@ export function gotoLine(num: number) {
 export function gotoLineSelect(num: number) {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
-		const range = editor.document.lineAt(num-1).range;
+		const lineCount = editor.document.lineCount;
+		const line = num < lineCount ? num : lineCount;
+		const range = editor.document.lineAt(line-1).range;
 		// The position to go to (focus)
 		const nextPos = range.start;
 		// current position
