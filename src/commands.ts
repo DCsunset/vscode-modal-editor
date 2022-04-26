@@ -2,7 +2,8 @@ import * as vscode from "vscode";
 import * as os from "os";
 import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
-import { AppState, NORMAL, INSERT, SELECT, COMMAND } from "./actions";
+import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
+import { isCommand } from "./actions.guard";
 import { isFindTextArgs } from "./commands.guard";
 
 /// Current app state
@@ -330,7 +331,22 @@ export function findText(args: FindTextArgs) {
 	}
 }
 
+// Execute a command with the current context
+export async function executeCommand(command: Command) {
+	if (!isCommand(command)) {
+		vscode.window.showErrorMessage(`Modal Editor: executeCommand: invalid command`);
+		return;
+	}
+	const ctx = appState.keyEventHandler.getCtx();
+	await appState.executeCommand(command, ctx);
+}
 
+/// Reset internal state
+export function resetState() {
+	appState.reset();
+}
+
+/// Event handler for config update
 export function onConfigUpdate() {
 	// Read config from file
 	const config = readConfig();
@@ -356,6 +372,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(gotoLine),
 		registerCommand(gotoLineSelect),
 		registerCommand(findText),
+		registerCommand(executeCommand),
+		registerCommand(resetState),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
 	);

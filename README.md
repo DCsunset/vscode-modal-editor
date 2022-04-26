@@ -76,6 +76,8 @@ They are listed as follows:
 | `modalEditor.gotoLine` | `number` | Go to the specified line |
 | `modalEditor.gotoLineSelect` | `number` | Go to the specified line and select content in between |
 | `modalEditor.findText` | `FindTextArgs` | Find and move cursor to text |
+| `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
+| `modalEditor.resetState` | - | Reset internal state |
 | `modalEditor.importKeybindings` | - | Import keybindings |
 | `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
 
@@ -181,6 +183,26 @@ type CommandContext = {
 	/// Count of the current command
 	count: number
 };
+```
+
+In order to use the context in VS Code `keybindings.json`,
+use the command `modalEditor.executeCommand`.
+
+For example, to emuate `alt+shift+c` in helix,
+add the following to your `keybindings.json`:
+
+```json
+{
+    "key": "alt+shift+c",
+    "command": "modalEditor.executeCommand",
+    "args": [
+        {
+            "command": "editor.action.insertCursorAbove",
+            "count": "_ctx.count"
+        },
+        "modalEditor.resetState"
+    ]
+}
 ```
 
 

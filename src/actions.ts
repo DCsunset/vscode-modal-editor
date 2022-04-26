@@ -108,6 +108,12 @@ export class AppState {
 		this.outputChannel.appendLine(message);
 	}
 	
+	/// Reset internal state
+	reset() {
+		this.keyEventHandler.reset();
+		this.updateStatus(vscode.window.activeTextEditor);
+	}
+	
 	setMode(mode: string) {
 		this.mode = mode;
 		this.updateStatus(vscode.window.activeTextEditor);
