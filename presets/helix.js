@@ -29,12 +29,14 @@ module.exports = {
 		x: repeatable("expandLineSelection"),
 		"<": repeatable("editor.action.outdentLines"),
 		">": repeatable("editor.action.indentLines"),
-		y: "editor.action.clipboardCopyAction",
-		p: [
-			"cursorRight",
-			"editor.action.clipboardPasteAction"
-		],
-		P: "editor.action.clipboardPasteAction",
+		y: "modalEditor.yank",
+		p: "modalEditor.paste",
+		P: {
+			command: "modalEditor.paste",
+			args: {
+				before: true
+			}
+		},
 
 		// into command mode
 		":": "modalEditor.setCommandMode",
