@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.8.0...v0.9.0) (2022-04-27)
+
+
+### Features
+
+* add yank and paste command ([273bbb4](https://github.com/DCsunset/vscode-modal-editor/commit/273bbb499af0f36b8c42f51fde722c09ecd3d46a))
+* add yank and paste motions to helix preset ([8a1e24b](https://github.com/DCsunset/vscode-modal-editor/commit/8a1e24b87bc5bc6114c425d733356bd6a9784f5d))
+
+
+### Bug Fixes
+
+* go to last line if count is larger than lineCount ([bbb26f4](https://github.com/DCsunset/vscode-modal-editor/commit/bbb26f4a4ce395334f653c467ce5dfd1d48e99f9))
+
 ## [0.8.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.7.0...v0.8.0) (2022-04-26)
 
 
