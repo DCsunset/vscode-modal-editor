@@ -3,7 +3,7 @@
  * WARNING: Do not manually change this file.
  */
 import { isSimpleCommand } from "./actions.guard";
-import { FindTextArgs } from "./commands";
+import { FindTextArgs, YankArgs, PasteArgs } from "./commands";
 
 export function isFindTextArgs(obj: any, _argumentName?: string): obj is FindTextArgs {
     return (
@@ -21,5 +21,28 @@ export function isFindTextArgs(obj: any, _argumentName?: string): obj is FindTex
         (typeof obj.backward === "undefined" ||
             obj.backward === false ||
             obj.backward === true)
+    )
+}
+
+export function isYankArgs(obj: any, _argumentName?: string): obj is YankArgs {
+    return (
+        (obj !== null &&
+            typeof obj === "object" ||
+            typeof obj === "function") &&
+        (typeof obj.register === "undefined" ||
+            isSimpleCommand(obj.register) as boolean)
+    )
+}
+
+export function isPasteArgs(obj: any, _argumentName?: string): obj is PasteArgs {
+    return (
+        (obj !== null &&
+            typeof obj === "object" ||
+            typeof obj === "function") &&
+        (typeof obj.register === "undefined" ||
+            isSimpleCommand(obj.register) as boolean) &&
+        (typeof obj.before === "undefined" ||
+            obj.before === false ||
+            obj.before === true)
     )
 }

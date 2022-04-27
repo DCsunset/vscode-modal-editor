@@ -4,7 +4,7 @@ import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
 import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
 import { isCommand } from "./actions.guard";
-import { isFindTextArgs } from "./commands.guard";
+import { isFindTextArgs, isYankArgs, isPasteArgs } from "./commands.guard";
 
 /// Current app state
 let appState: AppState;
@@ -335,6 +335,106 @@ export function findText(args: FindTextArgs) {
 	}
 }
 
+/**
+ * Get current editor's selection
+ * Empty selection will be extended to single char selection
+ */
+function getSelection(editor: vscode.TextEditor): vscode.Range {
+	let { start, end } = editor.selection;
+	if (end.isEqual(start))
+		end = end.translate(0, 1);
+	return new vscode.Range(start, end);
+}
+
+
+/**
+ * Args for yank command
+ *
+ * @see {isYankArgs} ts-auto-guard:type-guard
+ */
+export type YankArgs = {
+	/// Yank to a register, default to " (empty string for system clipboard)
+	register?: string;
+};
+
+/**
+ * Yank content to a register
+ */
+export function yank(args?: YankArgs) {
+	if (args && !isYankArgs(args)) {
+		vscode.window.showErrorMessage(`Modal Editor: yank: invalid arguments`);
+		return;
+	}
+
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		const text = editor.document.getText(getSelection(editor));
+		// store in registers
+		const reg = args?.register ?? '"';
+		// TODO: yank to clipboard if reg is empty
+		appState.registers[reg] = text;
+	}
+}
+
+
+/**
+ * Args for paste command
+ *
+ * @see {isPasteArgs} ts-auto-guard:type-guard
+ */
+export type PasteArgs = {
+	/// Paste from a register (empty string for system clipboard)
+	register?: string
+	/// Paste before the current selection
+	before?: boolean
+}
+
+/**
+ * Paste content from a register
+ */
+export function paste(args?: PasteArgs) {
+	if (args && !isPasteArgs(args)) {
+		vscode.window.showErrorMessage(`Modal Editor: paste: invalid arguments`);
+		return;
+	}
+
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		// read from clipboard
+		const reg = args?.register ?? '"';
+		// TODO: paste from clipboard if reg is empty
+		let text = appState.registers[reg];
+		if (!text) {
+			// empty register
+			return;
+		}
+
+		// insert
+		editor.edit(editBuilder => {
+			// insert before or after the current selection
+			const selection = getSelection(editor);
+			let pos = args?.before ? selection.start : selection.end;
+			// paste in previous or next line if content ends with newline
+			// (which means copy a line)
+			if (text.endsWith("\n")) {
+				const curLine = editor.document.lineAt(pos.line).range;
+				if (args?.before) {
+					// move to start of line
+					pos = curLine.start;
+				}
+				else {
+					// remove last new line to the begin to create a new line
+					text = `\n${text.substring(0, text.length - 1)}`;
+					// move to end of line
+					pos = curLine.end;
+				}
+			}
+			
+			editBuilder.insert(pos, text);
+		});
+	}
+}
+
 // Execute a command with the current context
 export async function executeCommand(command: Command) {
 	if (!isCommand(command)) {
@@ -376,6 +476,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(gotoLine),
 		registerCommand(gotoLineSelect),
 		registerCommand(findText),
+		registerCommand(yank),
+		registerCommand(paste),
 		registerCommand(executeCommand),
 		registerCommand(resetState),
 		registerCommand(importKeybindings),

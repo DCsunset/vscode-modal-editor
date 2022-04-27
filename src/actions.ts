@@ -59,6 +59,11 @@ export type CommandContext = {
 	count: number
 };
 
+/// Register to store yanked contents
+export type Registers = {
+	[reg: string]: string
+}
+
 /**
  * @see {isCommandList} ts-auto-guard:type-guard
  */
@@ -68,6 +73,7 @@ export class AppState {
 	// Allow initialization in a method
 	keyEventHandler!: KeyEventHandler;
 	mode!: string;
+	registers: Registers;
 	
 	constructor(
 		mode: string,
@@ -76,6 +82,7 @@ export class AppState {
 		public modeStatusBar: vscode.StatusBarItem,
 		public keyStatusBar: vscode.StatusBarItem
 	) {
+		this.registers = {};
 		this.setMode(mode);
 	}
 
