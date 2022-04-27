@@ -353,8 +353,11 @@ function getSelection(editor: vscode.TextEditor): vscode.Range {
  * @see {isYankArgs} ts-auto-guard:type-guard
  */
 export type YankArgs = {
-	/// Yank to a register, default to " (empty string for system clipboard)
-	register?: string;
+	/**
+	 * Yank to a register (default: ")
+	 * (empty string for system clipboard)
+	 */
+	register?: string
 };
 
 /**
@@ -383,8 +386,11 @@ export function yank(args?: YankArgs) {
  * @see {isPasteArgs} ts-auto-guard:type-guard
  */
 export type PasteArgs = {
-	/// Paste from a register (empty string for system clipboard)
-	register?: string
+	/**
+	 * Paste from a register (default: ")
+	 * (empty string for system clipboard)
+	 */
+	register?: string,
 	/// Paste before the current selection
 	before?: boolean
 }

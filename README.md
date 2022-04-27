@@ -76,6 +76,8 @@ They are listed as follows:
 | `modalEditor.gotoLine` | `number` | Go to the specified line |
 | `modalEditor.gotoLineSelect` | `number` | Go to the specified line and select content in between |
 | `modalEditor.findText` | `FindTextArgs` | Find and move cursor to text |
+| `modalEditor.yank` | `YankArgs` | Yank the selection to a register |
+| `modalEditor.paste` | `PasteArgs` | Paste content from a register |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
 | `modalEditor.resetState` | - | Reset internal state |
 | `modalEditor.importKeybindings` | - | Import keybindings |
@@ -97,6 +99,24 @@ type FindTextArgs = {
 	/// Search backward (default: false)
 	backward?: boolean,
 };
+
+type YankArgs = {
+	/**
+	 * Yank to a register (default: `"`)
+	 * (empty string for system clipboard)
+	 */
+	register?: string
+};
+
+type PasteArgs = {
+	/**
+	 * Paste from a register (default: `"`)
+	 * (empty string for system clipboard)
+	 */
+	register?: string,
+	/// Paste before the current selection
+	before?: boolean
+}
 ```
 
 
