@@ -37,6 +37,8 @@ export type Styles = {
  * @see {isMisc} ts-auto-guard:type-guard
  */
 export type Misc = {
+	/// Always include the character under cursor in selection
+	inclusiveRange: boolean,
 	/// Do not show error message for undefined keys
 	ignoreUndefinedKeys: boolean,
 	/// Priority of mode status bar which shows the current mode
@@ -61,7 +63,7 @@ export type Config = {
 /// Default styles
 const defaultStyles: Styles = {
 	insert: {
-		cursorStyle: "line",
+		cursorStyle: "block",
 		statusText: "-- INS --"
 	},
 	normal: {
@@ -69,12 +71,13 @@ const defaultStyles: Styles = {
 		statusText: "-- NOR --"
 	},
 	select: {
-		cursorStyle: "line",
+		cursorStyle: "block",
 		statusText: "-- SEL --"
 	}
 };
 
 const defaultMisc: Misc = {
+	inclusiveRange: true,
 	ignoreUndefinedKeys: false,
 	modeStatusBarPriority: 0,
 	keyStatusBarPriority: 10000,

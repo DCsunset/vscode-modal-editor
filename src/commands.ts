@@ -140,7 +140,23 @@ async function onType(event: { text: string }) {
 	await appState.handleKey(event.text);
 }
 
-export async function onStatusChange(editor?: vscode.TextEditor) {
+export async function onSelectionChange(editor: vscode.TextEditor) {
+	if (appState.config.misc.inclusiveRange
+		&& appState.mode === SELECT
+		&& appState.anchor) {
+		// Make the current anchor always included in selection
+		const anchor = appState.anchor;
+		const selection = editor.selection;
+		const anchorNext = anchor.translate(0, 1);
+		if (anchor.isAfter(selection.active)) {
+			if (!selection.anchor.isEqual(anchorNext))
+				editor.selection = new vscode.Selection(anchorNext, selection.active);
+		}
+		else {
+			if (!selection.anchor.isEqual(anchor))
+				editor.selection = new vscode.Selection(anchor, selection.active);
+		}
+	}
 	appState.updateStatus(editor);
 }
 
@@ -337,12 +353,14 @@ export function findText(args: FindTextArgs) {
 
 /**
  * Get current editor's selection
- * Empty selection will be extended to single char selection
+ * Always include the character under cursor if inclusiveRange
  */
 function getSelection(editor: vscode.TextEditor): vscode.Range {
-	let { start, end } = editor.selection;
-	if (end.isEqual(start))
+	let { active, start, end } = editor.selection;
+	if (appState.config.misc.inclusiveRange && end.isEqual(active)) {
+		// always include the character under cursor
 		end = end.translate(0, 1);
+	}
 	return new vscode.Range(start, end);
 }
 

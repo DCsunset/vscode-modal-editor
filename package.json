@@ -80,6 +80,11 @@
           "description": "Styles for different modes",
           "default": {}
         },
+        "modalEditor.misc.inclusiveRange": {
+          "type": "boolean",
+          "description": "Always include the character under cursor in selection",
+          "default": true
+        },
         "modalEditor.misc.ignoreUndefinedKeys": {
           "type": "boolean",
           "description": "Do not show error message for undefined keys",

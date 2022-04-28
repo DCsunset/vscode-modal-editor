@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
 	commands.register(context, channel);
 	
 	context.subscriptions.push(
-		vscode.window.onDidChangeTextEditorSelection(e => commands.onStatusChange(e.textEditor)),
+		vscode.window.onDidChangeTextEditorSelection(e => commands.onSelectionChange(e.textEditor)),
 		vscode.workspace.onDidChangeConfiguration(commands.onConfigUpdate)
 	);
 

@@ -74,6 +74,8 @@ export class AppState {
 	keyEventHandler!: KeyEventHandler;
 	mode!: string;
 	registers: Registers;
+	// anchor when entering select mode
+	anchor: vscode.Position | undefined;
 	
 	constructor(
 		mode: string,
@@ -124,6 +126,10 @@ export class AppState {
 	setMode(mode: string) {
 		this.mode = mode;
 		this.updateStatus(vscode.window.activeTextEditor);
+		if (mode === SELECT) {
+			// record anchor
+			this.anchor = vscode.window.activeTextEditor?.selection.anchor;
+		}
 		this.keyEventHandler = new KeyEventHandler(
 			mode === COMMAND ? this.modeStatusBar : this.keyStatusBar,
 			// keymap in this mode
