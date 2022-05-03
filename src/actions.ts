@@ -219,8 +219,19 @@ export class AppState {
 	/**
 	 * jsEval evaluates JS expressions
 	 */
-	jsEval(expressions: string, _ctx: CommandContext) {
+	jsEval(expressions: string, ctx: CommandContext) {
+		const editor = vscode.window.activeTextEditor;
+		const cursor = editor?.selection.active;
 		// _ctx is accessible in side eval
+		const _ctx = {
+			...ctx,
+			// context of current line
+			line: editor && {
+				pos: cursor!.character,
+				text: editor.document.lineAt(cursor!.line).text
+			}
+		};
+
 		return eval(`(${expressions})`);
 	}
 	
