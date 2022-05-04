@@ -355,9 +355,9 @@ export function findText(args: FindTextArgs) {
  * Get current editor's selection
  * Always include the character under cursor if inclusiveRange
  */
-function getSelection(editor: vscode.TextEditor): vscode.Range {
+export function getSelection(editor: vscode.TextEditor): vscode.Range {
 	let { active, start, end } = editor.selection;
-	if (appState.config.misc.inclusiveRange && end.isEqual(active)) {
+	if (appState.config.misc.inclusiveRange) {
 		// always include the character under cursor
 		end = end.translate(0, 1);
 	}

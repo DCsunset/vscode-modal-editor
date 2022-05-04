@@ -7,6 +7,7 @@ import {
 import { KeyEventHandler } from "./keybindings";
 import { Config, getStyle, cursorStyleMap } from "./config";
 import { KeyError } from "./error";
+import { getSelection } from "./commands";
 
 
 /**
@@ -76,6 +77,10 @@ export class AppState {
 	registers: Registers;
 	// anchor when entering select mode
 	anchor: vscode.Position | undefined;
+	// cursor position before last command
+	lastPos: vscode.Position | undefined;
+	// selection before last command
+	lastSelection: vscode.Selection | undefined;
 	
 	constructor(
 		mode: string,
@@ -221,21 +226,28 @@ export class AppState {
 	 */
 	jsEval(expressions: string, ctx: CommandContext) {
 		const editor = vscode.window.activeTextEditor;
-		const cursor = editor?.selection.active;
 		// _ctx is accessible in side eval
 		const _ctx = {
 			...ctx,
-			// context of current line
-			line: editor && {
-				pos: cursor!.character,
-				text: editor.document.lineAt(cursor!.line).text
-			}
+			// cursor position before last command
+			lastPos: this.lastPos,
+			// current cursor position
+			pos: editor?.selection.active,
+			// get the line
+			lineAt: editor?.document.lineAt,
+			// last selection
+			lastSelection: this.lastSelection,
+			// current selection
+			selection: editor?.selection,
 		};
 
 		return eval(`(${expressions})`);
 	}
 	
 	async executeVSCommand(command: string, ...rest: any[]) {
+		const editor = vscode.window.activeTextEditor;
+		this.lastSelection = editor?.selection;
+		this.lastPos = this.lastSelection?.active;
 		try {
 			await vscode.commands.executeCommand(command, ...rest);
 		}
