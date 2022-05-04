@@ -133,7 +133,7 @@ export class AppState {
 		this.updateStatus(vscode.window.activeTextEditor);
 		if (mode === SELECT) {
 			// record anchor
-			this.anchor = vscode.window.activeTextEditor?.selection.anchor;
+			this.anchor = vscode.window.activeTextEditor?.selection.active;
 		}
 		this.keyEventHandler = new KeyEventHandler(
 			mode === COMMAND ? this.modeStatusBar : this.keyStatusBar,

@@ -140,21 +140,27 @@ async function onType(event: { text: string }) {
 	await appState.handleKey(event.text);
 }
 
-export async function onSelectionChange(editor: vscode.TextEditor) {
+export async function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent) {
+	const editor = e.textEditor;
 	if (appState.config.misc.inclusiveRange
 		&& appState.mode === SELECT
 		&& appState.anchor) {
 		// Make the current anchor always included in selection
 		const anchor = appState.anchor;
-		const selection = editor.selection;
 		const anchorNext = anchor.translate(0, 1);
-		if (anchor.isAfter(selection.active)) {
-			if (!selection.anchor.isEqual(anchorNext))
-				editor.selection = new vscode.Selection(anchorNext, selection.active);
-		}
-		else {
-			if (!selection.anchor.isEqual(anchor))
-				editor.selection = new vscode.Selection(anchor, selection.active);
+		const anchorRange = new vscode.Range(anchor, anchorNext);
+		const selection = e.selections[0];
+		// Update selection if anchor not included
+		if (!selection.contains(anchorRange)) {
+			const anchorNext = anchor.translate(0, 1);
+			if (anchor.isAfter(selection.active)) {
+				if (!selection.anchor.isEqual(anchorNext))
+					editor.selection = new vscode.Selection(anchorNext, selection.active);
+			}
+			else {
+				if (!selection.anchor.isEqual(anchor))
+					editor.selection = new vscode.Selection(anchor, selection.active);
+			}
 		}
 	}
 	appState.updateStatus(editor);
