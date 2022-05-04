@@ -363,11 +363,17 @@ export function findText(args: FindTextArgs) {
  */
 export function getSelection(editor: vscode.TextEditor): vscode.Range {
 	let { active, start, end } = editor.selection;
-	if (appState.config.misc.inclusiveRange) {
+	const activeRange = new vscode.Range(active, active.translate(0, 1));
+	if (appState.config.misc.inclusiveRange && !editor.selection.contains(activeRange)) {
 		// always include the character under cursor
-		end = end.translate(0, 1);
+		const line = editor.document.lineAt(end.line);
+		if (line.range.end.isEqual(end))
+			end = line.rangeIncludingLineBreak.end;
+		else
+			end = end.translate(0, 1);
 	}
-	return new vscode.Range(start, end);
+	const range = new vscode.Range(start, end);
+	return range;
 }
 
 
