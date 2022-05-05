@@ -367,8 +367,10 @@ export function getSelection(editor: vscode.TextEditor): vscode.Range {
 	if (appState.config.misc.inclusiveRange && !editor.selection.contains(activeRange)) {
 		// always include the character under cursor
 		const line = editor.document.lineAt(end.line);
-		if (line.range.end.isEqual(end))
+		if (line.range.end.isEqual(end)) {
+			// include the newline character
 			end = line.rangeIncludingLineBreak.end;
+		}
 		else
 			end = end.translate(0, 1);
 	}
@@ -453,14 +455,17 @@ export function paste(args?: PasteArgs) {
 			// paste in previous or next line if content ends with newline
 			// (which means copy a line)
 			if (text.endsWith("\n")) {
-				const curLine = editor.document.lineAt(pos.line).range;
+				let lineNum = pos.line;
+				// If char === 0 at selection.end, the cursor is at the previous line
+				if (pos.character === 0 && !args?.before)
+					lineNum--;
+				const curLine = editor.document.lineAt(lineNum).rangeIncludingLineBreak;
+
 				if (args?.before) {
 					// move to start of line
 					pos = curLine.start;
 				}
 				else {
-					// remove last new line to the begin to create a new line
-					text = `\n${text.substring(0, text.length - 1)}`;
 					// move to end of line
 					pos = curLine.end;
 				}
