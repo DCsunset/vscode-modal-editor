@@ -15,7 +15,6 @@ module.exports = {
 	"": {
 		u: repeatable("undo"),
 		U: repeatable("redo"),
-		d: "deleteRight",
 		c: [
 			"deleteRight",
 			"modalEditor.setInsertMode"
@@ -43,6 +42,10 @@ module.exports = {
 		"<": repeatable("editor.action.outdentLines"),
 		">": repeatable("editor.action.indentLines"),
 		y: "modalEditor.yank",
+		d: [
+			"modalEditor.delete",
+			"modalEditor.setNormalMode"
+		],
 		p: "modalEditor.paste",
 		P: {
 			command: "modalEditor.paste",
@@ -86,6 +89,27 @@ module.exports = {
 		
 		// space mode
 		" ": {
+			// yank to clipboard
+			y: {
+				command: "modalEditor.yank",
+				args: {
+					register: ""
+				}
+			},
+			// paste from clipbard
+			p: {
+				command: "modalEditor.paste",
+				args: {
+					register: ""
+				}
+			},
+			P: {
+				command: "modalEditor.paste",
+				args: {
+					register: "",
+					before: true
+				}
+			},
 			f: "workbench.action.quickOpen",
 			b: "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
 			k: "editor.action.showHover"
