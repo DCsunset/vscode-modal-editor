@@ -395,7 +395,7 @@ export type YankArgs = {
 /**
  * Yank content to a register
  */
-export function yank(args?: YankArgs) {
+export async function yank(args?: YankArgs) {
 	if (args && !isYankArgs(args)) {
 		vscode.window.showErrorMessage(`Modal Editor: yank: invalid arguments`);
 		return;
@@ -404,10 +404,14 @@ export function yank(args?: YankArgs) {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		const text = editor.document.getText(getSelection(editor));
-		// store in registers
 		const reg = args?.register ?? '"';
-		// TODO: yank to clipboard if reg is empty
-		appState.registers[reg] = text;
+		// yank to clipboard if reg is empty
+		if (reg === "") {
+			await vscode.env.clipboard.writeText(text);
+		}
+		else {
+			appState.registers[reg] = text;
+		}
 	}
 }
 
@@ -449,10 +453,11 @@ export async function paste(args?: PasteArgs) {
 
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
-		// read from clipboard
 		const reg = args?.register ?? '"';
-		// TODO: paste from clipboard if reg is empty
-		let text = appState.registers[reg];
+		// read from clipboard if reg is empty
+		const text = reg === ""
+			? await vscode.env.clipboard.readText()
+			: appState.registers[reg];
 		if (!text) {
 			// empty register
 			return;
