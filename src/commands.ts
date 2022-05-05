@@ -11,9 +11,9 @@ let appState: AppState;
 /// Subscription to type command
 let typeCommandSubscription: vscode.Disposable | null = null;
 
-/// Get command id from command function
-function commandId(command: (_: any) => any) {
-	return `modalEditor.${command.name}`;
+/// Get command id from command function (with an optional name)
+function commandId(command: (_: any) => any, name?: string) {
+	return `modalEditor.${name ?? command.name}`;
 }
 
 /**
@@ -168,9 +168,9 @@ export async function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent
 
 export async function setMode(mode: string) {
 	try {
+		appState.setMode(mode);
 		// cancel selection or inserting may replace selected texts.
 		await vscode.commands.executeCommand("cancelSelection");
-		appState.setMode(mode);
 		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 		if (mode === INSERT) {
 			if (typeCommandSubscription) {
@@ -411,6 +411,17 @@ export function yank(args?: YankArgs) {
 	}
 }
 
+/**
+ * Delete current selection
+ */
+export async function deleteSelection() {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		await editor.edit(editBuilder => {
+			editBuilder.delete(getSelection(editor));
+		});
+	}
+}
 
 /**
  * Args for paste command
@@ -430,7 +441,7 @@ export type PasteArgs = {
 /**
  * Paste content from a register
  */
-export function paste(args?: PasteArgs) {
+export async function paste(args?: PasteArgs) {
 	if (args && !isPasteArgs(args)) {
 		vscode.window.showErrorMessage(`Modal Editor: paste: invalid arguments`);
 		return;
@@ -448,7 +459,7 @@ export function paste(args?: PasteArgs) {
 		}
 
 		// insert
-		editor.edit(editBuilder => {
+		await editor.edit(editBuilder => {
 			// insert before or after the current selection
 			const selection = getSelection(editor);
 			let pos = args?.before ? selection.start : selection.end;
@@ -499,8 +510,8 @@ export function onConfigUpdate() {
 	setMode(NORMAL);
 }
 
-function registerCommand(command: (_: any) => any) {
-	return vscode.commands.registerCommand(commandId(command), command);
+function registerCommand(command: (_: any) => any, name?: string) {
+	return vscode.commands.registerCommand(commandId(command, name), command);
 }
 
 /**
@@ -519,6 +530,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(findText),
 		registerCommand(yank),
 		registerCommand(paste),
+		registerCommand(deleteSelection, "delete"),
 		registerCommand(executeCommand),
 		registerCommand(resetState),
 		registerCommand(importKeybindings),
