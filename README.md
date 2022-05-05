@@ -2,7 +2,7 @@
 
 [![version](https://badgen.net/open-vsx/version/DCsunset/vscode-modal-editor)](https://open-vsx.org/extension/DCsunset/vscode-modal-editor)
 
-Customizable extension to turn VS Code into a modal editor
+Customizable extension to turn VS Code into a modal editor.
 
 ## Installation
 
@@ -52,8 +52,8 @@ It is just a demo and you can easily create your own based on it.
 
 ## Presets
 
-I am currently a user of [helix](https://github.com/helix-editor/helix),
-so I only create a preliminary [preset](./presets/helix.js) for it.
+The design of this extension mainly follows [helix](https://github.com/helix-editor/helix),
+so I create a preliminary [preset](./presets/helix.js) for it.
 It doesn't implement all helix features and some actions may have slight differences.
 
 You are encouraged to define your own keybindings
