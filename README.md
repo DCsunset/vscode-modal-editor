@@ -194,14 +194,24 @@ The condition `when` and `count` are also JS expressions.
 
 In the JS expression in a complex command, a context object `_ctx` is available.
 
-The definion of `_ctx` is defined as follows:
+The `_ctx` is defined as follows:
 
 ```ts
-type CommandContext = {
-	/// Key sequence to invoke this command or unexecuted keys
+type Context = {
+	// Key sequence to invoke this command or unexecuted keys
 	keys: string,
-	/// Count of the current command
-	count: number
+	// Count of the current command
+	count: number,
+	// cursor position before last command (undefined only when no editor is available)
+	lastPos: vscode.Position | undefined,
+	// current cursor position
+	pos: vscode.Position | undefined,
+	// get the line
+	lineAt: (() => vscode.TextLine) | undefined,
+	// last selection
+	lastSelection: vscode.Selection | undefined,
+	// current selection
+	selection: vscode.Selection | undefined
 };
 ```
 
