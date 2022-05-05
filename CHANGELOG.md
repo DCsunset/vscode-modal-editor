@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.9.0...v1.0.0) (2022-05-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* add inclusive range support
+
+### Features
+
+* add delete command and fix paste command ([aa3b8d2](https://github.com/DCsunset/vscode-modal-editor/commit/aa3b8d29c6cdf7e656d5273b0ffdf2fabbb6af88))
+* add inclusive range support ([90e6a79](https://github.com/DCsunset/vscode-modal-editor/commit/90e6a798220b1abd555f483993e8ec1e9a202196))
+* add line context ([77d7da2](https://github.com/DCsunset/vscode-modal-editor/commit/77d7da208ff15a37427fcc058bbcf77449bf1bfe))
+* add more context variables and improve inclusive range ([9c5c6fd](https://github.com/DCsunset/vscode-modal-editor/commit/9c5c6fdd17249d4c37dd36f0d2cda0d8fccec45f))
+* improve yanking and pasting in helix preset ([d186ac7](https://github.com/DCsunset/vscode-modal-editor/commit/d186ac7d3b2d64c4d85130db99b27df17d2d1124))
+* support clipboard yanking and pasting ([c32d02b](https://github.com/DCsunset/vscode-modal-editor/commit/c32d02b9a7b9f84470c175c70c2efabe272c3249))
+* update helix preset ([d3983ab](https://github.com/DCsunset/vscode-modal-editor/commit/d3983abff2b86993d377a0934384017efc18a723))
+
+
+### Bug Fixes
+
+* fix getSelection ([041d004](https://github.com/DCsunset/vscode-modal-editor/commit/041d0047683055b39164cdde54efbe6d26958c84))
+* fix paste command ([3359d11](https://github.com/DCsunset/vscode-modal-editor/commit/3359d113ea43e24abb73a93169abbafebd51493c))
+* fix selection change event handler ([1cc4aa0](https://github.com/DCsunset/vscode-modal-editor/commit/1cc4aa0867ba5479f6a6972aa494ed1dea49e1b0))
+
 ## [0.9.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.8.0...v0.9.0) (2022-04-27)
 
 
