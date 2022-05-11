@@ -76,8 +76,11 @@ They are listed as follows:
 | `modalEditor.gotoLine` | `number` | Go to the specified line |
 | `modalEditor.gotoLineSelect` | `number` | Go to the specified line and select content in between |
 | `modalEditor.findText` | `FindTextArgs` | Find and move cursor to text |
+| `modalEditor.cut` | `YankArgs` | Cut the selection to a register |
 | `modalEditor.yank` | `YankArgs` | Yank the selection to a register |
 | `modalEditor.paste` | `PasteArgs` | Paste content from a register |
+| `modalEditor.halfPageUp` | - | Move cursor half page up |
+| `modalEditor.halfPageDown` | - | Move cursor half page down |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
 | `modalEditor.resetState` | - | Reset internal state |
 | `modalEditor.importKeybindings` | - | Import keybindings |
