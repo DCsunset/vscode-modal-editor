@@ -12,8 +12,9 @@ let appState: AppState;
 let typeCommandSubscription: vscode.Disposable | null = null;
 
 /// Get command id from command function (with an optional name)
-function commandId(command: (_: any) => any, name?: string) {
-	return `modalEditor.${name ?? command.name}`;
+function commandId(command: ((_: any) => any) | string) {
+	const name = typeof command === "string" ? command : command.name;
+	return `modalEditor.${name}`;
 }
 
 /**
@@ -492,6 +493,18 @@ export async function paste(args?: PasteArgs) {
 	}
 }
 
+/// Cut: yank + delete
+async function cut(args?: YankArgs) {
+	if (args && !isYankArgs(args)) {
+		vscode.window.showErrorMessage(`Modal Editor: cutk: invalid arguments`);
+		return;
+	}
+
+	await yank(args);
+	await deleteSelection();
+}
+
+
 /// Create position with valid line number
 function createPosition(editor: vscode.TextEditor, line: number, character: number) {
 	const lineCount = editor.document.lineCount;
@@ -554,7 +567,7 @@ export function onConfigUpdate() {
 }
 
 function registerCommand(command: (_: any) => any, name?: string) {
-	return vscode.commands.registerCommand(commandId(command, name), command);
+	return vscode.commands.registerCommand(commandId(name ?? command), command);
 }
 
 /**
@@ -571,6 +584,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(gotoLine),
 		registerCommand(gotoLineSelect),
 		registerCommand(findText),
+		registerCommand(cut),
 		registerCommand(yank),
 		registerCommand(paste),
 		registerCommand(deleteSelection, "delete"),
