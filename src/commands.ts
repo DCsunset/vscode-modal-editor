@@ -297,8 +297,8 @@ export function findText(args: FindTextArgs) {
 		const gotoPos = (lineNum: number, pos: number) => {
 			let newPos = new vscode.Position(lineNum, pos);
 
-			// Add one since end position is not inclusive in vscode
-			if (!args.backward)
+			// Add one if the range is not inclusive
+			if (!args.backward && !appState.config.misc.inclusiveRange)
 				newPos = newPos.translate(0, 1);
 			
 			// Move to the text instead of till the text
@@ -496,7 +496,7 @@ export async function paste(args?: PasteArgs) {
 /// Cut: yank + delete
 async function cut(args?: YankArgs) {
 	if (args && !isYankArgs(args)) {
-		vscode.window.showErrorMessage(`Modal Editor: cutk: invalid arguments`);
+		vscode.window.showErrorMessage(`Modal Editor: cut: invalid arguments`);
 		return;
 	}
 
