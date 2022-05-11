@@ -112,7 +112,8 @@ module.exports = {
 			},
 			f: "workbench.action.quickOpen",
 			b: "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
-			k: "editor.action.showHover"
+			k: "editor.action.showHover",
+			"?": "workbench.action.showCommands"
 		},
 		
 		// search
