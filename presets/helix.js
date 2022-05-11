@@ -16,7 +16,7 @@ module.exports = {
 		u: repeatable("undo"),
 		U: repeatable("redo"),
 		c: [
-			"deleteRight",
+			"modalEditor.cut",
 			"modalEditor.setInsertMode"
 		],
 		/* Mutli-cursor
@@ -43,8 +43,7 @@ module.exports = {
 		">": repeatable("editor.action.indentLines"),
 		y: "modalEditor.yank",
 		d: [
-			"modalEditor.yank",
-			"modalEditor.delete",
+			"modalEditor.cut",
 			"modalEditor.setNormalMode"
 		],
 		p: "modalEditor.paste",
