@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.0.0...v1.1.0) (2022-05-11)
+
+
+### Features
+
+* add cut command ([a845532](https://github.com/DCsunset/vscode-modal-editor/commit/a845532b42401ba88a478bae15609f9fa0fca96f))
+* add moveHalfPage command ([86e7bd3](https://github.com/DCsunset/vscode-modal-editor/commit/86e7bd3eb88626d2257d8b54569cb5e6c206cd99))
+
+
+### Bug Fixes
+
+* add command palette in helix preset ([eba3c75](https://github.com/DCsunset/vscode-modal-editor/commit/eba3c754eb9d7585940ee72b95351b6a12a5bcb5))
+* fix cut motion in helix preset ([9968e85](https://github.com/DCsunset/vscode-modal-editor/commit/9968e85500b03a812324a868020321ababa87048))
+* fix delete command in helix preset ([31f9ef2](https://github.com/DCsunset/vscode-modal-editor/commit/31f9ef222afacfe440bcb94658a881681a71e629))
+* fix goto mode in helix preset ([6029ae4](https://github.com/DCsunset/vscode-modal-editor/commit/6029ae443c993cdb9d6855eb57eb8e362e577075))
+* split moveHalfPage into two commands ([084b01c](https://github.com/DCsunset/vscode-modal-editor/commit/084b01c87a4b8d191494b9eda5d549784c62f1f4))
+
 ## [1.0.0](https://github.com/DCsunset/vscode-modal-editor/compare/v0.9.0...v1.0.0) (2022-05-05)
 
 
