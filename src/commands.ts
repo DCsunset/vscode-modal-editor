@@ -4,7 +4,7 @@ import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
 import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
 import { isCommand } from "./actions.guard";
-import { isFindTextArgs, isYankArgs, isPasteArgs, isMoveHalfPageArgs } from "./commands.guard";
+import { isFindTextArgs, isYankArgs, isPasteArgs } from "./commands.guard";
 
 /// Current app state
 let appState: AppState;
@@ -502,24 +502,11 @@ function createPosition(editor: vscode.TextEditor, line: number, character: numb
 	return new vscode.Position(line, character);
 }
 
-/**
- * Args for moveHalfPage
- * 
- * @see {isMoveHalfPageArgs} ts-auto-guard:type-guard
- */
-export type MoveHalfPageArgs = {
-	direction: "up" | "down"
-};
 
 /**
  * Move half page up or down
  */
-export function moveHalfPage(args: MoveHalfPageArgs) {
-	if (!isMoveHalfPageArgs(args)) {
-		vscode.window.showErrorMessage(`Modal Editor: moveHalfPage: invalid arguments`);
-		return;
-	}
-
+function moveHalfPage(direction: "up" | "down") {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		const origPos = editor.selection.active;
@@ -527,12 +514,20 @@ export function moveHalfPage(args: MoveHalfPageArgs) {
 		// height of half page
 		const height = Math.ceil((end.line - start.line) / 2);
 		// line delta
-		const delta = args.direction === "up" ? -height : height;
+		const delta = direction === "up" ? -height : height;
 		const newPos = createPosition(editor, origPos.line + delta, origPos.character);
 		// If it's in select mode, the selection will be updated by onSelectionChange
 		editor.selection = new vscode.Selection(newPos, newPos);
 		editor.revealRange(editor.selection);
 	}
+}
+
+function halfPageUp() {
+	moveHalfPage("up");
+}
+
+function halfPageDown() {
+	moveHalfPage("down");
 }
 
 // Execute a command with the current context
@@ -579,7 +574,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(yank),
 		registerCommand(paste),
 		registerCommand(deleteSelection, "delete"),
-		registerCommand(moveHalfPage),
+		registerCommand(halfPageUp),
+		registerCommand(halfPageDown),
 		registerCommand(executeCommand),
 		registerCommand(resetState),
 		registerCommand(importKeybindings),

@@ -44,6 +44,14 @@
         "title": "Modal Editor: Set mode to command"
       },
       {
+        "command": "modalEditor.halfPageUp",
+        "title": "Modal Editor: Move cursor half page up"
+      },
+      {
+        "command": "modalEditor.halfPageDown",
+        "title": "Modal Editor: Move cursor half page down"
+      },
+      {
         "command": "modalEditor.importKeybindings",
         "title": "Modal Editor: Import keybindings"
       },
