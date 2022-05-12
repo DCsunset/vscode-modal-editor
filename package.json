@@ -55,9 +55,26 @@
     "keybindings": [
       {
         "key": "escape",
-        "command": "modalEditor.setMode",
-        "args": "normal",
+        "command": "modalEditor.setNormalMode",
         "when": "editorTextFocus"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeFindWidget",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && findWidgetVisible"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "hideSuggestWidget",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && suggestWidgetVisible"
       },
       {
         "key": "backspace",
