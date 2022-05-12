@@ -80,8 +80,30 @@ module.exports = {
 			"modalEditor.setInsertMode"
 		],
 		
+		// match mode
+		m: {
+			m: "editor.action.jumpToBracket"
+		},
+
 		// goto mode
 		g: {
+			h: "cursorHome",
+			l: [
+				"cursorEnd",
+				{
+					// move left if it's not the start of line
+					command: "cursorLeft",
+					when: "_ctx.pos.character > 0"
+				}
+			],
+			g: {
+				command: "modalEditor.gotoLine",
+				// line number is prefix count
+				computedArgs: true,
+				args: "_ctx.count"
+			},
+			e: "cursorBottom",
+			".": "workbench.action.navigateToLastEditLocation",
 			p: "workbench.action.previousEditor",
 			n: "workbench.action.nextEditor",
 			d: "editor.action.revealDefinition"
@@ -121,6 +143,7 @@ module.exports = {
 		n: "editor.action.nextMatchFindAction",
 		N: "editor.action.previousMatchFindAction"
 	},
+
 	normal: {
 		// replace the character at the cursor
 		r: {
@@ -228,26 +251,6 @@ module.exports = {
 			])
 		},
 	
-		// goto mode
-		g: {
-			h: "cursorHome",
-			l: [
-				"cursorEnd",
-				{
-					// move left if it's not the start of line
-					command: "cursorLeft",
-					when: "_ctx.pos.character > 0"
-				}
-			],
-			g: {
-				command: "modalEditor.gotoLine",
-				// line number is prefix count
-				computedArgs: true,
-				args: "_ctx.count"
-			},
-			e: "cursorBottom",
-		},
-	
 		// set to select mode
 		v: "modalEditor.setSelectMode"
 	},
@@ -313,32 +316,7 @@ module.exports = {
 				}`
 			})
 		},
-
-		// goto mode
-		g: {
-			h: "cursorHomeSelect",
-			l: [
-				"cursorEndSelect",
-				{
-					// move left if it's not the start of line
-					command: "cursorLeftSelect",
-					when: "_ctx.pos.character > 0"
-				}
-			],
-			g: {
-				command: "modalEditor.gotoLineSelect",
-				// line number is prefix count
-				computedArgs: true,
-				args: "_ctx.count"
-			},
-			e: "cursorBottomSelect",
-		},
-
-		// match mode
-		m: {
-			m: "editor.action.jumpToBracketSelect"
-		},
-		
+	
 		// set back to normal mode
 		v: "modalEditor.setNormalMode"
 	},
