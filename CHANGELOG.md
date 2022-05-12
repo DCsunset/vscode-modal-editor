@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/DCsunset/vscode-modal-editor/compare/v1.1.1...v1.1.2) (2022-05-12)
+
+
+### Bug Fixes
+
+* close widgets when pressing escape ([e39ca86](https://github.com/DCsunset/vscode-modal-editor/commit/e39ca8638777b78f0e62566d10dbacbc2d23d7ad))
+* fix goto mode in helix preset ([a0f6360](https://github.com/DCsunset/vscode-modal-editor/commit/a0f6360c105ec8c6247ef26d263de21bab9b66c8))
+* optimize helix preset ([e676c7f](https://github.com/DCsunset/vscode-modal-editor/commit/e676c7f657f4a61d997205839aa8ac98be97036a))
+
 ### [1.1.1](https://github.com/DCsunset/vscode-modal-editor/compare/v1.1.0...v1.1.1) (2022-05-11)
 
 
