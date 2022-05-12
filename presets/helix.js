@@ -87,15 +87,6 @@ module.exports = {
 
 		// goto mode
 		g: {
-			h: "cursorHome",
-			l: [
-				"cursorEnd",
-				{
-					// move left if it's not the start of line
-					command: "cursorLeft",
-					when: "_ctx.pos.character > 0"
-				}
-			],
 			g: {
 				command: "modalEditor.gotoLine",
 				// line number is prefix count
@@ -250,6 +241,19 @@ module.exports = {
 				}
 			])
 		},
+
+		// goto mode
+		g: {
+			h: "cursorHome",
+			l: [
+				"cursorEnd",
+				{
+					// move left if it's not the start of line
+					command: "cursorLeft",
+					when: "_ctx.pos.character > 0"
+				}
+			],
+		},
 	
 		// set to select mode
 		v: "modalEditor.setSelectMode"
@@ -315,6 +319,19 @@ module.exports = {
 					select: true
 				}`
 			})
+		},
+
+		// goto mode
+		g: {
+			h: "cursorHomeSelect",
+			l: [
+				"cursorEndSelect",
+				{
+					// move left if it's not the start of line
+					command: "cursorLeftSelect",
+					when: "_ctx.pos.character > 0"
+				}
+			]
 		},
 	
 		// set back to normal mode
