@@ -79,6 +79,14 @@ module.exports = {
 			"editor.action.insertLineBefore",
 			"modalEditor.setInsertMode"
 		],
+		G: {
+			command: "modalEditor.gotoLine",
+			// line number is prefix count
+			computedArgs: true,
+			args: "_ctx.count",
+			// only when there is a prefix count
+			when: "_ctx.count !== undefined"
+		},
 		
 		// match mode
 		m: {
@@ -91,7 +99,7 @@ module.exports = {
 				command: "modalEditor.gotoLine",
 				// line number is prefix count
 				computedArgs: true,
-				args: "_ctx.count"
+				args: "_ctx.count || 1"
 			},
 			e: "cursorBottom",
 			".": "workbench.action.navigateToLastEditLocation",
