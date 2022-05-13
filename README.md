@@ -74,7 +74,6 @@ They are listed as follows:
 | `modalEditor.setCommandMode` | - | Set to command mode |
 | `modalEditor.setKeys` | `string` | Change current key sequence without applying it. Value should be a js expression (useful for modifying unexecuted commands) |
 | `modalEditor.gotoLine` | `number` | Go to the specified line |
-| `modalEditor.gotoLineSelect` | `number` | Go to the specified line and select content in between |
 | `modalEditor.findText` | `FindTextArgs` | Find and move cursor to text |
 | `modalEditor.cut` | `YankArgs` | Cut the selection to a register |
 | `modalEditor.yank` | `YankArgs` | Yank the selection to a register |
@@ -204,7 +203,7 @@ type Context = {
 	// Key sequence to invoke this command or unexecuted keys
 	keys: string,
 	// Count of the current command
-	count: number,
+	count?: number,
 	// cursor position before last command (undefined only when no editor is available)
 	lastPos: vscode.Position | undefined,
 	// current cursor position
