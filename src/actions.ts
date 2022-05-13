@@ -57,13 +57,13 @@ export type CommandContext = {
 	/// Key sequence to invoke this command or unexecuted keys
 	keys: string,
 	/// Count of the current command
-	count: number
+	count?: number
 };
 
 /// Register to store yanked contents
 export type Registers = {
 	[reg: string]: string
-}
+};
 
 /**
  * @see {isCommandList} ts-auto-guard:type-guard
@@ -185,7 +185,7 @@ export class AppState {
 		else if (isComplexCommand(command)) {
 			// Execute it if when is not defined or condition is true
 			if (!command.when || this.jsEval(command.when, ctx)) {
-				const count = command.count ? this.jsEval(command.count, ctx) : 1;
+				const count = (command.count && this.jsEval(command.count, ctx)) ?? 1;
 				if (!Number.isInteger(count)) {
 					vscode.window.showErrorMessage(`Invalid count for command ${command.command}`);
 					return;

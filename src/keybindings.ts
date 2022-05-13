@@ -10,7 +10,7 @@ import { KeyError } from "./error";
  */
 export type Keymap = {
 	[key: string]: Keymap | Command
-}
+};
 
 /**
  * There are multiple modes in the key bindings.
@@ -20,7 +20,7 @@ export type Keymap = {
  */
 export type Keybindings = {
 	[mode: string]: Keymap | undefined
-}
+};
 
 function getFromKeymap(keymap: Keymap | undefined, key: string) {
 	if (keymap) {
@@ -76,7 +76,7 @@ export class KeyEventHandler {
 		return {
 			keys: this.keys,
 			// default count is 1
-			count: this.count.length === 0 ? 1 : parseInt(this.count)
+			count: this.count.length === 0 ? undefined: parseInt(this.count)
 		};
 	}
 	
