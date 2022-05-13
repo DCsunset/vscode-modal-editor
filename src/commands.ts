@@ -241,30 +241,6 @@ export function gotoLine(num: number) {
 };
 
 /**
- * Go to a specified line and select text
- */
-export function gotoLineSelect(num: number) {
-	const editor = vscode.window.activeTextEditor;
-	if (editor) {
-		const lineCount = editor.document.lineCount;
-		const line = num < lineCount ? num : lineCount;
-		const range = editor.document.lineAt(line-1).range;
-		// The position to go to (focus)
-		const nextPos = range.start;
-		// current position
-		let curPos = editor.selection.start;
-		if (nextPos.isBeforeOrEqual(curPos)) {
-			// include the current char if nextPos is before or equal
-			curPos = curPos.translate(0, 1);
-		}
-		
-		// update selection (nextPos is active)
-		editor.selection = new vscode.Selection(curPos, nextPos);
-		editor.revealRange(range);
-	}
-};
-
-/**
  * Args for findText command
  * 
  * @see {isFindTextArgs} ts-auto-guard:type-guard
@@ -582,7 +558,6 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(setCommandMode),
 		registerCommand(setKeys),
 		registerCommand(gotoLine),
-		registerCommand(gotoLineSelect),
 		registerCommand(findText),
 		registerCommand(cut),
 		registerCommand(yank),
