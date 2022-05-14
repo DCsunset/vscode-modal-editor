@@ -6,9 +6,9 @@ Customizable extension to turn VS Code into a modal editor.
 
 ## Installation
 
-Currently it is published on [Open VSX](https://open-vsx.org/extension/DCsunset/vscode-modal-editor),
-which is believed to be a vendor-neutral
-open-source alternative to the Visual Studio Marketplace.
+This extension is published on both [Open VSX](https://open-vsx.org/extension/DCsunset/vscode-modal-editor)
+and [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=DCsunset.vscode-modal-editor).
+You can install it via either registry.
 
 You can also download the extension directly from GitHub [releases](https://github.com/DCsunset/vscode-modal-editor/releases).
 
