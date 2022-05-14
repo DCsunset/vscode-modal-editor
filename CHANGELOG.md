@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.1.2...v1.2.0) (2022-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set count to undefined if no prefix
+
+### Features
+
+* add G motion and fix gotoLine command ([0b1d647](https://github.com/DCsunset/vscode-modal-editor/commit/0b1d647232c98d2b73cd197ddce6f133d34b6772))
+* set count to undefined if no prefix ([b2202b8](https://github.com/DCsunset/vscode-modal-editor/commit/b2202b8a59d8c5418ccee5debb13486b6e892414))
+
+
+### Bug Fixes
+
+* remove gotoLineSelect command ([2da91c0](https://github.com/DCsunset/vscode-modal-editor/commit/2da91c04f1eeac05d9cb4297812a1ad1ce727738))
+
 ### [1.1.2](https://github.com/DCsunset/vscode-modal-editor/compare/v1.1.1...v1.1.2) (2022-05-12)
 
 
