@@ -1,6 +1,7 @@
 # vscode-modal-editor
 
-[![version](https://badgen.net/open-vsx/version/DCsunset/vscode-modal-editor)](https://open-vsx.org/extension/DCsunset/vscode-modal-editor)
+[![Open VSX](https://badgen.net/open-vsx/version/DCsunset/vscode-modal-editor?label=Open%20VSX)](https://open-vsx.org/extension/DCsunset/vscode-modal-editor)
+[![VS Marketplace](https://badgen.net/vs-marketplace/v/DCsunset.vscode-modal-editor)](https://marketplace.visualstudio.com/items?itemName=DCsunset.vscode-modal-editor)
 
 Customizable extension to turn VS Code into a modal editor.
 
