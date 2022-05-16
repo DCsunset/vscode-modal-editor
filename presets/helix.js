@@ -139,8 +139,26 @@ module.exports = {
 		
 		// search
 		"/": "actions.find",
-		n: "editor.action.nextMatchFindAction",
-		N: "editor.action.previousMatchFindAction"
+		n: [
+			// move right to find the next instead of current
+			"cursorRight",
+			"editor.action.nextMatchFindAction",
+			{
+				// move left because of inclusive range
+				command: "cursorLeftSelect",
+				when: "!_ctx.selection.isEmpty"
+			}
+		],
+		N: [
+			// move right to find the next instead of current
+			"cursorRight",
+			"editor.action.previousMatchFindAction",
+			{
+				// move left because of inclusive range
+				command: "cursorLeftSelect",
+				when: "!_ctx.selection.isEmpty"
+			}
+		]
 	},
 
 	normal: {
