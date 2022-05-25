@@ -41,7 +41,10 @@ module.exports = {
 		]),
 		"<": repeatable("editor.action.outdentLines"),
 		">": repeatable("editor.action.indentLines"),
-		y: "modalEditor.yank",
+		y: [
+			"modalEditor.yank",
+			"modalEditor.setNormalMode"
+		],
 		d: [
 			"modalEditor.cut",
 			"modalEditor.setNormalMode"
