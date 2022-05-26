@@ -171,7 +171,8 @@ export async function setMode(mode: string) {
 	try {
 		appState.setMode(mode);
 		// cancel selection or inserting may replace selected texts.
-		await vscode.commands.executeCommand("cancelSelection");
+		if (mode === INSERT)
+			await vscode.commands.executeCommand("cancelSelection");
 		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 		if (mode === INSERT) {
 			if (typeCommandSubscription) {
