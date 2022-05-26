@@ -63,7 +63,7 @@ module.exports = {
 		// into insert mode
 		i: "modalEditor.setInsertMode",
 		I: [
-			"cursorHome",
+			"cursorLineStart",
 			"modalEditor.setInsertMode"
 		],
 		a: [
@@ -71,7 +71,7 @@ module.exports = {
 			"modalEditor.setInsertMode"
 		],
 		A: [
-			"cursorEnd",
+			"cursorLineEnd",
 			"modalEditor.setInsertMode"
 		],
 		o: [
@@ -114,12 +114,15 @@ module.exports = {
 		// space mode
 		" ": {
 			// yank to clipboard
-			y: {
-				command: "modalEditor.yank",
-				args: {
-					register: ""
-				}
-			},
+			y: [
+				{
+					command: "modalEditor.yank",
+					args: {
+						register: ""
+					}
+				},
+				"modalEditor.setNormalMode"
+			],
 			// paste from clipbard
 			p: {
 				command: "modalEditor.paste",
@@ -273,9 +276,9 @@ module.exports = {
 
 		// goto mode
 		g: {
-			h: "cursorHome",
+			h: "cursorLineStart",
 			l: [
-				"cursorEnd",
+				"cursorLineEnd",
 				{
 					// move left if it's not the start of line
 					command: "cursorLeft",
@@ -352,9 +355,9 @@ module.exports = {
 
 		// goto mode
 		g: {
-			h: "cursorHomeSelect",
+			h: "cursorLineStartSelect",
 			l: [
-				"cursorEndSelect",
+				"cursorLineEndSelect",
 				{
 					// move left if it's not the start of line
 					command: "cursorLeftSelect",
