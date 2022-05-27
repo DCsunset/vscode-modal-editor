@@ -167,7 +167,15 @@ module.exports = {
 				command: "cursorLeftSelect",
 				when: "!_ctx.selection.isEmpty"
 			}
-		]
+		],
+
+		// Unimpaired
+		"[": {
+			d: "editor.action.marker.prev",
+		},
+		"]": {
+			d: "editor.action.marker.next",
+		},
 	},
 
 	normal: {
