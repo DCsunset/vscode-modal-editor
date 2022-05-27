@@ -62,10 +62,19 @@
         "key": "escape",
         "command": "modalEditor.executeCommand",
         "args": [
-          "closeFindWidget",
+          "cancelLinkedEditingInput",
           "modalEditor.setNormalMode"
         ],
-        "when": "editorFocus && findWidgetVisible"
+        "when": "LinkedEditingInputVisible && editorTextFocus"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "cancelRenameInput",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && renameInputVisible"
       },
       {
         "key": "escape",
@@ -75,6 +84,60 @@
           "modalEditor.setNormalMode"
         ],
         "when": "editorFocus && suggestWidgetVisible"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeAccessibilityHelp",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "accessibilityHelpWidgetVisible && editorFocus"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeBreakpointWidget",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && breakpointWidgetVisible"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeDirtyDiff",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "dirtyDiffVisible"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeFindWidget",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && findWidgetVisible"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeMarkersNavigation",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && markersNavigationVisible"
+      },
+      {
+        "key": "escape",
+        "command": "modalEditor.executeCommand",
+        "args": [
+          "closeParameterHints",
+          "modalEditor.setNormalMode"
+        ],
+        "when": "editorFocus && parameterHintsVisible"
       },
       {
         "key": "backspace",
