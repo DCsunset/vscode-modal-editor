@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/DCsunset/vscode-modal-editor/compare/v1.2.1...v1.2.2) (2022-05-27)
+
+
+### Features
+
+* add unimpaired keybindings for helix preset ([a2d7a75](https://github.com/DCsunset/vscode-modal-editor/commit/a2d7a7570c7be920e5fb7643ffe0f469f489c8dc))
+
+
+### Bug Fixes
+
+* fix escape keybindings ([8042fe8](https://github.com/DCsunset/vscode-modal-editor/commit/8042fe8430528097184924ac7ab97d6d7338aa1b))
+* fix line expansion in helix preset ([d03c5dc](https://github.com/DCsunset/vscode-modal-editor/commit/d03c5dc5bff6a445bd61e557c41d4c81e208f446))
+* fix search keybindings for helix preset ([341675d](https://github.com/DCsunset/vscode-modal-editor/commit/341675d30e8d57de2bde8b862386a6e595380603))
+
 ## [1.2.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.1.2...v1.2.0) (2022-05-14)
 
 
