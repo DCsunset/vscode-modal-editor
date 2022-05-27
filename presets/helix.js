@@ -33,11 +33,8 @@ module.exports = {
 				when: "_ctx.selection.contains(_ctx.lineAt(_ctx.pos.line).range)"
 			},
 			"expandLineSelection",
-			{
-				// move left when it expands to a new line (because of inclusive range)
-				command: "cursorLeftSelect",
-				when: "!_ctx.lastSelection.contains(_ctx.lineAt(_ctx.lastPos.line).range)"
-			}
+			// move left because it expands to a new line (because of inclusive range)
+			"cursorLeftSelect",
 		]),
 		"<": repeatable("editor.action.outdentLines"),
 		">": repeatable("editor.action.indentLines"),
