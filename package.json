@@ -50,6 +50,30 @@
       {
         "command": "modalEditor.importPreset",
         "title": "Modal Editor: Import keybindings from preset directory"
+      },
+      {
+        "command": "modalEditor.delete",
+        "title": "Modal Editor: Delete current selection"
+      },
+      {
+        "command": "modalEditor.yank",
+        "title": "Modal Editor: Yank current selection to the register"
+      },
+      {
+        "command": "modalEditor.cut",
+        "title": "Modal Editor: Cut current selection to the register"
+      },
+      {
+        "command": "modalEditor.paste",
+        "title": "Modal Editor: Paste from the register"
+      },
+      {
+        "command": "modalEditor.toUpperCase",
+        "title": "Modal Editor: Tranform current selection to upper case"
+      },
+      {
+        "command": "modalEditor.toLowerCase",
+        "title": "Modal Editor: Tranform current selection to lower case"
       }
     ],
     "keybindings": [

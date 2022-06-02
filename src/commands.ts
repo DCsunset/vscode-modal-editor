@@ -481,6 +481,35 @@ async function cut(args?: YankArgs) {
 	await deleteSelection();
 }
 
+/// Transform selected text
+async function transformSelection(
+	transformer: (_: string) => string
+) {
+	const editor = vscode.window.activeTextEditor;
+	if (editor) {
+		await editor.edit(editBuilder => {
+			const selection = getSelection(editor);
+			const text = editor.document.getText(getSelection(editor));
+			editBuilder.replace(selection, transformer(text));
+		});
+	}
+}
+
+/// Tranform current selection to upper case
+async function toUpperCase() {
+	const transformer = (text: string) => (
+		text.toUpperCase()
+	);
+	await transformSelection(transformer);
+}
+
+/// Tranform current selection to lower case
+async function toLowerCase() {
+	const transformer = (text: string) => (
+		text.toLowerCase()
+	);
+	await transformSelection(transformer);
+}
 
 /// Create position with valid line number
 function createPosition(editor: vscode.TextEditor, line: number, character: number) {
@@ -566,6 +595,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(deleteSelection, "delete"),
 		registerCommand(halfPageUp),
 		registerCommand(halfPageDown),
+		registerCommand(toLowerCase),
+		registerCommand(toUpperCase),
 		registerCommand(executeCommand),
 		registerCommand(resetState),
 		registerCommand(importKeybindings),
