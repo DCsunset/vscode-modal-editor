@@ -81,6 +81,8 @@ They are listed as follows:
 | `modalEditor.paste` | `PasteArgs` | Paste content from a register |
 | `modalEditor.halfPageUp` | - | Move cursor half page up |
 | `modalEditor.halfPageDown` | - | Move cursor half page down |
+| `modalEditor.toUpperCase` | - | Tranform current selection to upper case |
+| `modalEditor.toLowerCase` | - | Tranform current selection to lower case |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
 | `modalEditor.resetState` | - | Reset internal state |
 | `modalEditor.importKeybindings` | - | Import keybindings |
