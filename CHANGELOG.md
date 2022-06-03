@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.2.2...v1.3.0) (2022-06-03)
+
+
+### Features
+
+* add case tranformation in helix preset ([66e18cb](https://github.com/DCsunset/vscode-modal-editor/commit/66e18cb206aa213fab51128236fb0002b536a591))
+* add text transformation commands ([0eabe69](https://github.com/DCsunset/vscode-modal-editor/commit/0eabe69e64299f51281273b57bda6741869a1875))
+
 ### [1.2.2](https://github.com/DCsunset/vscode-modal-editor/compare/v1.2.1...v1.2.2) (2022-05-27)
 
 
