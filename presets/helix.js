@@ -53,6 +53,7 @@ module.exports = {
 				before: true
 			}
 		},
+		"`": "modalEditor.toLowerCase",
 
 		// into command mode
 		":": "modalEditor.setCommandMode",
