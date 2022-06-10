@@ -8,8 +8,6 @@ import { isFindTextArgs, isYankArgs, isPasteArgs } from "./commands.guard";
 
 /// Current app state
 let appState: AppState;
-/// Subscription to type command
-let typeCommandSubscription: vscode.Disposable | null = null;
 
 /// Get command id from command function (with an optional name)
 function commandId(command: ((_: any) => any) | string) {
@@ -138,6 +136,7 @@ async function importKeybindings() {
  * The event gets one character each time
  */
 async function onType(event: { text: string }) {
+	appState.log(`Handling event: ${JSON.stringify(event)}`);
 	await appState.handleKey(event.text);
 }
 
@@ -170,22 +169,11 @@ export async function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent
 export async function setMode(mode: string) {
 	try {
 		appState.setMode(mode);
-		// cancel selection or inserting may replace selected texts.
-		if (mode === INSERT)
-			await vscode.commands.executeCommand("cancelSelection");
-		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 		if (mode === INSERT) {
-			if (typeCommandSubscription) {
-				typeCommandSubscription.dispose();
-				typeCommandSubscription = null;
-			}
+			// cancel selection or inserting may replace selected texts.
+			await vscode.commands.executeCommand("cancelSelection");
 		}
-		else {
-			if (!typeCommandSubscription) {
-				// Handle type events
-				typeCommandSubscription = vscode.commands.registerCommand("type", onType);
-			}
-		}
+		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 	}
 	catch (err: any) {
 		vscode.window.showErrorMessage(`Modal Editor: ${err.message}`);
@@ -607,6 +595,8 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(resetState),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
+		// Handle type events
+		vscode.commands.registerCommand("type", onType)
 	);
 		
 	const config = readConfig();

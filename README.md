@@ -83,6 +83,7 @@ They are listed as follows:
 | `modalEditor.halfPageDown` | - | Move cursor half page down |
 | `modalEditor.toUpperCase` | - | Tranform current selection to upper case |
 | `modalEditor.toLowerCase` | - | Tranform current selection to lower case |
+| `modalEditor.replayRecord` | `string` | Replay last recorded key sequence |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
 | `modalEditor.resetState` | - | Reset internal state |
 | `modalEditor.importKeybindings` | - | Import keybindings |
@@ -184,7 +185,9 @@ type ComplexCommand = {
 	/// condition to execute the above command
 	when?: string,
 	/// run this command for count times (a js expression)
-	count?: string
+	count?: string,
+	/// Whether to record the key sequence for this command in a register
+	record?: string
 };
 ```
 

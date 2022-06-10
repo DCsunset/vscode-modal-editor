@@ -78,6 +78,8 @@ export class AppState {
 	registers: Registers;
 	/// record registers for history key sequences
 	records: Registers;
+	/// Last record reg
+	lastRecordReg: string | undefined;
 	/// anchor when entering select mode
 	anchor: vscode.Position | undefined;
 	/// cursor position before last command
@@ -152,17 +154,43 @@ export class AppState {
 
 	async replayRecord(reg: string) {
 		const record = this.records[reg];
-		for (const key of record) {
-			await this.handleKey(key);
+		if (record) {
+			for (const key of record) {
+				await this.handleKey(key);
+			}
+			this.setMode(NORMAL);
 		}
 	}
 	
 	async handleKey(key: string) {
 		try {
+			if (this.mode === INSERT) {
+				if (this.lastRecordReg) {
+					// record the keys in insert mode as well
+					// if the last command is recorded
+					this.records[this.lastRecordReg] += key;
+				}
+
+				// call default handler for type
+				vscode.commands.executeCommand("default:type", {
+					text: key
+				});
+				return;
+			}
+
 			const result = this.keyEventHandler.handle(key);
 			if (result) {
 				const previousMode = this.mode;
 				const { command, ctx } = result;
+				// Record key sequence that triggers this command
+				if (isComplexCommand(command) && command.record) {
+					this.records[command.record] = ctx.keys;
+					this.lastRecordReg = command.record;
+				}
+				else {
+					this.lastRecordReg = undefined;
+				}
+
 				await this.executeCommand(command, ctx);
 
 				// Exit command mode if previous and current modes are command
@@ -194,11 +222,6 @@ export class AppState {
 			await this.executeVSCommand(command);
 		}
 		else if (isComplexCommand(command)) {
-			// Record key sequence that triggers this command
-			if (command.record) {
-				this.records[command.record] = ctx.keys;
-			}
-
 			// Execute it if when is not defined or condition is true
 			if (!command.when || this.jsEval(command.when, ctx)) {
 				const count = (command.count && this.jsEval(command.count, ctx)) ?? 1;
