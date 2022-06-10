@@ -10,6 +10,19 @@ function repeatable(command) {
 	};
 }
 
+// record command to a register
+function record(command, reg) {
+	return {
+		command,
+		record: reg
+	};
+}
+
+// record change
+const recordChange = command => record(command, "change");
+// record motion
+const recordMotion = command => record(command, "motion");
+
 module.exports = {
 	// Common keybindings (except for insert mode)
 	"": {
@@ -57,29 +70,36 @@ module.exports = {
 
 		// into command mode
 		":": "modalEditor.setCommandMode",
+		
+		// replay last change
+		".": {
+			command: "modalEditor.replayRecord",
+			args: "change"
+		},
 
-		// into insert mode
-		i: "modalEditor.setInsertMode",
-		I: [
+		// Changes
+		i: recordChange("modalEditor.setInsertMode"),
+		I: recordChange([
 			"cursorLineStart",
 			"modalEditor.setInsertMode"
-		],
-		a: [
+		]),
+		a: recordChange([
 			"cursorRight",
 			"modalEditor.setInsertMode"
-		],
-		A: [
+		]),
+		A: recordChange([
 			"cursorLineEnd",
 			"modalEditor.setInsertMode"
-		],
-		o: [
+		]),
+		o: recordChange([
 			"editor.action.insertLineAfter",
 			"modalEditor.setInsertMode"
-		],
-		O: [
+		]),
+		O: recordChange([
 			"editor.action.insertLineBefore",
 			"modalEditor.setInsertMode"
-		],
+		]),
+
 		G: {
 			command: "modalEditor.gotoLine",
 			// line number is prefix count
@@ -229,8 +249,10 @@ module.exports = {
 			"cancelSelection",
 			"cursorWordStartLeftSelect"
 		]),
+		
+		// Motions
 		f: {
-			"": repeatable([
+			"": recordMotion(repeatable([
 				"cancelSelection",
 				{
 					command: "modalEditor.findText",
@@ -240,10 +262,10 @@ module.exports = {
 						select: true
 					}`
 				}
-			])
+			]))
 		},
 		F: {
-			"": repeatable([
+			"": recordMotion(repeatable([
 				"cancelSelection",
 				{
 					command: "modalEditor.findText",
@@ -254,10 +276,10 @@ module.exports = {
 						select: true
 					}`
 				}
-			])
+			]))
 		},
 		t: {
-			"": repeatable([
+			"": recordMotion(repeatable([
 				"cancelSelection",
 				{
 					command: "modalEditor.findText",
@@ -268,10 +290,10 @@ module.exports = {
 						select: true
 					}`
 				}
-			])
+			]))
 		},
 		T: {
-			"": repeatable([
+			"": recordMotion(repeatable([
 				"cancelSelection",
 				{
 					command: "modalEditor.findText",
@@ -283,7 +305,7 @@ module.exports = {
 						select: true
 					}`
 				}
-			])
+			]))
 		},
 
 		// goto mode
