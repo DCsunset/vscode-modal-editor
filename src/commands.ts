@@ -549,6 +549,11 @@ function halfPageDown() {
 	moveHalfPage("down");
 }
 
+/// Replay a record from a register (key sequence)
+async function replayRecord(reg: string) {
+	await appState.replayRecord(reg);
+}
+
 // Execute a command with the current context
 export async function executeCommand(command: Command) {
 	if (!isCommand(command)) {
@@ -597,6 +602,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(halfPageDown),
 		registerCommand(toLowerCase),
 		registerCommand(toUpperCase),
+		registerCommand(replayRecord),
 		registerCommand(executeCommand),
 		registerCommand(resetState),
 		registerCommand(importKeybindings),

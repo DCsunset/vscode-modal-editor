@@ -30,7 +30,9 @@ export function isComplexCommand(obj: any, _argumentName?: string): obj is Compl
         (typeof obj.when === "undefined" ||
             isSimpleCommand(obj.when) as boolean) &&
         (typeof obj.count === "undefined" ||
-            isSimpleCommand(obj.count) as boolean)
+            isSimpleCommand(obj.count) as boolean) &&
+        (typeof obj.record === "undefined" ||
+            isSimpleCommand(obj.record) as boolean)
     )
 }
 
@@ -40,7 +42,8 @@ export function isCommandContext(obj: any, _argumentName?: string): obj is Comma
             typeof obj === "object" ||
             typeof obj === "function") &&
         isSimpleCommand(obj.keys) as boolean &&
-        typeof obj.count === "number"
+        (typeof obj.count === "undefined" ||
+            typeof obj.count === "number")
     )
 }
 

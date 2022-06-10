@@ -7,8 +7,6 @@ import {
 import { KeyEventHandler } from "./keybindings";
 import { Config, getStyle, cursorStyleMap } from "./config";
 import { KeyError } from "./error";
-import { getSelection } from "./commands";
-
 
 /**
  * Standard modes
@@ -45,7 +43,9 @@ export type ComplexCommand = {
 	/// condition to execute the above command
 	when?: string,
 	/// run this command for count times (a js expression)
-	count?: string
+	count?: string,
+	/// Whether to record the key sequence for this command in a register
+	record?: string
 };
 
 /**
@@ -74,12 +74,15 @@ export class AppState {
 	// Allow initialization in a method
 	keyEventHandler!: KeyEventHandler;
 	mode!: string;
+	/// registers for copy/paste
 	registers: Registers;
-	// anchor when entering select mode
+	/// record registers for history key sequences
+	records: Registers;
+	/// anchor when entering select mode
 	anchor: vscode.Position | undefined;
-	// cursor position before last command
+	/// cursor position before last command
 	lastPos: vscode.Position | undefined;
-	// selection before last command
+	/// selection before last command
 	lastSelection: vscode.Selection | undefined;
 	
 	constructor(
@@ -90,6 +93,7 @@ export class AppState {
 		public keyStatusBar: vscode.StatusBarItem
 	) {
 		this.registers = {};
+		this.records = {};
 		this.setMode(mode);
 	}
 
@@ -145,6 +149,13 @@ export class AppState {
 			mode === COMMAND
 		);
 	}
+
+	async replayRecord(reg: string) {
+		const record = this.records[reg];
+		for (const key of record) {
+			await this.handleKey(key);
+		}
+	}
 	
 	async handleKey(key: string) {
 		try {
@@ -183,6 +194,11 @@ export class AppState {
 			await this.executeVSCommand(command);
 		}
 		else if (isComplexCommand(command)) {
+			// Record key sequence that triggers this command
+			if (command.record) {
+				this.records[command.record] = ctx.keys;
+			}
+
 			// Execute it if when is not defined or condition is true
 			if (!command.when || this.jsEval(command.when, ctx)) {
 				const count = (command.count && this.jsEval(command.count, ctx)) ?? 1;
