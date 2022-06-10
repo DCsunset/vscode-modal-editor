@@ -44,7 +44,10 @@ export type ComplexCommand = {
 	when?: string,
 	/// run this command for count times (a js expression)
 	count?: string,
-	/// Whether to record the key sequence for this command in a register
+	/**
+	 * Whether to record the key sequence for this command in a register
+	 * (only works for top-level command)
+	 */
 	record?: string
 };
 
