@@ -136,7 +136,6 @@ async function importKeybindings() {
  * The event gets one character each time
  */
 async function onType(event: { text: string }) {
-	appState.log(`Handling event: ${JSON.stringify(event)}`);
 	await appState.handleKey(event.text);
 }
 
@@ -210,7 +209,6 @@ export function setKeys(expr: string) {
 		vscode.window.showErrorMessage("Modal Editor:");
 		return;
 	}
-	appState.log(`Set keys to: "${keys}"`);
 	appState.keyEventHandler.setKeys(keys);
 }
 
