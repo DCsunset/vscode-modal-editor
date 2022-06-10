@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.3.0...v1.4.0) (2022-06-10)
+
+
+### Features
+
+* add record and replay ([354ccf4](https://github.com/DCsunset/vscode-modal-editor/commit/354ccf43ed52b6b2a0d80f65a1d9b82099fa3ac0))
+* add record and replay keymaps in helix preset ([5623851](https://github.com/DCsunset/vscode-modal-editor/commit/5623851c912d9faaa8a31f4389c4e1848bb31006))
+* support recording keys in insert mode ([ab47279](https://github.com/DCsunset/vscode-modal-editor/commit/ab4727909dff18df1b5a0f15ac66e0cace5707c6))
+
 ## [1.3.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.2.2...v1.3.0) (2022-06-03)
 
 
