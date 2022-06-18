@@ -28,10 +28,6 @@ module.exports = {
 	"": {
 		u: repeatable("undo"),
 		U: repeatable("redo"),
-		c: [
-			"modalEditor.cut",
-			"modalEditor.setInsertMode"
-		],
 		/* Mutli-cursor
 		 * (for insert cursor above, use keybindings.json for Alt-Shift-C)
 		 */
@@ -78,6 +74,10 @@ module.exports = {
 		},
 
 		// Changes
+		c: recordChange([
+			"modalEditor.cut",
+			"modalEditor.setInsertMode"
+		]),
 		i: recordChange("modalEditor.setInsertMode"),
 		I: recordChange([
 			"cursorLineStart",
