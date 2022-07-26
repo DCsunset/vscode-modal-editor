@@ -64,7 +64,13 @@ export type CommandContext = {
 };
 
 /// Register to store yanked contents
-export type Registers = {
+export type YankRegisters = {
+	// A list of strings for multi-cursor yanking
+	[reg: string]: string[]
+};
+
+/// Register to store records
+export type RecordRegisters = {
 	[reg: string]: string
 };
 
@@ -78,9 +84,9 @@ export class AppState {
 	keyEventHandler!: KeyEventHandler;
 	mode!: string;
 	/// registers for copy/paste
-	registers: Registers;
+	registers: YankRegisters;
 	/// record registers for history key sequences
-	records: Registers;
+	records: RecordRegisters;
 	/// Last record reg
 	lastRecordReg: string | undefined;
 	/// anchor when entering select mode

@@ -325,21 +325,23 @@ export function findText(args: FindTextArgs) {
  * Get current editor's selection
  * Always include the character under cursor if inclusiveRange
  */
-export function getSelection(editor: vscode.TextEditor): vscode.Range {
-	let { active, start, end } = editor.selection;
-	const activeRange = new vscode.Range(active, active.translate(0, 1));
-	if (appState.config.misc.inclusiveRange && !editor.selection.contains(activeRange)) {
-		// always include the character under cursor
-		const line = editor.document.lineAt(end.line);
-		if (line.range.end.isEqual(end)) {
-			// include the newline character
-			end = line.rangeIncludingLineBreak.end;
+export function getSelections(editor: vscode.TextEditor): vscode.Range[] {
+	return editor.selections.map(selection => {
+		let { active, start, end } = selection;
+		const activeRange = new vscode.Range(active, active.translate(0, 1));
+		if (appState.config.misc.inclusiveRange && !editor.selection.contains(activeRange)) {
+			// always include the character under cursor
+			const line = editor.document.lineAt(end.line);
+			if (line.range.end.isEqual(end)) {
+				// include the newline character
+				end = line.rangeIncludingLineBreak.end;
+			}
+			else
+				end = end.translate(0, 1);
 		}
-		else
-			end = end.translate(0, 1);
-	}
-	const range = new vscode.Range(start, end);
-	return range;
+		const range = new vscode.Range(start, end);
+		return range;
+	});
 }
 
 
@@ -367,26 +369,27 @@ export async function yank(args?: YankArgs) {
 
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
-		const text = editor.document.getText(getSelection(editor));
+		const texts = getSelections(editor).map(editor.document.getText);
 		const reg = args?.register ?? '"';
 		// yank to clipboard if reg is empty
 		if (reg === "") {
-			await vscode.env.clipboard.writeText(text);
+			await vscode.env.clipboard.writeText(texts.join("\n"));
 		}
 		else {
-			appState.registers[reg] = text;
+			appState.registers[reg] = texts;
 		}
 	}
 }
 
 /**
- * Delete current selection
+ * Delete selection
  */
-export async function deleteSelection() {
+export async function deleteSelections() {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		await editor.edit(editBuilder => {
-			editBuilder.delete(getSelection(editor));
+			getSelections(editor)
+				.forEach(sel => editBuilder.delete(sel));
 		});
 	}
 }
@@ -418,11 +421,12 @@ export async function paste(args?: PasteArgs) {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		const reg = args?.register ?? '"';
-		// read from clipboard if reg is empty
-		const text = reg === ""
-			? await vscode.env.clipboard.readText()
+		// If from clipboard, use it for all selections
+		// Otherwise, use corresponding selection
+		const texts = reg === ""
+			? [await vscode.env.clipboard.readText()]
 			: appState.registers[reg];
-		if (!text) {
+		if (!texts) {
 			// empty register
 			return;
 		}
@@ -430,28 +434,32 @@ export async function paste(args?: PasteArgs) {
 		// insert
 		await editor.edit(editBuilder => {
 			// insert before or after the current selection
-			const selection = getSelection(editor);
-			let pos = args?.before ? selection.start : selection.end;
-			// paste in previous or next line if content ends with newline
-			// (which means copy a line)
-			if (text.endsWith("\n")) {
-				let lineNum = pos.line;
-				// If char === 0 at selection.end, the cursor is at the previous line
-				if (pos.character === 0 && !args?.before)
-					lineNum--;
-				const curLine = editor.document.lineAt(lineNum).rangeIncludingLineBreak;
+			getSelections(editor)
+				.forEach((selection, i) => {
+					let pos = args?.before ? selection.start : selection.end;
+					const text = texts[Math.min(i, texts.length-1)];
 
-				if (args?.before) {
-					// move to start of line
-					pos = curLine.start;
-				}
-				else {
-					// move to end of line
-					pos = curLine.end;
-				}
-			}
-			
-			editBuilder.insert(pos, text);
+					// paste in previous or next line if content ends with newline
+					// (which means copy a line)
+					if (text.endsWith("\n")) {
+						let lineNum = pos.line;
+						// If char === 0 at selection.end, the cursor is at the previous line
+						if (pos.character === 0 && !args?.before)
+							lineNum--;
+						const curLine = editor.document.lineAt(lineNum).rangeIncludingLineBreak;
+
+						if (args?.before) {
+							// move to start of line
+							pos = curLine.start;
+						}
+						else {
+							// move to end of line
+							pos = curLine.end;
+						}
+					}
+					
+					editBuilder.insert(pos, text);
+				});
 		});
 	}
 }
@@ -464,7 +472,7 @@ async function cut(args?: YankArgs) {
 	}
 
 	await yank(args);
-	await deleteSelection();
+	await deleteSelections();
 }
 
 /// Transform selected text
@@ -474,14 +482,16 @@ async function transformSelection(
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		await editor.edit(editBuilder => {
-			const selection = getSelection(editor);
-			const text = editor.document.getText(getSelection(editor));
-			editBuilder.replace(selection, transformer(text));
+			getSelections(editor)
+				.forEach(selection => {
+					const text = editor.document.getText(selection);
+					editBuilder.replace(selection, transformer(text));
+				});
 		});
 	}
 }
 
-/// Tranform current selection to upper case
+/// Transform current selection to upper case
 async function toUpperCase() {
 	const transformer = (text: string) => (
 		text.toUpperCase()
@@ -489,7 +499,7 @@ async function toUpperCase() {
 	await transformSelection(transformer);
 }
 
-/// Tranform current selection to lower case
+/// Transform current selection to lower case
 async function toLowerCase() {
 	const transformer = (text: string) => (
 		text.toLowerCase()
@@ -583,7 +593,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(cut),
 		registerCommand(yank),
 		registerCommand(paste),
-		registerCommand(deleteSelection, "delete"),
+		registerCommand(deleteSelections, "delete"),
 		registerCommand(halfPageUp),
 		registerCommand(halfPageDown),
 		registerCommand(toLowerCase),
