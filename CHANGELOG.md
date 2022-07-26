@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.4.0...v1.5.0) (2022-07-26)
+
+
+### Features
+
+* support multi-cursor operations ([99c7ef0](https://github.com/DCsunset/vscode-modal-editor/commit/99c7ef06c4ca5eca9becc431cff7f3e7a375e177))
+
+
+### Bug Fixes
+
+* fix helix preset ([e3fc79d](https://github.com/DCsunset/vscode-modal-editor/commit/e3fc79d8ba7d7fadf9c2c8d43abc7aaadaef6519))
+* remove auto generated files from git ([92c5853](https://github.com/DCsunset/vscode-modal-editor/commit/92c5853b74c8fbb53d44ca3cb073f81d752db37f))
+
 ## [1.4.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.3.0...v1.4.0) (2022-06-10)
 
 
