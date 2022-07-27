@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as os from "os";
+import axios from "axios";
 import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
 import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
@@ -21,7 +22,14 @@ function commandId(command: ((_: any) => any) | string) {
 async function loadKeybindings(uri: vscode.Uri) {
 	const fs = vscode.workspace.fs;
 	try {
-		let data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
+		let data: string;
+		if (uri.scheme === "http" || uri.scheme === "https") {
+			const res = await axios.get(uri.toString());
+			data = res.data;
+		}
+		else {
+			data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
+		}
 		if (uri.fsPath.match(/json[5c]?$/))
 			data = `(${data})`;
 
