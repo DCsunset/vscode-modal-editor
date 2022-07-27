@@ -22,6 +22,10 @@ Or you can use the preset in this repository as a start point.
 You can put different keybindings in the preset directory (default is `~/.config/vscode-modal-editor`),
 so that you can switch between them quickly.
 
+To get started, you may want to try the helix preset provided in this repo.
+To load it, import the preset using URI directly:
+<https://raw.githubusercontent.com/DCsunset/vscode-modal-editor/main/presets/helix.js>
+
 
 ## Features
 
