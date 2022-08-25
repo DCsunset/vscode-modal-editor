@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { Keybindings } from "./keybindings";
 import { isKeybindings } from "./keybindings.guard";
 import { isStyles, isMisc } from "./config.guard";
+import { NORMAL } from "./actions";
 
 /**
  * CursorStyle: styles for cursor
@@ -47,6 +48,8 @@ export type Misc = {
 	keyStatusBarPriority: number,
 	/// Preset directory to easily import keybindings
 	presetDirectory: string,
+	/// Default to use when extension starts
+	defaultMode: string
 };
 
 /**
@@ -81,7 +84,8 @@ const defaultMisc: Misc = {
 	ignoreUndefinedKeys: false,
 	modeStatusBarPriority: 0,
 	keyStatusBarPriority: 10000,
-	presetDirectory: "~/.config/vscode-modal-editor"
+	presetDirectory: "~/.config/vscode-modal-editor",
+	defaultMode: NORMAL
 };
 
 export function getStyle(mode: string, styles: Styles) {

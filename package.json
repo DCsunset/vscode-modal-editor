@@ -208,6 +208,11 @@
           "type": "string",
           "description": "Preset directory to easily import keybindings",
           "default": "~/.config/vscode-modal-editor"
+        },
+        "modalEditor.misc.defaultMode": {
+          "type": "boolean",
+          "description": "Preset directory to easily import keybindings",
+          "default": "normal"
         }
       }
     }
