@@ -173,6 +173,10 @@ export async function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent
 	appState.updateStatus(editor);
 }
 
+export async function setDefaultMode() {
+	await setMode(appState.config.misc.defaultMode);
+}
+
 export async function setMode(mode: string) {
 	try {
 		appState.setMode(mode);
@@ -578,7 +582,6 @@ export function onConfigUpdate() {
 	// Read config from file
 	const config = readConfig();
 	appState.updateConfig(config);
-	setMode(NORMAL);
 }
 
 function registerCommand(command: (_: any) => any, name?: string) {

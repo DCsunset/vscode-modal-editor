@@ -130,7 +130,7 @@ export class AppState {
 			...this.config,
 			...config
 		};
-		this.setMode(NORMAL);
+		this.setMode(this.config.misc.defaultMode);
 	}
 	
 	log(message: string) {

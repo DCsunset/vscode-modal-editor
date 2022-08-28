@@ -9,7 +9,7 @@ import * as actions from "./actions";
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 	// Create output channel for this extension
-	const channel = vscode.window.createOutputChannel("Modal Editor")
+	const channel = vscode.window.createOutputChannel("Modal Editor");
 
 	// Register all commands
 	commands.register(context, channel);
@@ -19,8 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidChangeConfiguration(commands.onConfigUpdate)
 	);
 
-	// Set mode to Normal by default
-	commands.setMode(actions.NORMAL);
+	// Set default mode
+	commands.setDefaultMode();
 }
 
 // this method is called when your extension is deactivated
