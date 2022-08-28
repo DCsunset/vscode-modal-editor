@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/DCsunset/vscode-modal-editor/compare/v1.5.1...v1.5.2) (2022-08-28)
+
+
+### Bug Fixes
+
+* fix type for defaultMode ([73d4edf](https://github.com/DCsunset/vscode-modal-editor/commit/73d4edf673a76f64cbb4a283698b4662701ee1be))
+* set default mode on update and startup ([fc6e189](https://github.com/DCsunset/vscode-modal-editor/commit/fc6e189a123d77e144333c032a54f19f27b84c05))
+* support default mode in config ([51ed29d](https://github.com/DCsunset/vscode-modal-editor/commit/51ed29dd64d53bee2554fca8d7cae99d3943c352))
+
 ### [1.5.1](https://github.com/DCsunset/vscode-modal-editor/compare/v1.5.0...v1.5.1) (2022-07-27)
 
 
