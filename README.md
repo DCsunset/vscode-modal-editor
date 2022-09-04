@@ -129,6 +129,28 @@ type PasteArgs = {
 }
 ```
 
+## Settings
+
+Various settings can be found in settings page.
+
+For the default mode, initial valid options are `normal`, `insert`, and `select`.
+If you add custom mode, you can also set it here.
+That's why its type is string instead of enum.
+
+Styles are also customizable for each mode.
+To change the cursor style or status text for a mode, you can add the following settings to `modalEditor.styles`:
+(you can set just one property and the remaining properties are default values)
+
+```json
+{
+	"insert": {
+		"cursorStyle": "line",
+		"statusText": "-- insert --"
+	}
+}
+```
+
+
 
 ## Tutorial to Customize Keybindings
 
