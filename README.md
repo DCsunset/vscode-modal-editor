@@ -150,7 +150,7 @@ To change the cursor style or status text for a mode, you can add the following 
 }
 ```
 
-
+Available cursor styles can be found [here](https://github.com/microsoft/vscode/blob/0b5aad37bd56218493863731950980d1c3a90c26/src/vs/editor/common/config/editorOptions.ts#L223).
 
 ## Tutorial to Customize Keybindings
 
