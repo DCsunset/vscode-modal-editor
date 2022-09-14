@@ -18,6 +18,14 @@ function record(command, reg) {
 	};
 }
 
+// reset previous selections but keep all cursors
+function reselect(command) {
+	return [
+		"modalEditor.clearSelections",
+		command
+	];
+}
+
 // record change
 const recordChange = command => record(command, "change");
 // record motion
@@ -217,25 +225,12 @@ module.exports = {
 		},
 
 		// cursor movement
-		h: repeatable([
-			// Cancel selection first or it will move before the selection
-			"cancelSelection",
-			"cursorLeft"
-		]),
-		j: repeatable([
-			"cancelSelection",
-			"cursorDown"
-		]),
-		k: repeatable([
-			"cancelSelection",
-			"cursorUp"
-		]),
-		l: repeatable([
-			"cancelSelection",
-			"cursorRight"
-		]),
-		w: repeatable([
-			"cancelSelection",
+		// clear selection first or it will move before the selection
+		h: repeatable(reselect("cursorLeft")),
+		j: repeatable(reselect("cursorDown")),
+		k: repeatable(reselect("cursorUp")),
+		l: repeatable(reselect("cursorRight")),
+		w: repeatable(reselect([
 			{
 				// move right when it's boundary of words, spaces, or newline (only zero or one char if it's newline)
 				command: "cursorRight",
@@ -244,68 +239,53 @@ module.exports = {
 			"cursorWordStartRightSelect",
 			// move left because the range is inclusive
 			"cursorLeftSelect"
-		]),
-		b: repeatable([
-			"cancelSelection",
-			"cursorWordStartLeftSelect"
-		]),
+		])),
+		b: repeatable(reselect("cursorWordStartLeftSelect")),
 		
 		// Motions
 		f: {
-			"": recordMotion(repeatable([
-				"cancelSelection",
-				{
-					command: "modalEditor.findText",
-					computedArgs: true,
-					args: `{
-						text: _ctx.keys.charAt(_ctx.keys.length-1),
-						select: true
-					}`
-				}
-			]))
+			"": recordMotion(repeatable(reselect({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					select: true
+				}`
+			})))
 		},
 		F: {
-			"": recordMotion(repeatable([
-				"cancelSelection",
-				{
-					command: "modalEditor.findText",
-					computedArgs: true,
-					args: `{
-						text: _ctx.keys.charAt(_ctx.keys.length-1),
-						backward: true,
-						select: true
-					}`
-				}
-			]))
+			"": recordMotion(repeatable(reselect({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					backward: true,
+					select: true
+				}`
+			})))
 		},
 		t: {
-			"": recordMotion(repeatable([
-				"cancelSelection",
-				{
-					command: "modalEditor.findText",
-					computedArgs: true,
-					args: `{
-						text: _ctx.keys.charAt(_ctx.keys.length-1),
-						till: true,
-						select: true
-					}`
-				}
-			]))
+			"": recordMotion(repeatable(reselect({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					till: true,
+					select: true
+				}`
+			})))
 		},
 		T: {
-			"": recordMotion(repeatable([
-				"cancelSelection",
-				{
-					command: "modalEditor.findText",
-					computedArgs: true,
-					args: `{
-						text: _ctx.keys.charAt(_ctx.keys.length-1),
-						till: true,
-						backward: true,
-						select: true
-					}`
-				}
-			]))
+			"": recordMotion(repeatable(reselect({
+				command: "modalEditor.findText",
+				computedArgs: true,
+				args: `{
+					text: _ctx.keys.charAt(_ctx.keys.length-1),
+					till: true,
+					backward: true,
+					select: true
+				}`
+			})))
 		},
 
 		// goto mode
