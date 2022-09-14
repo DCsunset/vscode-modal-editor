@@ -87,6 +87,7 @@ They are listed as follows:
 | `modalEditor.halfPageDown` | - | Move cursor half page down |
 | `modalEditor.toUpperCase` | - | Transform current selection to upper case |
 | `modalEditor.toLowerCase` | - | Transform current selection to lower case |
+| `modalEditor.clearSelections` | - | Clear existing selections but keep all cursors |
 | `modalEditor.replayRecord` | `string` | Replay last recorded key sequence |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
 | `modalEditor.resetState` | - | Reset internal state |
