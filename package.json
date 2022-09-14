@@ -74,6 +74,10 @@
       {
         "command": "modalEditor.toLowerCase",
         "title": "Modal Editor: Transform current selection to lower case"
+      },
+      {
+        "command": "modalEditor.clearSelections",
+        "title": "Modal Editor: Clear existing selections but keep all cursors"
       }
     ],
     "keybindings": [

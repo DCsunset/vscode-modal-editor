@@ -182,7 +182,7 @@ export async function setMode(mode: string) {
 		appState.setMode(mode);
 		if (mode === INSERT) {
 			// cancel selection or inserting may replace selected texts.
-			await vscode.commands.executeCommand("cancelSelection");
+			await vscode.commands.executeCommand("modalEditor.clearSelections");
 		}
 		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 	}
@@ -402,7 +402,7 @@ export async function yank(args?: YankArgs) {
 }
 
 /**
- * Delete selection
+ * Delete content in selections
  */
 export async function deleteSelections() {
 	const editor = vscode.window.activeTextEditor;
@@ -511,6 +511,21 @@ async function transformSelection(
 	}
 }
 
+/**
+ * Clear existing selections but keep all cursors
+ * (`cancelSelection` in vscode remove secondary cursor as well)
+ */
+function clearSelections() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		return;
+	}
+
+	editor.selections = editor.selections.map(sel => {
+		return new vscode.Selection(sel.active, sel.active);
+	});
+}
+
 /// Transform current selection to upper case
 async function toUpperCase() {
 	const transformer = (text: string) => (
@@ -617,6 +632,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(halfPageDown),
 		registerCommand(toLowerCase),
 		registerCommand(toUpperCase),
+		registerCommand(clearSelections),
 		registerCommand(replayRecord),
 		registerCommand(executeCommand),
 		registerCommand(resetState),
