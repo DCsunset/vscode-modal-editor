@@ -267,43 +267,45 @@ export function findText(args: FindTextArgs) {
 	}
 
 	const editor = vscode.window.activeTextEditor;
-	if (editor) {
-		// Go to position after successfully finding it
-		const gotoPos = (lineNum: number, pos: number) => {
-			let newPos = new vscode.Position(lineNum, pos);
+	if (!editor) {
+		return;
+	}
 
-			// Add one if the range is not inclusive
-			if (!args.backward && !appState.config.misc.inclusiveRange)
-				newPos = newPos.translate(0, 1);
-			
-			// Move to the text instead of till the text
-			if (args.till)
-				newPos = newPos.translate(0, args.backward ? 1 : -1);
+	// Update a selection to a pos
+	const updateSel = (sel: vscode.Selection, lineNum: number, pos: number) => {
+		let newPos = new vscode.Position(lineNum, pos);
 
-			if (args.select) {
-				// merge with previous selection using anchor
-				editor.selection = new vscode.Selection(editor.selection.anchor, newPos);
-			}
-			else
-				editor.selection = new vscode.Selection(newPos, newPos);
-			// Focus on active cursor
-			editor.revealRange(new vscode.Range(newPos, newPos.translate(0, 1)));
-		};
+		// Add one if the range is not inclusive
+		if (!args.backward && !appState.config.misc.inclusiveRange)
+			newPos = newPos.translate(0, 1);
+		
+		// Move to the text instead of till the text
+		if (args.till)
+			newPos = newPos.translate(0, args.backward ? 1 : -1);
 
+		if (args.select) {
+			// merge with previous selection using anchor
+			return new vscode.Selection(sel.anchor, newPos);
+		}
+		else
+			return new vscode.Selection(newPos, newPos);
+	};
+
+	// Find text for a selection
+	const findTextForSel = (sel: vscode.Selection) => {
 		/** Find in current line first */
 		// Set the pos to the cursor
-		const curPos = editor.selection.active;
+		const curPos = sel.active;
 		const curLine = editor.document.lineAt(curPos.line);
 		const pos = args.backward ?
 			curLine.text.lastIndexOf(args.text, curPos.character-1) :
 			curLine.text.indexOf(args.text, curPos.character+1);
 		
 		if (pos >= 0) {
-			gotoPos(curLine.lineNumber, pos);
-			return;
+			return updateSel(sel, curLine.lineNumber, pos);
 		}
 
-		/** Find line by line (because of VSCode API limit) **/
+		/** Find line by line (because of VSCode API limitation) */
 		if (!args.withinLine) {
 			if (args.backward) {
 				const start = curLine.lineNumber - 1; 
@@ -312,8 +314,7 @@ export function findText(args: FindTextArgs) {
 					const line = editor.document.lineAt(l);
 					const pos = line.text.lastIndexOf(args.text);
 					if (pos >= 0) {
-						gotoPos(l, pos);
-						return;
+						return updateSel(sel, l, pos);
 					}
 				}
 			}
@@ -324,13 +325,20 @@ export function findText(args: FindTextArgs) {
 					const line = editor.document.lineAt(l);
 					const pos = line.text.indexOf(args.text);
 					if (pos >= 0) {
-						gotoPos(l, pos);
-						return;
+						return updateSel(sel, l, pos);
 					}
 				}
 			}
 		}
-	}
+		// Without modifying it
+		return sel;
+	};
+
+	editor.selections = editor.selections.map(sel => findTextForSel(sel));
+
+	// Focus on active cursor
+	const curPos = editor.selection.active;
+	editor.revealRange(new vscode.Range(curPos, curPos.translate(0, 1)));
 }
 
 /**
