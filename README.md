@@ -13,6 +13,23 @@ You can install it via either registry.
 
 You can also download the extension directly from GitHub [releases](https://github.com/DCsunset/vscode-modal-editor/releases).
 
+To try the latest unpublished version,
+run the following commands in a shell (without comments):
+
+```sh
+# clone the repo
+git clone https://github.com/DCsunset/vscode-modal-editor.git
+cd vscode-modal-editor
+# VSCode official extension manager
+npm i -g vsce
+# Install dependencies
+npm i
+vsce package
+```
+
+Then you should see a `.vsix` file in the same directory.
+Install it manually into VSCode and reload the window.
+
 ## Usage
 
 To use this extension, first you need to import keybindings.
