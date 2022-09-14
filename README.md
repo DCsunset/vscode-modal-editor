@@ -85,8 +85,8 @@ They are listed as follows:
 | `modalEditor.paste` | `PasteArgs` | Paste content from a register |
 | `modalEditor.halfPageUp` | - | Move cursor half page up |
 | `modalEditor.halfPageDown` | - | Move cursor half page down |
-| `modalEditor.toUpperCase` | - | Tranform current selection to upper case |
-| `modalEditor.toLowerCase` | - | Tranform current selection to lower case |
+| `modalEditor.toUpperCase` | - | Transform current selection to upper case |
+| `modalEditor.toLowerCase` | - | Transform current selection to lower case |
 | `modalEditor.replayRecord` | `string` | Replay last recorded key sequence |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
 | `modalEditor.resetState` | - | Reset internal state |
@@ -198,7 +198,7 @@ It has the lowest priority and can be overwritten by other keys.
 ### Commands
 
 The command can be a string (which means a VS Code command),
-a list of commmands,
+a list of commands,
 or a complex command object:
 
 ```ts
@@ -255,7 +255,7 @@ type Context = {
 In order to use the context in VS Code `keybindings.json`,
 use the command `modalEditor.executeCommand`.
 
-For example, to emuate `alt+shift+c` in helix,
+For example, to emulate `alt+shift+c` in helix,
 add the following to your `keybindings.json`:
 
 ```json
