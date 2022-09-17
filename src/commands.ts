@@ -155,6 +155,7 @@ export function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent) {
 		let changed = false;
 		const newSelections = editor.selections.map((sel, i) => {
 			if (anchors.length <= i) {
+				// Create anchors for new selections
 				anchors.push(sel.anchor);
 			}
 			// Make the current anchor always included in selection
@@ -184,6 +185,7 @@ export function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent) {
 			editor.selections = newSelections;
 		}
 
+		// Remove selections that don't exist anymore
 		appState.anchors = anchors.slice(0, editor.selections.length);
 	}
 	appState.updateStatus(editor);
