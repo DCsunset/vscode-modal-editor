@@ -147,28 +147,44 @@ async function onType(event: { text: string }) {
 	await appState.handleKey(event.text);
 }
 
-export async function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent) {
+export function onSelectionChange(e: vscode.TextEditorSelectionChangeEvent) {
 	const editor = e.textEditor;
 	if (appState.config.misc.inclusiveRange
-		&& appState.mode === SELECT
-		&& appState.anchor) {
-		// Make the current anchor always included in selection
-		const anchor = appState.anchor;
-		const anchorNext = anchor.translate(0, 1);
-		const anchorRange = new vscode.Range(anchor, anchorNext);
-		const selection = e.selections[0];
-		// Update selection if anchor not included
-		if (!selection.contains(anchorRange)) {
+		&& appState.mode === SELECT) {
+		const anchors = appState.anchors;
+		let changed = false;
+		const newSelections = editor.selections.map((sel, i) => {
+			if (anchors.length <= i) {
+				anchors.push(sel.anchor);
+			}
+			// Make the current anchor always included in selection
+			const anchor = anchors[i];
 			const anchorNext = anchor.translate(0, 1);
-			if (anchor.isAfter(selection.active)) {
-				if (!selection.anchor.isEqual(anchorNext))
-					editor.selection = new vscode.Selection(anchorNext, selection.active);
+			const anchorRange = new vscode.Range(anchor, anchorNext);
+			// Update selection if anchor not included
+			if (!sel.contains(anchorRange)) {
+				const anchorNext = anchor.translate(0, 1);
+				if (anchor.isAfter(sel.active)) {
+					if (!sel.anchor.isEqual(anchorNext)) {
+						changed = true;
+						return new vscode.Selection(anchorNext, sel.active);
+					}
+				}
+				else {
+					if (!sel.anchor.isEqual(anchor)) {
+						changed = true;
+						return new vscode.Selection(anchor, sel.active);
+					}
+				}
 			}
-			else {
-				if (!selection.anchor.isEqual(anchor))
-					editor.selection = new vscode.Selection(anchor, selection.active);
-			}
+			return sel;
+		});
+
+		if (changed) {
+			editor.selections = newSelections;
 		}
+
+		appState.anchors = anchors.slice(0, editor.selections.length);
 	}
 	appState.updateStatus(editor);
 }

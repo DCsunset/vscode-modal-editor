@@ -89,12 +89,10 @@ export class AppState {
 	records: RecordRegisters;
 	/// Last record reg
 	lastRecordReg: string | undefined;
-	/// anchor when entering select mode
-	anchor: vscode.Position | undefined;
-	/// cursor position before last command
-	lastPos: vscode.Position | undefined;
+	/// anchors when entering select mode
+	anchors: vscode.Position[];
 	/// selection before last command
-	lastSelection: vscode.Selection | undefined;
+	lastSelections: readonly vscode.Selection[] | undefined;
 	
 	constructor(
 		mode: string,
@@ -105,6 +103,7 @@ export class AppState {
 	) {
 		this.registers = {};
 		this.records = {};
+		this.anchors = [];
 		this.setMode(mode);
 	}
 
@@ -148,7 +147,7 @@ export class AppState {
 		this.updateStatus(vscode.window.activeTextEditor);
 		if (mode === SELECT) {
 			// record anchor
-			this.anchor = vscode.window.activeTextEditor?.selection.active;
+			this.anchors = vscode.window.activeTextEditor?.selections.map(sel => sel.anchor) ?? [];
 		}
 		this.keyEventHandler = new KeyEventHandler(
 			mode === COMMAND ? this.modeStatusBar : this.keyStatusBar,
@@ -278,15 +277,19 @@ export class AppState {
 		const _ctx = {
 			...ctx,
 			// cursor position before last command
-			lastPos: this.lastPos,
+			lastPos: this.lastSelections?.[0].active,
 			// current cursor position
 			pos: editor?.selection.active,
 			// get the line
 			lineAt: editor?.document.lineAt,
 			// last selection
-			lastSelection: this.lastSelection,
+			lastSelection: this.lastSelections?.[0],
+			// last selections
+			lastSelections: this.lastSelections,
 			// current selection
 			selection: editor?.selection,
+			// current selections
+			selections: editor?.selections,
 		};
 
 		return eval(`(${expressions})`);
@@ -294,8 +297,7 @@ export class AppState {
 	
 	async executeVSCommand(command: string, ...rest: any[]) {
 		const editor = vscode.window.activeTextEditor;
-		this.lastSelection = editor?.selection;
-		this.lastPos = this.lastSelection?.active;
+		this.lastSelections = editor?.selections;
 		try {
 			await vscode.commands.executeCommand(command, ...rest);
 		}
