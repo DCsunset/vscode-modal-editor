@@ -282,11 +282,12 @@ export class AppState {
 			pos: editor?.selection.active,
 			// get the line
 			lineAt: editor?.document.lineAt,
-			// last selection
+			// primary selection before last command
+			// (alias for this.lastSelections?.[0])
 			lastSelection: this.lastSelections?.[0],
-			// last selections
+			// selections before last command
 			lastSelections: this.lastSelections,
-			// current selection
+			// current primary selection
 			selection: editor?.selection,
 			// current selections
 			selections: editor?.selections,

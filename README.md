@@ -263,10 +263,15 @@ type Context = {
 	pos: vscode.Position | undefined,
 	// get the line
 	lineAt: (() => vscode.TextLine) | undefined,
-	// last selection
+	// primary selection before last command
+	// (alias for lastSelections?.[0])
 	lastSelection: vscode.Selection | undefined,
-	// current selection
-	selection: vscode.Selection | undefined
+	// selections before last command
+	lastSelections: readonly vscode.Selections[] | undefined,
+	// current primary selection
+	selection: vscode.Selection | undefined,
+	// current selections
+	selections: readonly vscode.Selections[] | undefined
 };
 ```
 
