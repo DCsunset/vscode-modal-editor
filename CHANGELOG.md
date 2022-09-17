@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.5.2...v1.6.0) (2022-09-17)
+
+
+### Features
+
+* add clearSelections command ([4c5e3a9](https://github.com/DCsunset/vscode-modal-editor/commit/4c5e3a9e498c516987d1d3fa7755fd4a3237ebd5))
+* use clearSelections in helix preset ([e646769](https://github.com/DCsunset/vscode-modal-editor/commit/e64676961231a93fb11bdb97d8196fa9dbb5f44e))
+
+
+### Bug Fixes
+
+* fix and optimize select mode for multiple cursors ([01d8c14](https://github.com/DCsunset/vscode-modal-editor/commit/01d8c142e54d1dfdef1b203300df4b05b22d694b))
+* support multiple cursors in findText ([32bc97c](https://github.com/DCsunset/vscode-modal-editor/commit/32bc97cf4f99fe9e62e5bf72bb6cd54db9bbe8ac))
+
 ### [1.5.2](https://github.com/DCsunset/vscode-modal-editor/compare/v1.5.1...v1.5.2) (2022-08-28)
 
 
