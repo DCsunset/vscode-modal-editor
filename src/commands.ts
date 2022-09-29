@@ -296,22 +296,29 @@ export function findText(args: FindTextArgs) {
 		pos = pos || 0;
 
 		// Search forward from position in string
-		let indexOf = str.substring(pos).search(RegExp(regex));
+		let index = str.substring(pos).search(regex);
 
 		// Add position to found index to account for beginning of string
-		return (indexOf >= 0) ? (indexOf + pos) : indexOf;
+		return (index >= 0) ? (index + pos) : index;
 	}
 
 	// Find the previous index given a regex
 	const regexLastIndexOf = (str: string, regex: string, pos?: number | undefined) => {
-		pos = pos || str.length;
+		pos = pos || str.length - 1;
 
-		// Reverse the string and search for first occurrence
-		let strReversed = str.substring(0, pos).split("").reverse().join("");
-		let indexOfReversed = strReversed.search(RegExp(regex));
+		// lastIndexOf should search inclusively, but substring is exclusive
+		let strThroughPos = str.substring(0, pos + 1);
 
-		// Compute un-reversed position
-		return (indexOfReversed >= 0) ? (pos - indexOfReversed - 1) : indexOfReversed;
+		// Search for all matches and take the match nearest pos (the right-end of the string)
+		let allMatches = [...strThroughPos.matchAll(RegExp(regex, 'g'))];
+
+		// Return the start index of the last (right-most) match if one exists
+		// Note: TypeScript will not compile the one-liner (that 'at' method will
+		//       work well in the newer version of TypeScript.)
+		// return allMatches.length ? allMatches[allMatches.length - 1].index : -1;
+		// return allMatches.length ? allMatches.at(-1).index : -1;
+		let possibleIndex = allMatches.length ? allMatches[allMatches.length - 1].index : -1;
+		return typeof possibleIndex === 'number' ? possibleIndex : -1;
 	}
 
 	// Update a selection to a pos
@@ -353,10 +360,7 @@ export function findText(args: FindTextArgs) {
 			indexOf = (str: string, text: string, pos?: number) => { return str.indexOf(text, pos); }
 		}
 
-		// An annoying difference between lastIndexOf and regexLastIndexOf
-		let offset = (args.backward && args.regex) ? 0 : (args.backward ? -1 : 1);
-		let pos = indexOf(curLine.text, args.text, curPos.character + offset);
-
+		let pos = indexOf(curLine.text, args.text, curPos.character + (args.backward ? -1 : 1));
 		if (pos >= 0) {
 			return updateSel(sel, curLine.lineNumber, pos);
 		}
