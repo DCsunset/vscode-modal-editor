@@ -296,7 +296,7 @@ export function findText(args: FindTextArgs) {
 		pos = pos || 0;
 
 		// Search forward from position in string
-		let index = str.substring(pos).search(regex);
+		let index = str.substring(pos).search(RegExp(regex));
 
 		// Add position to found index to account for beginning of string
 		return (index >= 0) ? (index + pos) : index;
