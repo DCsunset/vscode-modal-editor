@@ -72,11 +72,11 @@ async function importPreset(directory?: string) {
 			path: vscode.Uri.joinPath(dir, name),
 			label: name
 		}));
-	
+
 	const choice = await vscode.window.showQuickPick(files, {
 		placeHolder: "Warning: importing keybindings will overwrite current ones in settings.json"
 	});
-	
+
 	if (choice) {
 		await loadKeybindings(choice.path);
 	}
@@ -97,7 +97,7 @@ async function importKeybindings() {
 			type: "uri"
 		}
 	];
-	
+
 	const choice = await vscode.window.showQuickPick(choices, {
 		placeHolder: "Warning: importing keybindings will overwrite current ones in settings.json"
 	});
@@ -108,7 +108,7 @@ async function importKeybindings() {
 				title: "Import keybindings from file",
 				openLabel: "Import",
 				filters: {
-				  "Keybindings": ["json", "jsonc", "js"]
+					"Keybindings": ["json", "jsonc", "js"]
 				},
 				canSelectFiles: true,
 				canSelectFolders: false,
@@ -130,7 +130,7 @@ async function importKeybindings() {
 			}
 			break;
 		}
-		
+
 		case "preset": {
 			await importPreset();
 			break;
@@ -250,7 +250,7 @@ export function gotoLine(num: number) {
 	if (editor) {
 		const lineCount = editor.document.lineCount;
 		const line = num < lineCount ? num : lineCount;
-		const range = editor.document.lineAt(line-1).range;
+		const range = editor.document.lineAt(line - 1).range;
 		// go to the start of that line
 		editor.selection = new vscode.Selection(range.start, range.start);
 		editor.revealRange(range);
@@ -259,7 +259,7 @@ export function gotoLine(num: number) {
 
 /**
  * Args for findText command
- * 
+ *
  * @see {isFindTextArgs} ts-auto-guard:type-guard
  */
 export type FindTextArgs = {
@@ -273,6 +273,8 @@ export type FindTextArgs = {
 	withinLine?: boolean,
 	/// Search backward (default: false)
 	backward?: boolean,
+	/// Whether to search using regex (default: false)
+	regex?: boolean,
 };
 
 /**
@@ -289,6 +291,36 @@ export function findText(args: FindTextArgs) {
 		return;
 	}
 
+	// Find the next index given a regex
+	const regexIndexOf = (str: string, regex: string, pos?: number | undefined) => {
+		pos = pos || 0;
+
+		// Search forward from position in string
+		let index = str.substring(pos).search(RegExp(regex));
+
+		// Add position to found index to account for beginning of string
+		return (index >= 0) ? (index + pos) : index;
+	}
+
+	// Find the previous index given a regex
+	const regexLastIndexOf = (str: string, regex: string, pos?: number | undefined) => {
+		pos = pos || str.length - 1;
+
+		// lastIndexOf should search inclusively, but substring is exclusive
+		let strThroughPos = str.substring(0, pos + 1);
+
+		// Search for all matches and take the match nearest pos (the right-end of the string)
+		let allMatches = [...strThroughPos.matchAll(RegExp(regex, 'g'))];
+
+		// Return the start index of the last (right-most) match if one exists
+		// Note: TypeScript will not compile the one-liner (that 'at' method will
+		//       work well in the newer version of TypeScript.)
+		// return allMatches.length ? allMatches[allMatches.length - 1].index : -1;
+		// return allMatches.length ? allMatches.at(-1).index : -1;
+		let possibleIndex = allMatches.length ? allMatches[allMatches.length - 1].index : -1;
+		return typeof possibleIndex === 'number' ? possibleIndex : -1;
+	}
+
 	// Update a selection to a pos
 	const updateSel = (sel: vscode.Selection, lineNum: number, pos: number) => {
 		let newPos = new vscode.Position(lineNum, pos);
@@ -296,7 +328,7 @@ export function findText(args: FindTextArgs) {
 		// Add one if the range is not inclusive
 		if (!args.backward && !appState.config.misc.inclusiveRange)
 			newPos = newPos.translate(0, 1);
-		
+
 		// Move to the text instead of till the text
 		if (args.till)
 			newPos = newPos.translate(0, args.backward ? 1 : -1);
@@ -315,39 +347,43 @@ export function findText(args: FindTextArgs) {
 		// Set the pos to the cursor
 		const curPos = sel.active;
 		const curLine = editor.document.lineAt(curPos.line);
-		const pos = args.backward ?
-			curLine.text.lastIndexOf(args.text, curPos.character-1) :
-			curLine.text.indexOf(args.text, curPos.character+1);
-		
+
+		// Set the indexOf method (used for current line and looping later)
+		let indexOf;
+		if (args.backward && args.regex) {
+			indexOf = regexLastIndexOf;
+		} else if (args.backward && !args.regex) {
+			indexOf = (str: string, text: string, pos?: number) => { return str.lastIndexOf(text, pos); }
+		} else if (!args.backward && args.regex) {
+			indexOf = regexIndexOf;
+		} else { // !args.backward && !args.regex
+			indexOf = (str: string, text: string, pos?: number) => { return str.indexOf(text, pos); }
+		}
+
+		let pos = indexOf(curLine.text, args.text, curPos.character + (args.backward ? -1 : 1));
 		if (pos >= 0) {
 			return updateSel(sel, curLine.lineNumber, pos);
 		}
 
 		/** Find line by line (because of VSCode API limitation) */
 		if (!args.withinLine) {
-			if (args.backward) {
-				const start = curLine.lineNumber - 1; 
-				const end = 0;
-				for (let l = start; l >= end; l--) {
-					const line = editor.document.lineAt(l);
-					const pos = line.text.lastIndexOf(args.text);
-					if (pos >= 0) {
-						return updateSel(sel, l, pos);
-					}
+			const start = curLine.lineNumber + (args.backward ? - 1 : 1);
+			const end = args.backward ? 0 : editor.document.lineCount;
+
+			let l = start;
+			while ((args.backward && l >= end) || (!args.backward && l < end)) {
+				const line = editor.document.lineAt(l);
+
+				const pos = indexOf(line.text, args.text);
+
+				if (pos >= 0) {
+					return updateSel(sel, l, pos);
 				}
-			}
-			else {
-				const start = curLine.lineNumber + 1; 
-				const end = editor.document.lineCount;
-				for (let l = start; l < end; l++) {
-					const line = editor.document.lineAt(l);
-					const pos = line.text.indexOf(args.text);
-					if (pos >= 0) {
-						return updateSel(sel, l, pos);
-					}
-				}
+
+				l = l + (args.backward ? -1 : 1);
 			}
 		}
+
 		// Without modifying it
 		return sel;
 	};
@@ -475,7 +511,7 @@ export async function paste(args?: PasteArgs) {
 			getSelections(editor)
 				.forEach((selection, i) => {
 					let pos = args?.before ? selection.start : selection.end;
-					const text = texts[Math.min(i, texts.length-1)];
+					const text = texts[Math.min(i, texts.length - 1)];
 
 					// paste in previous or next line if content ends with newline
 					// (which means copy a line)
@@ -495,7 +531,7 @@ export async function paste(args?: PasteArgs) {
 							pos = curLine.end;
 						}
 					}
-					
+
 					editBuilder.insert(pos, text);
 				});
 		});
@@ -659,7 +695,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		// Handle type events
 		vscode.commands.registerCommand("type", onType)
 	);
-		
+
 	const config = readConfig();
 	const modeStatusBar = vscode.window.createStatusBarItem(
 		vscode.StatusBarAlignment.Left,
@@ -671,4 +707,3 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 	);
 	appState = new AppState(NORMAL, config, outputChannel, modeStatusBar, keyStatusBar);
 }
-
