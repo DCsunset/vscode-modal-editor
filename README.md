@@ -126,6 +126,8 @@ type FindTextArgs = {
 	withinLine?: boolean,
 	/// Search backward (default: false)
 	backward?: boolean,
+	/// Whether to search using regex (default: false)
+	regex?: boolean,
 };
 
 type YankArgs = {
