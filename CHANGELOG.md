@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.7.0...v1.8.0) (2022-11-11)
+
+
+### Features
+
+* add toUpperCase and use tranform for replacement ([e60853b](https://github.com/DCsunset/vscode-modal-editor/commit/e60853b18168d92865fda14a520fd8ced8f4bca2))
+* add transform command ([363f018](https://github.com/DCsunset/vscode-modal-editor/commit/363f018f8a78ada4f978559071fc3f3f2eccd8f0))
+
 ## [1.7.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.6.0...v1.7.0) (2022-09-30)
 
 ## [1.6.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.5.2...v1.6.0) (2022-09-17)
