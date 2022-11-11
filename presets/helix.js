@@ -71,7 +71,21 @@ module.exports = {
 			}
 		},
 		"`": "modalEditor.toLowerCase",
-
+		"~": "modalEditor.toUpperCase",
+		// Replace selections
+		r: {
+			// Wildcard character
+			"": {
+				command: "modalEditor.transform",
+				// use a js expression for computed args
+				computedArgs: true,
+				// replace with last key in the key sequence
+				args: `{
+					transformer: text => _ctx.keys.charAt(_ctx.keys.length-1).repeat(text.length)
+				}`
+			}
+		},
+	
 		// into command mode
 		":": "modalEditor.setCommandMode",
 		
@@ -208,22 +222,6 @@ module.exports = {
 	},
 
 	normal: {
-		// replace the character at the cursor
-		r: {
-			// Wildcard character
-			"": {
-				command: "compositionType",
-				computedArgs: true,
-				// use a js expression for computed args
-				args: `{
-					// replace with last key in the key sequence
-					text: _ctx.keys.charAt(_ctx.keys.length-1),
-					replaceNextCharCnt: 1,
-					positionDelta: -1
-				}`
-			}
-		},
-
 		// cursor movement
 		// clear selection first or it will move before the selection
 		h: repeatable(reselect("cursorLeft")),
