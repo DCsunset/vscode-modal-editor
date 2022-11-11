@@ -102,8 +102,9 @@ They are listed as follows:
 | `modalEditor.paste` | `PasteArgs` | Paste content from a register |
 | `modalEditor.halfPageUp` | - | Move cursor half page up |
 | `modalEditor.halfPageDown` | - | Move cursor half page down |
-| `modalEditor.toUpperCase` | - | Transform current selection to upper case |
-| `modalEditor.toLowerCase` | - | Transform current selection to lower case |
+| `modalEditor.toUpperCase` | - | Transform current selection(s) to upper case |
+| `modalEditor.toLowerCase` | - | Transform current selection(s) to lower case |
+| `modalEditor.transform` | `TransformArgs` | Transform current selection(s) using a user-defined function |
 | `modalEditor.clearSelections` | - | Clear existing selections but keep all cursors |
 | `modalEditor.replayRecord` | `string` | Replay last recorded key sequence |
 | `modalEditor.executeCommand` | `Command` | Execute a command based on the current context |
@@ -147,6 +148,11 @@ type PasteArgs = {
 	/// Paste before the current selection
 	before?: boolean
 }
+
+type TransformArgs = {
+	/// A function for transforming text in selections.
+	transformer: (_: string) => string
+};
 ```
 
 ## Settings
@@ -317,22 +323,6 @@ module.exports = {
 		i: "modalEditor.setInsertMode",
 	},
 	normal: {
-		// replace the character at the cursor
-		r: {
-			// Wildcard character
-			"": {
-				command: "compositionType",
-				computedArgs: true,
-				// use a js expression for computed args
-				args: `{
-					// replace with last key in the key sequence
-					text: _ctx.keys.charAt(_ctx.keys.length-1),
-					replaceNextCharCnt: 1,
-					positionDelta: -1
-				}`
-			}
-		},
-
 		// cursor movement
 		h: repeatable("cursorLeft"),
 		j: repeatable("cursorDown"),

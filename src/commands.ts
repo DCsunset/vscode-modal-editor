@@ -5,7 +5,7 @@ import { readConfig } from "./config";
 import { isKeybindings } from "./keybindings.guard";
 import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
 import { isCommand } from "./actions.guard";
-import { isFindTextArgs, isYankArgs, isPasteArgs } from "./commands.guard";
+import { isFindTextArgs, isYankArgs, isPasteArgs, isTransformArgs } from "./commands.guard";
 
 /// Current app state
 let appState: AppState;
@@ -596,6 +596,26 @@ async function toLowerCase() {
 	await transformSelection(transformer);
 }
 
+
+/**
+ * Args for transform command
+ *
+ * @see {isTransformArgs} ts-auto-guard:type-guard
+ */
+export type TransformArgs = {
+	/// A function for transforming text in selections.
+	transformer: (_: string) => string
+};
+
+async function transform(args: TransformArgs) {
+	if (!isTransformArgs(args)) {
+		vscode.window.showErrorMessage(`Modal Editor: transform: invalid arguments`);
+		return;
+	}
+
+	await transformSelection(args.transformer);
+}
+
 /// Create position with valid line number
 function createPosition(editor: vscode.TextEditor, line: number, character: number) {
 	const lineCount = editor.document.lineCount;
@@ -686,6 +706,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		registerCommand(halfPageDown),
 		registerCommand(toLowerCase),
 		registerCommand(toUpperCase),
+		registerCommand(transform),
 		registerCommand(clearSelections),
 		registerCommand(replayRecord),
 		registerCommand(executeCommand),
