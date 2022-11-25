@@ -63,13 +63,13 @@ module.exports = {
 			"modalEditor.cut",
 			"modalEditor.setNormalMode"
 		],
-		p: "modalEditor.paste",
-		P: {
+		p: repeatable("modalEditor.paste"),
+		P: repeatable({
 			command: "modalEditor.paste",
 			args: {
 				before: true
 			}
-		},
+		}),
 		"`": "modalEditor.toLowerCase",
 		"~": "modalEditor.toUpperCase",
 		// Replace selections
