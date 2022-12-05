@@ -226,6 +226,7 @@
     }
   },
   "scripts": {
+    "build": "vsce package --allow-star-activation",
     "release": "standard-version",
     "vscode:prepublish": "npm run compile",
     "compile": "npm run type-guard && rm -rf dist && tsc -p ./",
