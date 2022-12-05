@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/DCsunset/vscode-modal-editor/compare/v1.8.0...v1.8.1) (2022-12-05)
+
+
+### Bug Fixes
+
+* clear selections after deletion ([8795551](https://github.com/DCsunset/vscode-modal-editor/commit/87955516f0c17954ea76bb771d88b1ee07cff8f2))
+* make paste command repeatable in helix preset ([6afba6d](https://github.com/DCsunset/vscode-modal-editor/commit/6afba6d70dc692c440c018ff6475a393a6d78987))
+
 ## [1.8.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.7.0...v1.8.0) (2022-11-11)
 
 
