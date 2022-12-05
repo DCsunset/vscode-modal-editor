@@ -300,7 +300,7 @@ export function findText(args: FindTextArgs) {
 
 		// Add position to found index to account for beginning of string
 		return (index >= 0) ? (index + pos) : index;
-	}
+	};
 
 	// Find the previous index given a regex
 	const regexLastIndexOf = (str: string, regex: string, pos?: number | undefined) => {
@@ -319,7 +319,7 @@ export function findText(args: FindTextArgs) {
 		// return allMatches.length ? allMatches.at(-1).index : -1;
 		let possibleIndex = allMatches.length ? allMatches[allMatches.length - 1].index : -1;
 		return typeof possibleIndex === 'number' ? possibleIndex : -1;
-	}
+	};
 
 	// Update a selection to a pos
 	const updateSel = (sel: vscode.Selection, lineNum: number, pos: number) => {
@@ -353,11 +353,11 @@ export function findText(args: FindTextArgs) {
 		if (args.backward && args.regex) {
 			indexOf = regexLastIndexOf;
 		} else if (args.backward && !args.regex) {
-			indexOf = (str: string, text: string, pos?: number) => { return str.lastIndexOf(text, pos); }
+			indexOf = (str: string, text: string, pos?: number) => { return str.lastIndexOf(text, pos); };
 		} else if (!args.backward && args.regex) {
 			indexOf = regexIndexOf;
 		} else { // !args.backward && !args.regex
-			indexOf = (str: string, text: string, pos?: number) => { return str.indexOf(text, pos); }
+			indexOf = (str: string, text: string, pos?: number) => { return str.indexOf(text, pos); };
 		}
 
 		let pos = indexOf(curLine.text, args.text, curPos.character + (args.backward ? -1 : 1));
@@ -465,6 +465,8 @@ export async function deleteSelections() {
 			getSelections(editor)
 				.forEach(sel => editBuilder.delete(sel));
 		});
+		// clear selections to prevent setting selections again by onSelectionChange
+		clearSelections();
 	}
 }
 
