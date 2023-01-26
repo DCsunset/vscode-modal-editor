@@ -1,4 +1,7 @@
 import * as vscode from "vscode";
+import * as os from "os";
+import * as path from "path";
+import axios from "axios";
 import { Keybindings } from "./keybindings";
 import { isKeybindings } from "./keybindings.guard";
 import { isStyles, isMisc } from "./config.guard";
@@ -10,6 +13,15 @@ import { NORMAL } from "./actions";
  * @see {isCursorStyle} ts-auto-guard:type-guard
  */
 type CursorStyle = "line" | "block" | "underline" | "line-thin" | "block-outline" | "underline-thin";
+
+/// Expand tilde to home directory
+export function expandHome(filePath: string) {
+	const home = os.homedir();
+	// Use lookahead to match the tilde
+	const regex = /^~(?=$|\/|\\)/;
+	return filePath.replace(regex, home);
+}
+
 
 export const cursorStyleMap: { [style in CursorStyle]: vscode.TextEditorCursorStyle } = {
 	"line": vscode.TextEditorCursorStyle.Line,
@@ -38,6 +50,8 @@ export type Styles = {
  * @see {isMisc} ts-auto-guard:type-guard
  */
 export type Misc = {
+	/// Save loaded keybindings in settings.json
+	keybindingsInSettings: boolean,
 	/// Always include the character under cursor in selection
 	inclusiveRange: boolean,
 	/// Do not show error message for undefined keys
@@ -48,6 +62,8 @@ export type Misc = {
 	keyStatusBarPriority: number,
 	/// Preset directory to easily import keybindings
 	presetDirectory: string,
+	/// Preset file name to autoload (only works when keybindingsInSettings is false; empty means no autoloading)
+	autoloadPreset: string;
 	/// Default to use when extension starts
 	defaultMode: string
 };
@@ -80,11 +96,13 @@ const defaultStyles: Styles = {
 };
 
 const defaultMisc: Misc = {
+	keybindingsInSettings: true,
 	inclusiveRange: true,
 	ignoreUndefinedKeys: false,
 	modeStatusBarPriority: 0,
 	keyStatusBarPriority: 10000,
 	presetDirectory: "~/.config/vscode-modal-editor",
+	autoloadPreset: "",
 	defaultMode: NORMAL
 };
 
@@ -101,32 +119,76 @@ export function getStyle(mode: string, styles: Styles) {
 	}
 }
 
+/**
+ * Load keybindings from a URI
+ */
+export async function loadKeybindings(uri: vscode.Uri) {
+	const fs = vscode.workspace.fs;
+	try {
+		let data: string;
+		if (uri.scheme === "http" || uri.scheme === "https") {
+			const res = await axios.get(uri.toString());
+			data = res.data;
+		}
+		else {
+			data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
+		}
+		if (uri.fsPath.match(/json[5c]?$/))
+			data = `(${data})`;
+
+		const keybindings = eval(data);
+		if (!isKeybindings(keybindings)) {
+			throw new Error("invalid keybindings");
+		}
+		return keybindings;
+	}
+	catch (err: any) {
+		vscode.window.showErrorMessage(`Modal Editor: Failed to load keybindings: ${err.message}`);
+		return null;
+	}
+}
+
+
+
 /// Read config from settings.json
-export function readConfig() {
+export async function readConfig() {
 	const config = vscode.workspace.getConfiguration("modalEditor");
-	let keybindings = config.get("keybindings");
-	if (!isKeybindings(keybindings)) {
-		vscode.window.showErrorMessage("Invalid keybindings in config");
-		keybindings = {};
+	
+	let misc: Misc | undefined = config.get("misc");
+	if (!isMisc(misc)) {
+		vscode.window.showErrorMessage("Invalid misc config");
+		misc = defaultMisc;
+	}
+	// Merge with default config
+	misc = {
+		...defaultMisc,
+		...misc
+	};
+	
+	let keybindings = {};
+	if (misc.keybindingsInSettings) {
+		let keybindings = config.get("keybindings");
+		if (!isKeybindings(keybindings)) {
+			vscode.window.showErrorMessage("Invalid keybindings in config");
+			keybindings = {};
+		}
+	}
+	else if (misc.autoloadPreset.length > 0) {
+		// Read from preset dir
+		const file = vscode.Uri.file(path.join(
+			expandHome(misc.presetDirectory),
+			misc.autoloadPreset
+		));
+		const ret = await loadKeybindings(file);
+		if (ret !== null) {
+			keybindings = ret;
+		}
 	}
 
 	let styles = config.get("styles");
 	if (!isStyles(styles)) {
 		vscode.window.showErrorMessage("Invalid styles in config");
 		styles = {};
-	}
-	
-	let misc = config.get("misc");
-	if (!isMisc(misc)) {
-		vscode.window.showErrorMessage("Invalid misc config");
-		misc = defaultMisc;
-	}
-	else {
-		// Merge with default config
-		misc = {
-			...defaultMisc,
-			...misc
-		};
 	}
 	
 	return {

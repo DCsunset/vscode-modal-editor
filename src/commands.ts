@@ -1,8 +1,5 @@
 import * as vscode from "vscode";
-import * as os from "os";
-import axios from "axios";
-import { readConfig } from "./config";
-import { isKeybindings } from "./keybindings.guard";
+import { expandHome, loadKeybindings, readConfig } from "./config";
 import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
 import { isCommand } from "./actions.guard";
 import { isFindTextArgs, isYankArgs, isPasteArgs, isTransformArgs } from "./commands.guard";
@@ -16,47 +13,8 @@ function commandId(command: ((_: any) => any) | string) {
 	return `modalEditor.${name}`;
 }
 
-/**
- * Load keybindings from a URI
- */
-async function loadKeybindings(uri: vscode.Uri) {
-	const fs = vscode.workspace.fs;
-	try {
-		let data: string;
-		if (uri.scheme === "http" || uri.scheme === "https") {
-			const res = await axios.get(uri.toString());
-			data = res.data;
-		}
-		else {
-			data = Buffer.from(await fs.readFile(uri)).toString("utf-8");
-		}
-		if (uri.fsPath.match(/json[5c]?$/))
-			data = `(${data})`;
-
-		const keybindings = eval(data);
-		if (!isKeybindings(keybindings)) {
-			throw new Error("invalid keybindings");
-		}
-		appState.updateConfig({ keybindings });
-		const config = vscode.workspace.getConfiguration("modalEditor");
-		config.update("keybindings", keybindings, vscode.ConfigurationTarget.Global);
-		vscode.window.showInformationMessage("Modal Editor: Keybindings imported");
-	}
-	catch (err: any) {
-		vscode.window.showErrorMessage(`Modal Editor: Failed to import keybindings: ${err.message}`);
-	}
-}
-
 interface PickItem extends vscode.QuickPickItem {
 	type: "file" | "uri" | "preset"
-}
-
-/// Expand tilde to home directory
-function expandHome(filePath: string) {
-	const home = os.homedir();
-	// Use lookahead to match the tilde
-	const regex = /^~(?=$|\/|\\)/;
-	return filePath.replace(regex, home);
 }
 
 async function importPreset(directory?: string) {
@@ -78,7 +36,15 @@ async function importPreset(directory?: string) {
 	});
 
 	if (choice) {
-		await loadKeybindings(choice.path);
+		const keybindings = await loadKeybindings(choice.path)
+		if (keybindings !== null) {
+			appState.updateConfig({ keybindings });
+			const config = vscode.workspace.getConfiguration("modalEditor");
+			if (appState.config.misc.keybindingsInSettings) {
+				config.update("keybindings", keybindings, vscode.ConfigurationTarget.Global);
+			}
+			vscode.window.showInformationMessage("Modal Editor: Keybindings imported");
+		}
 	}
 }
 
@@ -677,10 +643,12 @@ export function resetState() {
 }
 
 /// Event handler for config update
-export function onConfigUpdate() {
-	// Read config from file
-	const config = readConfig();
-	appState.updateConfig(config);
+export async function onConfigUpdate() {
+	if (appState.config.misc.keybindingsInSettings) {
+		// Read config again
+		const config = await readConfig();
+		appState.updateConfig(config);
+	}
 }
 
 function registerCommand(command: (_: any) => any, name?: string) {
@@ -690,7 +658,7 @@ function registerCommand(command: (_: any) => any, name?: string) {
 /**
  * Register all commands
  */
-export function register(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
+export async function register(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
 	context.subscriptions.push(
 		registerCommand(setMode),
 		registerCommand(setInsertMode),
@@ -719,7 +687,7 @@ export function register(context: vscode.ExtensionContext, outputChannel: vscode
 		vscode.commands.registerCommand("type", onType)
 	);
 
-	const config = readConfig();
+	const config = await readConfig();
 	const modeStatusBar = vscode.window.createStatusBarItem(
 		vscode.StatusBarAlignment.Left,
 		config.misc.modeStatusBarPriority

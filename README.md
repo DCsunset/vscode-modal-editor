@@ -157,7 +157,12 @@ type TransformArgs = {
 
 ## Settings
 
-Various settings can be found in settings page.
+Various settings can be found in settings page by searching `modalEditor`.
+
+One important setting is `keybindingsInSettings`.
+it decides whether this extension should store the current keybindings in User Settings.
+Default is `true`.
+If set to `false`, you may want to set `autoloadPreset` to a preset file that should be autoloaded on startup.
 
 For the default mode, initial valid options are `normal`, `insert`, and `select`.
 If you add custom mode, you can also set it here.

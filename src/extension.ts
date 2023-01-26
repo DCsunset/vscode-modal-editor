@@ -7,12 +7,12 @@ import * as actions from "./actions";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	// Create output channel for this extension
 	const channel = vscode.window.createOutputChannel("Modal Editor");
 
 	// Register all commands
-	commands.register(context, channel);
+	await commands.register(context, channel);
 	
 	context.subscriptions.push(
 		vscode.window.onDidChangeTextEditorSelection(commands.onSelectionChange),

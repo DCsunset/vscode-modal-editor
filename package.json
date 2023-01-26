@@ -184,13 +184,18 @@
       "properties": {
         "modalEditor.keybindings": {
           "type": "object",
-          "description": "Keybindings to map keys to commands",
+          "description": "Keybindings to map keys to commands (only works if keybindingsInSettings is true)",
           "default": {}
         },
         "modalEditor.styles": {
           "type": "object",
           "description": "Styles for different modes",
           "default": {}
+        },
+        "modalEditor.misc.keybindingsInSettings": {
+          "type": "boolean",
+          "description": "Save loaded keybindings in settings.json",
+          "default": true
         },
         "modalEditor.misc.inclusiveRange": {
           "type": "boolean",
@@ -216,6 +221,11 @@
           "type": "string",
           "description": "Preset directory to easily import keybindings",
           "default": "~/.config/vscode-modal-editor"
+        },
+        "modalEditor.misc.autoloadPreset": {
+          "type": "string",
+          "description": "Preset file to autoload in preset directory (only works when keybindingsInSettings is false; empty means no autoloading)",
+          "default": ""
         },
         "modalEditor.misc.defaultMode": {
           "type": "string",
