@@ -1,6 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## [1.9.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.8.1...v1.9.0) (2023-01-26)
+
+
+### Features
+
+* support autoload from preset directory and not saving keybindings in user settings ([cba6b7e](https://github.com/DCsunset/vscode-modal-editor/commit/cba6b7e17cf0e936434469469b30550e78e24e4f))
 
 ### [1.8.1](https://github.com/DCsunset/vscode-modal-editor/compare/v1.8.0...v1.8.1) (2022-12-05)
 
