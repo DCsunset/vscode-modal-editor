@@ -106,8 +106,8 @@ module.exports = {
 			"modalEditor.setInsertMode"
 		]),
 		a: recordChange([
-			"cursorRight",
-			"modalEditor.setInsertMode"
+			"modalEditor.setInsertMode",
+			"cursorRight"
 		]),
 		A: recordChange([
 			"cursorLineEnd",
