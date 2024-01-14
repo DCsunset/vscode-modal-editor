@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.9.1](https://github.com/DCsunset/vscode-modal-editor/compare/v1.9.0...v1.9.1) (2024-01-14)
+
+
+### Bug Fixes
+
+* update 'a' behavior in select mode ([04810a1](https://github.com/DCsunset/vscode-modal-editor/commit/04810a11605cab2d2b82f162785021cb496efb4d))
+* update app state after loading keybindings ([1a6d3b1](https://github.com/DCsunset/vscode-modal-editor/commit/1a6d3b1f9851fc3c9f5079ebade8b6987d55684e))
+
 ## [1.9.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.8.1...v1.9.0) (2023-01-26)
 
 
