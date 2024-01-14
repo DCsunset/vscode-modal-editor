@@ -17,6 +17,18 @@ interface PickItem extends vscode.QuickPickItem {
 	type: "file" | "uri" | "preset"
 }
 
+// Update keybindings in APpState
+function updateAppKeybindings(keybindings: any) {
+	if (keybindings !== null) {
+		appState.updateConfig({ keybindings });
+		const config = vscode.workspace.getConfiguration("modalEditor");
+		if (appState.config.misc.keybindingsInSettings) {
+			config.update("keybindings", keybindings, vscode.ConfigurationTarget.Global);
+		}
+		vscode.window.showInformationMessage("Modal Editor: Keybindings imported");
+	}
+}
+
 async function importPreset(directory?: string) {
 	const presetDir = directory ?? appState.config.misc.presetDirectory;
 	const dir = vscode.Uri.file(expandHome(presetDir));
@@ -37,14 +49,7 @@ async function importPreset(directory?: string) {
 
 	if (choice) {
 		const keybindings = await loadKeybindings(choice.path)
-		if (keybindings !== null) {
-			appState.updateConfig({ keybindings });
-			const config = vscode.workspace.getConfiguration("modalEditor");
-			if (appState.config.misc.keybindingsInSettings) {
-				config.update("keybindings", keybindings, vscode.ConfigurationTarget.Global);
-			}
-			vscode.window.showInformationMessage("Modal Editor: Keybindings imported");
-		}
+    updateAppKeybindings(keybindings);
 	}
 }
 
@@ -82,7 +87,8 @@ async function importKeybindings() {
 			});
 
 			if (files && files.length > 0) {
-				await loadKeybindings(files[0]);
+				const keybindings = await loadKeybindings(files[0]);
+        updateAppKeybindings(keybindings);
 			}
 			break;
 		}
@@ -92,7 +98,8 @@ async function importKeybindings() {
 				prompt: "Enter a valid URI"
 			});
 			if (uri) {
-				await loadKeybindings(vscode.Uri.parse(uri, true));
+				const keybindings = await loadKeybindings(vscode.Uri.parse(uri, true));
+        updateAppKeybindings(keybindings);
 			}
 			break;
 		}
