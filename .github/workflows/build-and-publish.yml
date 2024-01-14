@@ -60,13 +60,22 @@ jobs:
         with:
           name: vsix
 
+      - name: Info
+        id: info
+        run: |
+          VSIX_PATH=$(echo *.vsix)
+          # used in workflow vars
+          echo "::set-output name=VSIX_PATH::$VSIX_PATH"
+          # can be accessed by env in other steps
+          echo "VSIX_PATH=$VSIX_PATH" >> $GITHUB_ENV
+
       - name: Publish to Open VSX
         if: env.tag_release == 'true' || inputs.open_vsx
         uses: HaaLeo/publish-vscode-extension@v1
         id: publishToOpenVSX
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
-          extensionFile: "*.vsix"
+          extensionFile: ${{ steps.info.outputs.VSIX_PATH }}
 
       - name: Publish to Visual Studio Marketplace
         if: env.tag_release == 'true' || inputs.vs_marketplace
@@ -74,7 +83,7 @@ jobs:
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          extensionFile: "*.vsix"
+          extensionFile: ${{ steps.info.outputs.VSIX_PATH }}
 
       - name: GitHub release (from tag)
         if: env.tag_release == 'true'
@@ -82,7 +91,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: "*.vsix"
+          file: ${{ steps.info.outputs.VSIX_PATH }}
           overwrite: true
 
       - name: GitHub release (manual)
@@ -91,7 +100,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: "*.vsix"
+          file: ${{ steps.info.outputs.VSIX_PATH }}
           tag: ${{ inputs.github_release_tag }}
           overwrite: true
 
