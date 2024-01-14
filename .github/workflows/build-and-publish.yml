@@ -101,6 +101,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: ${{ steps.info.outputs.VSIX_PATH }}
-          tag: ${{ inputs.github_release_tag }}
+          tag: ${{ inputs.release_tag }}
           overwrite: true
 
