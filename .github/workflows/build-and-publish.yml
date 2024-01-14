@@ -5,6 +5,22 @@ on:
     tags:
       - '*'
   workflow_dispatch:
+    inputs:
+      vs_marketplace:
+        type: boolean
+        default: true
+        required: true
+        description: "Publish to VS Marketplace"
+      open_vsx:
+        type: boolean
+        default: true
+        required: true
+        description: "Publish to Open VSX"
+      release:
+        type: boolean
+        default: true
+        required: true
+        description: "Create a GitHub release"
 
 jobs:
   build:
@@ -12,30 +28,33 @@ jobs:
 
     steps:
       - name: Checkout codebase
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node.js 17
         uses: actions/setup-node@v2
         with:
           node-version: 17
-      
+
       - name: Install dependencies
         run: npm ci --no-optional
-    
+
       - name: Publish to Open VSX
+        if: env.tag_release == 'true' || inputs.open_vsx
         uses: HaaLeo/publish-vscode-extension@v1
         id: publishToOpenVSX
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
 
       - name: Publish to Visual Studio Marketplace
+        if: env.tag_release == 'true' || inputs.vs_marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
-          
+
       - name: Upload to GitHub release
+        if: env.tag_release == 'true' || inputs.release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
