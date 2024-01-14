@@ -21,11 +21,15 @@ on:
         default: true
         required: true
         description: "Create a GitHub release"
+      release_tag:
+        type: string
+        default: "main"
+        required: true
+        description: "Tag for GitHub release"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v3
@@ -38,12 +42,31 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-optional
 
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: "*.vsix"
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vsix
+
       - name: Publish to Open VSX
         if: env.tag_release == 'true' || inputs.open_vsx
         uses: HaaLeo/publish-vscode-extension@v1
         id: publishToOpenVSX
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
+          extensionFile: "*.vsix"
 
       - name: Publish to Visual Studio Marketplace
         if: env.tag_release == 'true' || inputs.vs_marketplace
@@ -51,15 +74,24 @@ jobs:
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
+          extensionFile: "*.vsix"
 
-      - name: Upload to GitHub release
-        if: env.tag_release == 'true' || inputs.release
+      - name: GitHub release (from tag)
+        if: env.tag_release == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
-          tag: ${{ github.ref }}
+          file: "*.vsix"
+          overwrite: true
+
+      - name: GitHub release (manual)
+        if: env.tag_release == 'false' || inputs.release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
+          file: "*.vsix"
+          tag: ${{ inputs.github_release_tag }}
           overwrite: true
 
