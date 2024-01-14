@@ -20,11 +20,10 @@ run the following commands in a shell (without comments):
 # clone the repo
 git clone https://github.com/DCsunset/vscode-modal-editor.git
 cd vscode-modal-editor
-# VSCode official extension manager
-npm i -g vsce
 # Install dependencies
 npm i
-vsce package
+# Build extension
+npm run build
 ```
 
 Then you should see a `.vsix` file in the same directory.
