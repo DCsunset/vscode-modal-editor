@@ -53,7 +53,7 @@ export type ComplexCommand = {
 
 /**
  * Context for eval js expressions
- * 
+ *
  * @see {isCommandContext} ts-auto-guard:type-guard
  */
 export type CommandContext = {
@@ -93,7 +93,7 @@ export class AppState {
 	anchors: vscode.Position[];
 	/// selection before last command
 	lastSelections: readonly vscode.Selection[] | undefined;
-	
+
 	constructor(
 		mode: string,
 		public config: Config,
@@ -131,17 +131,17 @@ export class AppState {
 		};
 		this.setMode(this.config.misc.defaultMode);
 	}
-	
+
 	log(message: string) {
 		this.outputChannel.appendLine(message);
 	}
-	
+
 	/// Reset internal state
 	reset() {
 		this.keyEventHandler.reset();
 		this.updateStatus(vscode.window.activeTextEditor);
 	}
-	
+
 	setMode(mode: string) {
 		this.mode = mode;
 		this.updateStatus(vscode.window.activeTextEditor);
@@ -169,7 +169,7 @@ export class AppState {
 			this.setMode(NORMAL);
 		}
 	}
-	
+
 	async handleKey(key: string) {
 		try {
 			if (this.mode === INSERT) {
@@ -221,7 +221,7 @@ export class AppState {
 				this.setMode(NORMAL);
 		}
 	}
-	
+
 	/**
 	 * Execute a command with a context
 	 */
@@ -267,7 +267,7 @@ export class AppState {
 			vscode.window.showErrorMessage(`Invalid command: ${command}`);
 		}
 	}
-	
+
 	/**
 	 * jsEval evaluates JS expressions
 	 */
@@ -291,11 +291,13 @@ export class AppState {
 			selection: editor?.selection,
 			// current selections
 			selections: editor?.selections,
+			// language Id of current document
+			languageId: editor?.document.languageId,
 		};
 
 		return eval(`(${expressions})`);
 	}
-	
+
 	async executeVSCommand(command: string, ...rest: any[]) {
 		const editor = vscode.window.activeTextEditor;
 		this.lastSelections = editor?.selections;
@@ -307,5 +309,3 @@ export class AppState {
 		}
 	}
 }
-
-
