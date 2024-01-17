@@ -284,6 +284,8 @@ type Context = {
 	selection: vscode.Selection | undefined,
 	// current selections
 	selections: readonly vscode.Selections[] | undefined
+	// language Id of current document
+	languageId: string | undefined,
 };
 ```
 
@@ -372,4 +374,3 @@ The logo of this extension is modified based on the icon credited to
 Copyright (C) 2022 DCsunset
 
 Licensed under the [AGPLv3](LICENSE) license.
-
