@@ -65,9 +65,7 @@ jobs:
         run: |
           VSIX_PATH=$(echo *.vsix)
           # used in workflow vars
-          echo "::set-output name=VSIX_PATH::$VSIX_PATH"
-          # can be accessed by env in other steps
-          echo "VSIX_PATH=$VSIX_PATH" >> $GITHUB_ENV
+          echo "VSIX_PATH=$VSIX_PATH" >> $GITHUB_OUTPUT
 
       - name: Publish to Open VSX
         if: ${{ github.event_name == 'push' || inputs.open_vsx }}
