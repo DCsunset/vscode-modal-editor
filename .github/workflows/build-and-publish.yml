@@ -70,7 +70,7 @@ jobs:
           echo "VSIX_PATH=$VSIX_PATH" >> $GITHUB_ENV
 
       - name: Publish to Open VSX
-        if: env.tag_release == 'true' || inputs.open_vsx
+        if: ${{ github.event_name == 'push' || inputs.open_vsx }}
         uses: HaaLeo/publish-vscode-extension@v1
         id: publishToOpenVSX
         with:
@@ -78,7 +78,7 @@ jobs:
           extensionFile: ${{ steps.info.outputs.VSIX_PATH }}
 
       - name: Publish to Visual Studio Marketplace
-        if: env.tag_release == 'true' || inputs.vs_marketplace
+        if: ${{ github.event_name == 'push' || inputs.vs_marketplace }}
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
@@ -86,7 +86,7 @@ jobs:
           extensionFile: ${{ steps.info.outputs.VSIX_PATH }}
 
       - name: GitHub release (from tag)
-        if: env.tag_release == 'true'
+        if: ${{ github.event_name == 'push' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
           overwrite: true
 
       - name: GitHub release (manual)
-        if: env.tag_release == 'false' || inputs.release
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
