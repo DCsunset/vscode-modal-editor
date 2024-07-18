@@ -116,41 +116,41 @@ Types defined in the above table:
 
 ```ts
 type FindTextArgs = {
-	/// String to find
-	text: string,
-	/// Whether to select text
-	select: boolean,
-	/// Whether to move till the text rather than to the text (default: false)
-	till?: boolean,
-	/// Within the ine of current cursor (default: false)
-	withinLine?: boolean,
-	/// Search backward (default: false)
-	backward?: boolean,
-	/// Whether to search using regex (default: false)
-	regex?: boolean,
+  /// String to find
+  text: string,
+  /// Whether to select text
+  select: boolean,
+  /// Whether to move till the text rather than to the text (default: false)
+  till?: boolean,
+  /// Within the ine of current cursor (default: false)
+  withinLine?: boolean,
+  /// Search backward (default: false)
+  backward?: boolean,
+  /// Whether to search using regex (default: false)
+  regex?: boolean,
 };
 
 type YankArgs = {
-	/**
-	 * Yank to a register (default: `"`)
-	 * (empty string for system clipboard)
-	 */
-	register?: string
+  /**
+   * Yank to a register (default: `"`)
+   * (empty string for system clipboard)
+   */
+  register?: string
 };
 
 type PasteArgs = {
-	/**
-	 * Paste from a register (default: `"`)
-	 * (empty string for system clipboard)
-	 */
-	register?: string,
-	/// Paste before the current selection
-	before?: boolean
+  /**
+   * Paste from a register (default: `"`)
+   * (empty string for system clipboard)
+   */
+  register?: string,
+  /// Paste before the current selection
+  before?: boolean
 }
 
 type TransformArgs = {
-	/// A function for transforming text in selections.
-	transformer: (_: string) => string
+  /// A function for transforming text in selections.
+  transformer: (_: string) => string
 };
 ```
 
@@ -173,10 +173,10 @@ To change the cursor style or status text for a mode, you can add the following 
 
 ```json
 {
-	"insert": {
-		"cursorStyle": "line",
-		"statusText": "-- insert --"
-	}
+  "insert": {
+    "cursorStyle": "line",
+    "statusText": "-- insert --"
+  }
 }
 ```
 
@@ -204,10 +204,10 @@ The keybindings object is defined in the following format (in TypeScript):
 
 ```ts
 type Keymap = {
-	[key: string]: Keymap | Command
+  [key: string]: Keymap | Command
 }
 type Keybindings = {
-	[mode: string]: Keymap
+  [mode: string]: Keymap
 }
 ```
 
@@ -233,20 +233,20 @@ or a complex command object:
 
 ```ts
 type ComplexCommand = {
-	command: Command,
-	/// args for that command (only if it's a simple command)
-	args?: any,
-	/// whether to use JS expression for args
-	computedArgs?: boolean,
-	/// condition to execute the above command
-	when?: string,
-	/// run this command for count times (a js expression)
-	count?: string,
-	/**
-	 * Whether to record the key sequence for this command in a register
-	 * (only works for top-level command)
-	 */
-	record?: string
+  command: Command,
+  /// args for that command (only if it's a simple command)
+  args?: any,
+  /// whether to use JS expression for args
+  computedArgs?: boolean,
+  /// condition to execute the above command
+  when?: string,
+  /// run this command for count times (a js expression)
+  count?: string,
+  /**
+   * Whether to record the key sequence for this command in a register
+   * (only works for top-level command)
+   */
+  record?: string
 };
 ```
 
@@ -265,27 +265,27 @@ The `_ctx` is defined as follows:
 
 ```ts
 type Context = {
-	// Key sequence to invoke this command or unexecuted keys
-	keys: string,
-	// Count of the current command
-	count?: number,
-	// cursor position before last command (undefined only when no editor is available)
-	lastPos: vscode.Position | undefined,
-	// current cursor position
-	pos: vscode.Position | undefined,
-	// get the line
-	lineAt: (() => vscode.TextLine) | undefined,
-	// primary selection before last command
-	// (alias for lastSelections?.[0])
-	lastSelection: vscode.Selection | undefined,
-	// selections before last command
-	lastSelections: readonly vscode.Selections[] | undefined,
-	// current primary selection
-	selection: vscode.Selection | undefined,
-	// current selections
-	selections: readonly vscode.Selections[] | undefined
-	// language Id of current document
-	languageId: string | undefined,
+  // Key sequence to invoke this command or unexecuted keys
+  keys: string,
+  // Count of the current command
+  count?: number,
+  // cursor position before last command (undefined only when no editor is available)
+  lastPos: vscode.Position | undefined,
+  // current cursor position
+  pos: vscode.Position | undefined,
+  // get the line
+  lineAt: (() => vscode.TextLine) | undefined,
+  // primary selection before last command
+  // (alias for lastSelections?.[0])
+  lastSelection: vscode.Selection | undefined,
+  // selections before last command
+  lastSelections: readonly vscode.Selections[] | undefined,
+  // current primary selection
+  selection: vscode.Selection | undefined,
+  // current selections
+  selections: readonly vscode.Selections[] | undefined
+  // language Id of current document
+  languageId: string | undefined,
 };
 ```
 
@@ -317,32 +317,32 @@ Here is an example code snippet for `helix.js` preset:
 ```js
 // add count argument
 function repeatable(command) {
-	return {
-		command,
-		count: "_ctx.count"
-	};
+  return {
+    command,
+    count: "_ctx.count"
+  };
 }
 
 module.exports = {
-	"": {
-		// Common keybindings
-		i: "modalEditor.setInsertMode",
-	},
-	normal: {
-		// cursor movement
-		h: repeatable("cursorLeft"),
-		j: repeatable("cursorDown"),
-		k: repeatable("cursorUp"),
-		l: repeatable("cursorRight"),
-		w: repeatable([
-			"cancelSelection",
-			"cursorWordStartRightSelect",
-		]),
-		b: repeatable([
-			"cancelSelection",
-			"cursorWordStartLeftSelect"
-		]),
-	}
+  "": {
+    // Common keybindings
+    i: "modalEditor.setInsertMode",
+  },
+  normal: {
+    // cursor movement
+    h: repeatable("cursorLeft"),
+    j: repeatable("cursorDown"),
+    k: repeatable("cursorUp"),
+    l: repeatable("cursorRight"),
+    w: repeatable([
+      "cancelSelection",
+      "cursorWordStartRightSelect",
+    ]),
+    b: repeatable([
+      "cancelSelection",
+      "cursorWordStartLeftSelect"
+    ]),
+  }
 }
 ```
 
