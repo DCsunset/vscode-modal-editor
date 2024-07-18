@@ -310,7 +310,7 @@ add the following to your `keybindings.json`:
 ```
 
 
-### Example
+### Examples
 
 Here is an example code snippet for `helix.js` preset:
 
@@ -349,6 +349,30 @@ module.exports = {
 So it maps some movement keys to some existing commands in VS Code,
 which leverages the built-in text manipulation.
 You can refer to the `presets/helix.js` for more examples.
+
+With the power of JavaScript,
+you can also easily reference other keybindings in the keymap:
+
+``` js
+let keymap = {
+  normal: {
+    h: "cursorLeft",
+    j: "cursorDown",
+    k: "cursorUp",
+    l: "cursorRight",
+    w: [
+      "cancelSelection",
+      "cursorWordStartRightSelect",
+    ]
+    // using getter function (this can access keymap in the same level)
+    get Y() { return [ this.h, this.w ]; }
+  }
+};
+// or define other recursive keys in another stage
+keymap.normal.Z = [ keymap.normal.h, keymap.normal.w ];
+
+module.exports = keymap;
+```
 
 
 ## Acknowledgement
