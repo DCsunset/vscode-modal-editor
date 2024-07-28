@@ -171,10 +171,6 @@ export async function setDefaultMode() {
 export async function setMode(mode: string) {
 	try {
 		appState.setMode(mode);
-		if (mode === INSERT) {
-			// cancel selection or inserting may replace selected texts.
-			await vscode.commands.executeCommand("modalEditor.clearSelections");
-		}
 		await vscode.commands.executeCommand("setContext", "modalEditor.mode", mode);
 	}
 	catch (err: any) {
@@ -184,6 +180,8 @@ export async function setMode(mode: string) {
 
 export async function setInsertMode() {
 	await setMode(INSERT);
+	// cancel selection or inserting may replace selected texts.
+	await vscode.commands.executeCommand("modalEditor.clearSelections");
 }
 
 export async function setNormalMode() {

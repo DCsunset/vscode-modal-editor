@@ -89,7 +89,7 @@ They are listed as follows:
 | Command | Arguments | Description |
 | - | - | - |
 | `modalEditor.setMode` | `string` | Set the current mode |
-| `modalEditor.setInsertMode` | - | Set to insert mode |
+| `modalEditor.setInsertMode` | - | Set to insert mode (and clear selections) |
 | `modalEditor.setNormalMode` | - | Set to normal mode |
 | `modalEditor.setSelectMode` | - | Set to select mode |
 | `modalEditor.setCommandMode` | - | Set to command mode |
@@ -373,6 +373,14 @@ keymap.normal.Z = [ keymap.normal.h, keymap.normal.w ];
 
 module.exports = keymap;
 ```
+
+
+## Migrations
+
+### From v1.9 to v1.10+
+
+The `setMode` command no longer clear selections when changing to `insert` mode.
+Use `setInsertMode` or run `clearSelections` explicitly instead if you want to keep the old behaviour.
 
 
 ## Acknowledgement
