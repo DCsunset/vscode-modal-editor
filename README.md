@@ -48,6 +48,10 @@ To load it, import the preset using URI directly:
 * Easy to customize your key type to emulate other modal editors.
 * Recursive keymaps (easy to add multi-stage keybindings)
 
+## Todo
+
+- [ ] Support binding commands to events
+
 
 ## How it works
 
@@ -89,7 +93,7 @@ They are listed as follows:
 | Command | Arguments | Description |
 | - | - | - |
 | `modalEditor.setMode` | `string` | Set the current mode |
-| `modalEditor.setInsertMode` | - | Set to insert mode (and clear selections) |
+| `modalEditor.setInsertMode` | - | Set to insert mode (and clear selections if `clearSelectionsOnInsertMode` is enabled) |
 | `modalEditor.setNormalMode` | - | Set to normal mode |
 | `modalEditor.setSelectMode` | - | Set to select mode |
 | `modalEditor.setCommandMode` | - | Set to command mode |
@@ -182,12 +186,14 @@ To change the cursor style or status text for a mode, you can add the following 
 
 Available cursor styles can be found [here](https://github.com/microsoft/vscode/blob/0b5aad37bd56218493863731950980d1c3a90c26/src/vs/editor/common/config/editorOptions.ts#L223).
 
+
 ## Tutorial to Customize Keybindings
 
 ### Basics
 
 There are 4 predefined modes (`normal`, `insert`, `select`, `command`) in this extension,
 but you are free to add more modes.
+Note that the mode name shouldn't start with underscore `_` as it is reserved for other config.
 
 Keybindings can be defined for all modes except for insert mode,
 because this extension will handle over to VS Code in insert mode.
@@ -216,6 +222,8 @@ each keymap maps a key to a sub-keymap or a command.
 Recursive keymaps are useful to define multi-stage commands.
 Note that the key must be a single character.
 If you need map a key sequence to a command, you can use a recursive keymap.
+
+Your config file should export a `Keybindings` object.
 
 There's a special mode `""` in `Keybindings` which means common keybindings.
 It is shared by all the modes (except insert mode),
