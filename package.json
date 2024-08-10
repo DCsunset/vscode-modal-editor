@@ -231,6 +231,12 @@
           "type": "string",
           "description": "Preset directory to easily import keybindings",
           "default": "normal"
+        },
+        "modalEditor.misc.clearSelectionsOnInsertMode": {
+          "type": "boolean",
+          "description": "Clear selections when running command setInsertMode",
+          "deprecationMessage": "Deprecated: use modalEditor.clearSelections by yourself instead",
+          "default": true
         }
       }
     }

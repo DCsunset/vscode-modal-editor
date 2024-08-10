@@ -65,7 +65,9 @@ export type Misc = {
 	/// Preset file name to autoload (only works when keybindingsInSettings is false; empty means no autoloading)
 	autoloadPreset: string;
 	/// Default to use when extension starts
-	defaultMode: string
+	defaultMode: string,
+	/// Clear selections when running command setInsertMode (deprecated)
+	clearSelectionsOnInsertMode: boolean
 };
 
 /**
@@ -103,7 +105,8 @@ const defaultMisc: Misc = {
 	keyStatusBarPriority: 10000,
 	presetDirectory: "~/.config/vscode-modal-editor",
 	autoloadPreset: "",
-	defaultMode: NORMAL
+	defaultMode: NORMAL,
+	clearSelectionsOnInsertMode: true
 };
 
 export function getStyle(mode: string, styles: Styles) {
