@@ -455,9 +455,7 @@ export type PasteArgs = {
 	 */
 	register?: string,
 	/// Paste before the current selection
-	before?: boolean,
-	/// Replace with current selection
-	replace?: boolean,
+	before?: boolean
 };
 
 /**
@@ -487,10 +485,6 @@ export async function paste(args?: PasteArgs) {
 			// insert before or after the current selection
 			getSelections(editor)
 				.forEach((selection, i) => {
-					if (args?.replace) {
-						editBuilder.delete(selection);
-					}
-
 					let pos = args?.before ? selection.start : selection.end;
 					const text = texts[Math.min(i, texts.length - 1)];
 
