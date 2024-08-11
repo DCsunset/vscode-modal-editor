@@ -103,6 +103,7 @@ They are listed as follows:
 | `modalEditor.cut` | `YankArgs` | Cut the selection to a register |
 | `modalEditor.yank` | `YankArgs` | Yank the selection to a register |
 | `modalEditor.paste` | `PasteArgs` | Paste content from a register |
+| `modalEditor.delete` | - | Delete content in selection |
 | `modalEditor.halfPageUp` | - | Move cursor half page up |
 | `modalEditor.halfPageDown` | - | Move cursor half page down |
 | `modalEditor.toUpperCase` | - | Transform current selection(s) to upper case |
