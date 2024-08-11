@@ -70,6 +70,12 @@ module.exports = {
 				before: true
 			}
 		}),
+		R: {
+			command: "modalEditor.paste",
+			args: {
+				replace: true
+			}
+		},
 		"`": "modalEditor.toLowerCase",
 		"~": "modalEditor.toUpperCase",
 		// Replace selections
@@ -175,6 +181,13 @@ module.exports = {
 				args: {
 					register: "",
 					before: true
+				}
+			},
+			R: {
+				command: "modalEditor.paste",
+				args: {
+					register: "",
+					replace: true
 				}
 			},
 			f: "workbench.action.quickOpen",
