@@ -392,6 +392,14 @@ The `setMode` command no longer clear selections when changing to `insert` mode.
 Use `setInsertMode` or run `clearSelections` explicitly instead if you want to keep the old behaviour.
 
 
+## Contributing
+
+Contributions to this repo are welcome.
+It's recommended to open an issue for discussion first if it's a new feature.
+
+The commit messages should roughly follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
+
 ## Acknowledgement
 
 This extension is greatly inspired by
