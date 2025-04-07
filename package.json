@@ -237,6 +237,11 @@
           "description": "Clear selections when running command setInsertMode",
           "deprecationMessage": "Deprecated: use modalEditor.clearSelections by yourself instead",
           "default": true
+        },
+        "modalEditor.misc.parseNumberPrefix": {
+          "type": "boolean",
+          "description": "Parse leading number as prefix instead of normal keys",
+          "default": true
         }
       }
     }

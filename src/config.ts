@@ -67,7 +67,9 @@ export type Misc = {
 	/// Default to use when extension starts
 	defaultMode: string,
 	/// Clear selections when running command setInsertMode (deprecated)
-	clearSelectionsOnInsertMode: boolean
+	clearSelectionsOnInsertMode: boolean,
+  /// Parse leading number as prefix instead of normal keys
+  parseNumberPrefix: boolean,
 };
 
 /**
@@ -106,7 +108,8 @@ const defaultMisc: Misc = {
 	presetDirectory: "~/.config/vscode-modal-editor",
 	autoloadPreset: "",
 	defaultMode: NORMAL,
-	clearSelectionsOnInsertMode: true
+	clearSelectionsOnInsertMode: true,
+  parseNumberPrefix: true,
 };
 
 export function getStyle(mode: string, styles: Styles) {

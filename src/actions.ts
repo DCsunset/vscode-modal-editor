@@ -156,7 +156,8 @@ export class AppState {
 			// common keymap
 			this.config.keybindings[""],
 			// whether it's command mode
-			mode === COMMAND
+			mode === COMMAND,
+      this.config.misc.parseNumberPrefix
 		);
 	}
 

@@ -47,14 +47,16 @@ export class KeyEventHandler {
 	keys!: string;
 	/// Count prefix
 	count!: string;
-	/// Whether it is parsing the prefix count
+	/// Whether it is parsing the number prefix
 	parsingCount!: boolean;
 	
 	constructor(
 		public keyStatusBar: vscode.StatusBarItem,
 		public keymap: Keymap | undefined,
 		public commonKeymap: Keymap | undefined,
-		public commandMode: boolean
+		public commandMode: boolean,
+    /// Whether to parse number prefix
+    public parseNumberPrefix: boolean,
 	) {
 		this.reset();
 	}
@@ -177,7 +179,7 @@ export class KeyEventHandler {
 		this.currentKeymap = this.keymap;
 		this.currentCommonKeymap = this.commonKeymap;
 		this.count = "";
-		this.parsingCount = true;
+		this.parsingCount = this.parseNumberPrefix;
 		this.setKeys("");
 	}
 
