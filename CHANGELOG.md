@@ -1,6 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.11.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.10.0...v1.11.0) (2025-04-11)
+
+
+### Features
+
+* add option to disable number prefix parsing ([29cd1ec](https://github.com/DCsunset/vscode-modal-editor/commit/29cd1ecf5dac831edf7db542bfc9777a062833ac))
 
 ## [1.10.0](https://github.com/DCsunset/vscode-modal-editor/compare/v1.9.2...v1.10.0) (2024-08-10)
 
