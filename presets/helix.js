@@ -43,16 +43,7 @@ module.exports = {
 		",": "removeSecondaryCursors",
 
 		J: repeatable("editor.action.joinLines"),
-		x: repeatable([
-			{
-				command: "cursorRightSelect",
-				// move right when this line is alreay selected (because of inclusive range)
-				when: "_ctx.selection.contains(_ctx.lineAt(_ctx.pos.line).range)"
-			},
-			"expandLineSelection",
-			// move left because it expands to a new line (because of inclusive range)
-			"cursorLeftSelect",
-		]),
+		x: repeatable("modalEditor.selectLine"),
 		"<": repeatable("editor.action.outdentLines"),
 		">": repeatable("editor.action.indentLines"),
 		y: [
@@ -94,10 +85,10 @@ module.exports = {
 				}`
 			}
 		},
-	
+
 		// into command mode
 		":": "modalEditor.setCommandMode",
-		
+
 		// replay last change
 		".": {
 			command: "modalEditor.replayRecord",
@@ -139,7 +130,7 @@ module.exports = {
 			// only when there is a prefix count
 			when: "_ctx.count !== undefined"
 		},
-		
+
 		// match mode
 		m: {
 			m: "editor.action.jumpToBracket"
@@ -159,7 +150,7 @@ module.exports = {
 			n: "workbench.action.nextEditor",
 			d: "editor.action.revealDefinition"
 		},
-		
+
 		// space mode
 		" ": {
 			// yank to clipboard
@@ -201,7 +192,7 @@ module.exports = {
 			k: "editor.action.showHover",
 			"?": "workbench.action.showCommands"
 		},
-		
+
 		// search
 		"/": "actions.find",
 		n: [
@@ -258,7 +249,7 @@ module.exports = {
 			"cursorLeftSelect"
 		])),
 		b: repeatable(reselect("cursorWordStartLeftSelect")),
-		
+
 		// Motions
 		f: {
 			"": recordMotion(repeatable(reselect({
@@ -317,7 +308,7 @@ module.exports = {
 				}
 			],
 		},
-	
+
 		// set to select mode
 		v: "modalEditor.setSelectMode"
 	},
@@ -396,7 +387,7 @@ module.exports = {
 				}
 			]
 		},
-	
+
 		// set back to normal mode
 		v: "modalEditor.setNormalMode"
 	},

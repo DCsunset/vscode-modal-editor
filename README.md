@@ -115,6 +115,8 @@ They are listed as follows:
 | `modalEditor.resetState` | - | Reset internal state |
 | `modalEditor.importKeybindings` | - | Import keybindings |
 | `modalEditor.importPreset` | `string?` | Import keybindings from preset dir or a specified dir |
+| `modalEditor.selectLine` | - | Select current line (allows expanding with repeated use; properly handles empty lines) |
+| `modalEditor.selectToEndOfLine` | - | Select to end of line (first press: to last char, second press: to actual line end) |
 
 
 Types defined in the above table:

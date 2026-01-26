@@ -634,6 +634,107 @@ async function replayRecord(reg: string) {
 	await appState.replayRecord(reg);
 }
 
+/**
+ * Select line(s) - properly handles empty lines
+ * Selects entire lines and allows extending selections
+ */
+async function selectLine() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) return;
+
+	const newSelections = editor.selections.map((sel) => {
+		// Get the range of lines we're working with
+		let startLine = sel.isEmpty
+			? sel.active.line
+			: Math.min(sel.start.line, sel.end.line);
+		let endLine = sel.isEmpty
+			? sel.active.line
+			: Math.max(sel.start.line, sel.end.line);
+
+		// Check if we need to expand the selection
+		if (!sel.isEmpty) {
+			// We have a selection - check if the last line is fully included
+			const lastLineRange = editor.document.lineAt(endLine).range;
+			const lastLineText = editor.document.lineAt(endLine).text;
+
+			// Check if we're at the end of the last line (considering inclusive range)
+			const atEndOfLine =
+				lastLineText.length === 0
+					? sel.end.isEqual(lastLineRange.end)
+					: sel.end.character >= lastLineText.length - 1;
+
+			// If we're at the end of the current selection, expand to next line
+			if (atEndOfLine && endLine < editor.document.lineCount - 1) {
+				endLine++;
+			}
+		}
+
+		// Build the selection from start of first line to end of last line
+		const startPos = editor.document.lineAt(startLine).range.start;
+		const endLineText = editor.document.lineAt(endLine).text;
+
+		let endPos: vscode.Position;
+		if (endLineText.length === 0) {
+			// Empty line - select to actual end
+			// endPos = editor.document.lineAt(endLine).range.end;
+			endPos = new vscode.Position(endLine + 1, 0);
+		} else {
+			// Non-empty line - select beyond last character
+			endPos = new vscode.Position(endLine, endLineText.length + 1);
+		}
+
+		return new vscode.Selection(startPos, endPos);
+	});
+
+	editor.selections = newSelections;
+}
+
+/**
+ * Select to end of line
+ * First $: selects to last character
+ * Second $: selects to actual end of line
+ */
+async function selectToEndOfLine() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) return;
+
+	const newSelections: vscode.Selection[] = [];
+
+	for (const sel of editor.selections) {
+		const currentLine = sel.active.line;
+		const lineText = editor.document.lineAt(currentLine).text;
+		const lineRange = editor.document.lineAt(currentLine).range;
+
+		let anchor: vscode.Position;
+		let active: vscode.Position;
+
+		if (lineText.length === 0) {
+			// Empty line - select the entire line
+			anchor = lineRange.start;
+			active = lineRange.end;
+		} else {
+			// Non-empty line
+			// Use current position as anchor if no selection, otherwise keep existing anchor
+			anchor = sel.isEmpty ? sel.active : sel.anchor;
+
+			// Check if we're already at the last character position
+			const atLastChar = sel.active.character === lineText.length - 1;
+
+			if (!sel.isEmpty && atLastChar) {
+				// Second $ - we're already at last char, now go to actual end
+				active = lineRange.end;
+			} else {
+				// First $ - go to last character (inclusive range)
+				active = new vscode.Position(currentLine, lineText.length - 1);
+			}
+		}
+
+		newSelections.push(new vscode.Selection(anchor, active));
+	}
+
+	editor.selections = newSelections;
+}
+
 // Execute a command with the current context
 export async function executeCommand(command: Command) {
 	if (!isCommand(command)) {
@@ -690,6 +791,8 @@ export async function register(context: vscode.ExtensionContext, outputChannel: 
 		registerCommand(resetState),
 		registerCommand(importKeybindings),
 		registerCommand(importPreset),
+		registerCommand(selectLine),
+		registerCommand(selectToEndOfLine),
 		// Handle type events
 		vscode.commands.registerCommand("type", onType)
 	);
