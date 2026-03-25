@@ -246,6 +246,11 @@
           "type": "boolean",
           "description": "Parse leading number as prefix instead of normal keys",
           "default": true
+        },
+        "modalEditor.misc.insertKeybindingTimeout": {
+          "type": "number",
+          "description": "Timeout in milliseconds for insert-mode keybinding sequences (<= 0 disables timeout)",
+          "default": 200
         }
       }
     }

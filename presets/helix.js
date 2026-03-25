@@ -322,6 +322,16 @@ module.exports = {
 		v: "modalEditor.setSelectMode"
 	},
 
+	// insert-mode escape chords
+	insert: {
+		j: {
+			j: "modalEditor.setNormalMode"
+		},
+		k: {
+			k: "modalEditor.setNormalMode"
+		}
+	},
+
 	select: {
 		// cursor movement
 		h: repeatable("cursorLeftSelect"),
@@ -407,4 +417,3 @@ module.exports = {
 		w: "workbench.action.files.save"
 	}
 };
-

@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
 import {
+	isCommand,
 	isCommandList,
 	isSimpleCommand,
 	isComplexCommand
 } from "./actions.guard";
-import { KeyEventHandler } from "./keybindings";
+import { KeyEventHandler, Keymap } from "./keybindings";
 import { Config, getStyle, cursorStyleMap } from "./config";
 import { KeyError } from "./error";
 
@@ -93,6 +94,12 @@ export class AppState {
 	anchors: vscode.Position[];
 	/// selection before last command
 	lastSelections: readonly vscode.Selection[] | undefined;
+	/// Current sub-keymap while parsing insert-mode key sequences
+	insertCurrentKeymap: Keymap | undefined;
+	/// Buffered insert-mode keys while parsing key sequences
+	insertKeys: string;
+	/// Timeout used for insert-mode key sequence matching
+	insertKeyTimer: NodeJS.Timeout | undefined;
 
 	constructor(
 		mode: string,
@@ -104,7 +111,99 @@ export class AppState {
 		this.registers = {};
 		this.records = {};
 		this.anchors = [];
+		this.insertCurrentKeymap = undefined;
+		this.insertKeys = "";
+		this.insertKeyTimer = undefined;
 		this.setMode(mode);
+	}
+
+	getFromKeymap(keymap: Keymap | undefined, key: string) {
+		if (keymap) {
+			if (key in keymap)
+				return keymap[key];
+			// wildcard
+			if ("" in keymap)
+				return keymap[""];
+		}
+		return undefined;
+	}
+
+	resetInsertKeys() {
+		if (this.insertKeyTimer) {
+			clearTimeout(this.insertKeyTimer);
+			this.insertKeyTimer = undefined;
+		}
+		this.insertCurrentKeymap = this.config.keybindings[INSERT];
+		this.insertKeys = "";
+	}
+
+	setInsertKeyTimeout() {
+		if (this.insertKeyTimer) {
+			clearTimeout(this.insertKeyTimer);
+		}
+
+		const timeout = this.config.misc.insertKeybindingTimeout;
+		if (timeout <= 0) {
+			return;
+		}
+
+		this.insertKeyTimer = setTimeout(() => {
+			this.resetInsertKeys();
+		}, timeout);
+	}
+
+	async undoTypedText(length: number) {
+		for (let i = 0; i < length; ++i) {
+			await this.executeVSCommand("deleteLeft");
+		}
+	}
+
+	/**
+	 * Parse insert-mode bindings.
+	 *
+	 * This allows sequences like "jj" to switch mode while still
+	 * keeping normal typing behavior for non-matching sequences.
+	 */
+	async handleInsertKeybinding(key: string) {
+		const insertKeymap = this.config.keybindings[INSERT];
+		if (!insertKeymap) {
+			return;
+		}
+
+		let value = this.getFromKeymap(this.insertCurrentKeymap, key);
+		if (value) {
+			this.insertKeys += key;
+			if (isCommand(value)) {
+				const keys = this.insertKeys;
+				this.resetInsertKeys();
+				await this.undoTypedText(keys.length);
+				await this.executeCommand(value, { keys });
+			}
+			else {
+				this.insertCurrentKeymap = value;
+				this.setInsertKeyTimeout();
+			}
+			return;
+		}
+
+		this.resetInsertKeys();
+
+		// Re-try with the current key as a fresh sequence.
+		value = this.getFromKeymap(this.insertCurrentKeymap, key);
+		if (!value) {
+			return;
+		}
+
+		this.insertKeys = key;
+		if (isCommand(value)) {
+			this.resetInsertKeys();
+			await this.undoTypedText(1);
+			await this.executeCommand(value, { keys: key });
+		}
+		else {
+			this.insertCurrentKeymap = value;
+			this.setInsertKeyTimeout();
+		}
 	}
 
 	/// Update cursor and status bar
@@ -144,6 +243,7 @@ export class AppState {
 
 	setMode(mode: string) {
 		this.mode = mode;
+		this.resetInsertKeys();
 		this.updateStatus(vscode.window.activeTextEditor);
 		if (mode === SELECT) {
 			// record anchor
@@ -181,9 +281,10 @@ export class AppState {
 				}
 
 				// call default handler for type
-				vscode.commands.executeCommand("default:type", {
+				await vscode.commands.executeCommand("default:type", {
 					text: key
 				});
+				await this.handleInsertKeybinding(key);
 				return;
 			}
 

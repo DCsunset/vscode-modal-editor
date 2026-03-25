@@ -55,7 +55,9 @@ To load it, import the preset using URI directly:
 
 ## How it works
 
-This extension can only capture normal characters typed in modes except for insert mode.
+This extension captures normal characters typed in all modes.
+In insert mode, characters are still inserted by VS Code first,
+then optional insert-mode keybindings (for example `jj` to leave insert mode) are matched.
 For special keys like `Esc`, `Ctrl` or `Alt`, they are handled by VS Code directly.
 So if you want to bind those keys to commands,
 you can directly map them in `keybindings.json`.
@@ -197,8 +199,14 @@ There are 4 predefined modes (`normal`, `insert`, `select`, `command`) in this e
 but you are free to add more modes.
 Note that the mode name shouldn't start with underscore `_` as it is reserved for other config.
 
-Keybindings can be defined for all modes except for insert mode,
-because this extension will handle over to VS Code in insert mode.
+Keybindings can be defined for all modes.
+
+For insert mode, keybindings are primarily useful for transition sequences
+(for example `jj` / `kk` to switch to normal mode).
+Characters are inserted first, and when a configured insert-mode sequence matches,
+the matched characters are removed and the mapped command is executed.
+By default, insert-mode sequence matching times out after `200ms`
+(configurable via `modalEditor.misc.insertKeybindingTimeout`).
 
 Each key sequence can be prefixed with a number indicating the count.
 The count value will be stored in the `CommandContext`,
@@ -228,7 +236,7 @@ If you need map a key sequence to a command, you can use a recursive keymap.
 Your config file should export a `Keybindings` object.
 
 There's a special mode `""` in `Keybindings` which means common keybindings.
-It is shared by all the modes (except insert mode),
+It is shared by all modes except command mode,
 and it can be overwritten by other modes.
 
 There's also a special key `""` in `Keymap` which represents a wildcard character
