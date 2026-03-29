@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { expandHome, loadKeybindings, readConfig } from "./config";
-import { AppState, NORMAL, INSERT, SELECT, COMMAND, Command } from "./actions";
+import { AppState, NORMAL, INSERT, SELECT, COMMAND, SELECTION_SEARCH, Command } from "./actions";
 import { isCommand } from "./actions.guard";
 import { isFindTextArgs, isYankArgs, isPasteArgs, isTransformArgs } from "./commands.guard";
 
@@ -196,6 +196,22 @@ export async function setSelectMode() {
 
 export async function setCommandMode() {
 	await setMode(COMMAND);
+}
+
+export async function setSelectionSearchMode() {
+	await setMode(SELECTION_SEARCH);
+}
+
+export function navigateToNextSelection() {
+	appState.navigateToNextSelection();
+}
+
+export function navigateToPreviousSelection() {
+	appState.navigateToPreviousSelection();
+}
+
+export function unselectPrimarySelection() {
+	appState.unselectPrimarySelection();
 }
 
 /**
@@ -715,6 +731,10 @@ export async function register(context: vscode.ExtensionContext, outputChannel: 
 		registerCommand(setNormalMode),
 		registerCommand(setSelectMode),
 		registerCommand(setCommandMode),
+		registerCommand(setSelectionSearchMode),
+		registerCommand(navigateToNextSelection),
+		registerCommand(navigateToPreviousSelection),
+		registerCommand(unselectPrimarySelection),
 		registerCommand(setKeys),
 		registerCommand(gotoLine),
 		registerCommand(findText),

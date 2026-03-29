@@ -15,6 +15,7 @@ export const NORMAL = "normal";
 export const INSERT = "insert";
 export const SELECT = "select";
 export const COMMAND = "command";
+export const SELECTION_SEARCH = "selectionSearch";
 
 /**
  * Command types:
@@ -93,6 +94,15 @@ export class AppState {
 	anchors: vscode.Position[];
 	/// selection before last command
 	lastSelections: readonly vscode.Selection[] | undefined;
+	/// selection search state
+	selectionSearchPattern: string;
+	/// original selections before entering selection search
+	originalSelections: readonly vscode.Selection[] | undefined;
+	/// index of primary selection for multi-selection navigation
+	primarySelectionIndex: number;
+	/// decorations for primary and secondary selections
+	primarySelectionDecoration: vscode.TextEditorDecorationType | undefined;
+	secondarySelectionDecoration: vscode.TextEditorDecorationType | undefined;
 
 	constructor(
 		mode: string,
@@ -104,6 +114,10 @@ export class AppState {
 		this.registers = {};
 		this.records = {};
 		this.anchors = [];
+		this.selectionSearchPattern = "";
+		this.originalSelections = undefined;
+		this.primarySelectionIndex = 0;
+		this.initializeDecorations();
 		this.setMode(mode);
 	}
 
@@ -113,8 +127,11 @@ export class AppState {
 			const { cursorStyle, statusText } = getStyle(this.mode, this.config.styles);
 			// default cursorStyle
 			editor.options.cursorStyle = cursorStyleMap[cursorStyle || "block"];
-			// default statusText
-			this.modeStatusBar.text = statusText || `-- ${this.mode.toUpperCase()} --`;
+			if (this.mode !== SELECTION_SEARCH) {
+				// default statusText (except for selection search mode that has its own status)
+				this.modeStatusBar.text = statusText || `-- ${this.mode.toUpperCase()} --`;
+			}
+
 			this.modeStatusBar.show();
 			this.keyStatusBar.show();
 		}
@@ -142,23 +159,43 @@ export class AppState {
 		this.updateStatus(vscode.window.activeTextEditor);
 	}
 
+	statusBarForMode(mode: string): vscode.StatusBarItem {
+		switch (mode) {
+			case COMMAND:
+			case SELECTION_SEARCH:
+				return this.modeStatusBar;
+			default:
+				return this.keyStatusBar;
+		}
+	}
+
 	setMode(mode: string) {
+		// Clear decorations when leaving any mode
+		this.clearSelectionDecorations();
 		this.mode = mode;
 		this.updateStatus(vscode.window.activeTextEditor);
 		if (mode === SELECT) {
 			// record anchor
 			this.anchors = vscode.window.activeTextEditor?.selections.map(sel => sel.anchor) ?? [];
+		} else if (mode === SELECTION_SEARCH) {
+			// record original selections before making new ones during search
+			this.originalSelections = vscode.window.activeTextEditor?.selections;
+			this.selectionSearchPattern = "";
 		}
 		this.keyEventHandler = new KeyEventHandler(
-			mode === COMMAND ? this.modeStatusBar : this.keyStatusBar,
+			this.statusBarForMode(mode),
 			// keymap in this mode
 			this.config.keybindings[mode],
 			// common keymap
 			this.config.keybindings[""],
 			// whether it's command mode
 			mode === COMMAND,
-      this.config.misc.parseNumberPrefix
+			this.config.misc.parseNumberPrefix
 		);
+
+		if (mode === SELECTION_SEARCH) {
+			this.updateSearchStatus();
+		}
 	}
 
 	async replayRecord(reg: string) {
@@ -184,6 +221,12 @@ export class AppState {
 				vscode.commands.executeCommand("default:type", {
 					text: key
 				});
+				return;
+			}
+
+			if (this.mode === SELECTION_SEARCH) {
+				// Handle selection search input
+				await this.handleSelectionSearchKey(key);
 				return;
 			}
 
@@ -308,5 +351,242 @@ export class AppState {
 		catch (error: any) {
 			vscode.window.showErrorMessage(error.message);
 		}
+	}
+
+	async handleSelectionSearchKey(key: string) {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor || !this.originalSelections) {
+			return;
+		}
+
+		switch (key) {
+			case '\n':
+			case '\r':
+				// Enter key - confirm search and exit to normal mode
+				this.setMode(NORMAL);
+				return;
+			case '\u001b':
+				// Escape key - cancel search and restore original selections
+				if (this.originalSelections) {
+					editor.selections = Array.from(this.originalSelections);
+				}
+				this.setMode(NORMAL);
+				return;
+			case '\b':
+			case '\u007f':
+				// Backspace or Delete - remove last character
+				if (this.selectionSearchPattern.length > 0) {
+					this.selectionSearchPattern = this.selectionSearchPattern.slice(0, -1);
+					this.updateSelectionSearch(editor);
+				}
+				return;
+			default:
+				// Regular character - add to pattern
+				this.selectionSearchPattern += key;
+				this.updateSelectionSearch(editor);
+				return;
+		}
+	}
+
+	updateSelectionSearch(editor: vscode.TextEditor) {
+		// If no pattern, restore original selections
+		if (!this.originalSelections || this.selectionSearchPattern === "") {
+			if (this.originalSelections) {
+				editor.selections = Array.from(this.originalSelections);
+			}
+			this.updateSearchStatus();
+			return;
+		}
+
+		let regex: RegExp;
+		try {
+			regex = new RegExp(this.selectionSearchPattern, 'gm');
+		} catch (error) {
+			if (this.originalSelections) {
+				editor.selections = Array.from(this.originalSelections);
+			}
+			this.updateSearchStatus("invalid regex");
+			return;
+		}
+
+		const newSelections: vscode.Selection[] = [];
+
+		// Search within each original selection
+		for (const originalSel of this.originalSelections) {
+			const text = editor.document.getText(originalSel);
+			let match;
+			regex.lastIndex = 0; // Reset regex state
+
+			while ((match = regex.exec(text)) !== null) {
+				// Calculate absolute positions
+				const startOffset = editor.document.offsetAt(originalSel.start) + match.index;
+				const endOffset = startOffset + Math.max(0, match[0].length - 1);
+				const startPos = editor.document.positionAt(startOffset);
+				const endPos = editor.document.positionAt(endOffset);
+				if (match[0].length > 0) {
+					newSelections.push(new vscode.Selection(startPos, endPos));
+				}
+				else {
+					// Prevent infinite loop with zero-length matches
+					regex.lastIndex = match.index + 1;
+				}
+			}
+		}
+
+		// Update editor selections
+		if (newSelections.length > 0) {
+			editor.selections = newSelections;
+			// Reset primary selection to first result
+			this.primarySelectionIndex = 0;
+			// Ensure the first selection is visible
+			editor.revealRange(newSelections[0], vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+			// Update decorations for multiple selections
+			if (newSelections.length > 1) {
+				this.updateSelectionDecorations();
+			}
+			this.updateSearchStatus(undefined, newSelections.length);
+		} else {
+			// No matches found - restore original selections
+			if (this.originalSelections) {
+				editor.selections = Array.from(this.originalSelections);
+			}
+			this.updateSearchStatus(undefined, 0);
+		}
+	}
+
+	updateSearchStatus(error?: string, matchCount?: number) {
+		if (this.mode !== SELECTION_SEARCH) {
+			return;
+		}
+
+		const editor = vscode.window.activeTextEditor;
+		let actualMatchCount = 0;
+		if (matchCount === undefined) {
+			if (this.selectionSearchPattern === "") {
+				error = "enter regex";
+			}
+			else if (editor && editor.selections) {
+				actualMatchCount = editor.selections.length;
+			}
+		}
+		else {
+			actualMatchCount = matchCount;
+		}
+
+		const statusText = error
+			? `SEL: ${this.selectionSearchPattern} (${error})`
+			: `SEL: ${this.selectionSearchPattern} (${actualMatchCount} matches)`;
+		this.modeStatusBar.text = statusText;
+	}
+
+	initializeDecorations() {
+		this.primarySelectionDecoration = vscode.window.createTextEditorDecorationType({
+			backgroundColor: new vscode.ThemeColor('editor.selectionBackground'),
+			border: '2px solid',
+			borderColor: new vscode.ThemeColor('editor.selectionForeground')
+		});
+
+		this.secondarySelectionDecoration = vscode.window.createTextEditorDecorationType({
+			backgroundColor: new vscode.ThemeColor('editor.inactiveSelectionBackground'),
+			border: '1px solid',
+			borderColor: new vscode.ThemeColor('editor.selectionForeground')
+		});
+	}
+
+	updateSelectionDecorations() {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor || editor.selections.length <= 1) {
+			return;
+		}
+
+		const primaryRanges: vscode.Range[] = [];
+		const secondaryRanges: vscode.Range[] = [];
+
+		editor.selections.forEach((selection, index) => {
+			if (index === this.primarySelectionIndex) {
+				primaryRanges.push(selection);
+			} else {
+				secondaryRanges.push(selection);
+			}
+		});
+
+		if (this.primarySelectionDecoration) {
+			editor.setDecorations(this.primarySelectionDecoration, primaryRanges);
+		}
+		if (this.secondarySelectionDecoration) {
+			editor.setDecorations(this.secondarySelectionDecoration, secondaryRanges);
+		}
+	}
+
+	clearSelectionDecorations() {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			return;
+		}
+
+		if (this.primarySelectionDecoration) {
+			editor.setDecorations(this.primarySelectionDecoration, []);
+		}
+		if (this.secondarySelectionDecoration) {
+			editor.setDecorations(this.secondarySelectionDecoration, []);
+		}
+	}
+
+	navigateToNextSelection() {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor || editor.selections.length <= 1) {
+			return;
+		}
+
+		this.primarySelectionIndex = (this.primarySelectionIndex + 1) % editor.selections.length;
+		this.updateSelectionDecorations();
+
+		// Ensure the primary selection is visible
+		const primarySelection = editor.selections[this.primarySelectionIndex];
+		editor.revealRange(primarySelection, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+	}
+
+	navigateToPreviousSelection() {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor || editor.selections.length <= 1) {
+			return;
+		}
+
+		this.primarySelectionIndex = this.primarySelectionIndex === 0
+			? editor.selections.length - 1
+			: this.primarySelectionIndex - 1;
+		this.updateSelectionDecorations();
+
+		// Ensure the primary selection is visible
+		const primarySelection = editor.selections[this.primarySelectionIndex];
+		editor.revealRange(primarySelection, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+	}
+
+	unselectPrimarySelection() {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor || editor.selections.length <= 1) {
+			return;
+		}
+
+		const newSelections = editor.selections.filter((_, index) => index !== this.primarySelectionIndex);
+		editor.selections = newSelections;
+
+		// Adjust primary selection index
+		if (this.primarySelectionIndex >= newSelections.length) {
+			this.primarySelectionIndex = Math.max(0, newSelections.length - 1);
+		}
+
+		this.updateSelectionDecorations();
+
+		// Ensure the new primary selection is visible if any selections remain
+		if (newSelections.length > 0) {
+			const primarySelection = newSelections[this.primarySelectionIndex];
+			editor.revealRange(primarySelection, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+		}
+	}
+
+	dispose() {
+		this.primarySelectionDecoration?.dispose();
+		this.secondarySelectionDecoration?.dispose();
 	}
 }

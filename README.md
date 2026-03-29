@@ -96,6 +96,7 @@ They are listed as follows:
 | `modalEditor.setInsertMode` | - | Set to insert mode (and clear selections if `clearSelectionsOnInsertMode` is enabled) |
 | `modalEditor.setNormalMode` | - | Set to normal mode |
 | `modalEditor.setSelectMode` | - | Set to select mode |
+| `modalEditor.setSelectionSearchMode` | - | Set to search-within-a-selection mode |
 | `modalEditor.setCommandMode` | - | Set to command mode |
 | `modalEditor.setKeys` | `string` | Change current key sequence without applying it. Value should be a js expression (useful for modifying unexecuted commands) |
 | `modalEditor.gotoLine` | `number` | Go to the specified line |
@@ -193,12 +194,14 @@ Available cursor styles can be found [here](https://github.com/microsoft/vscode/
 
 ### Basics
 
-There are 4 predefined modes (`normal`, `insert`, `select`, `command`) in this extension,
-but you are free to add more modes.
+There are 5 predefined modes (`normal`, `insert`, `select`, `selectionSearch`,
+and `command`) in this extension, but you are free to add more modes.
 Note that the mode name shouldn't start with underscore `_` as it is reserved for other config.
 
-Keybindings can be defined for all modes except for insert mode,
-because this extension will handle over to VS Code in insert mode.
+Keybindings can be defined for all modes except for insert mode and
+selection search mode. In insert mode this extension will handle over to
+VS Code, whereas in selection search input is reserved to type in the
+regular expression to search with.
 
 Each key sequence can be prefixed with a number indicating the count.
 The count value will be stored in the `CommandContext`,
